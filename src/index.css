@@ -1,0 +1,344 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --darkBlue: #205FA8;
+    --lightBlue: #EAF2F8;
+  }
+  
+  
+  @font-face {
+    font-family: 'Gotham Bold';
+    src: url('./assets/fonts/Gotham-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  svg.active{
+    color: #205fa8;
+  }
+
+  .ring-card-img svg{
+    max-width: 100%;
+    height: auto;
+  }
+
+  .ring-card-slot .svg-icon{
+    color: #205fa8;
+    display: inline-block;
+    line-height: 1em;
+    vertical-align: middle;
+  }
+  .ring-card-slot .svg-icon svg{
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+  
+  .config-arrow {
+    padding: 0 20px;
+    line-height: 50px;
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #000;
+    background-color: var(--lightBlue);
+  }
+  
+  .config-arrow-left {
+    border-right: 2px solid #fff;
+  }
+  
+  .arrow-disabled {
+    color: #B3B9BD
+  }
+  
+  .configurator-tabs {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    width: 80.81vw;
+  }
+  
+  .ring-width-1-before {
+    height: 45px;
+    margin-top: 20px;
+    width: 40px;
+    background-image: url("https://ui.cdn.confmetrix.com/auronia/production/12.3.5/dimension-width.8d226d4f6bfd98c3ca9e.svg");
+  }
+  
+  
+  .ring-width-2-before {
+    height: 45px;
+    margin-top: 20px;
+    width: 40px;
+    background-image: url("https://ui.cdn.confmetrix.com/auronia/production/12.3.5/dimension-height.8bd26271ff2b092a74f0.svg");
+  }
+  
+  .ring-width-3-before {
+    height: 45px;
+    margin-top: 20px;
+    width: 40px;
+    background-image: url("https://ui.cdn.confmetrix.com/auronia/production/12.3.5/dimension-size.e81027ac7062d2a68cc7.svg");
+  }
+  
+  .options {
+    color: #000;
+    border-right: 2px solid #fff;
+    font-size: 14px;
+    font-weight: 700;
+    background-color: var(--lightBlue);
+    height: 50px;
+  }
+  
+  
+  .option-active {
+    background-color: var(--darkBlue);
+    color: white;
+  }
+  
+  .config-header {
+    display: flex;
+    flex-direction: row;
+    background-color: #F1F1F3;
+    /* gray color  */
+    padding-top: 15px;
+    width: 86%;
+    padding-bottom: 15px;
+  }
+  
+  .ring-mode {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .add-ring {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    font-size: 12px;
+    align-items: center;
+    border-radius: 30px;
+    margin-left: 20px;
+    height: 30px;
+  }
+  
+  .option-image {
+    display: inline-block;
+    position: relative;
+    transition: .3s;
+    vertical-align: top;
+    /* height: auto; */
+    /* padding-bottom: 85%; */
+    background: url("./assets/profile-bg.a58c77c8a0ada755be0b.svg") no-repeat 50% 105%;
+  }
+  
+  .profile-container {
+    background: #F9F9FA;
+    margin: 20px
+  }
+  
+  /* buttons for Profile Form */
+  .button-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 0.2fr);
+    /* 4 columns per row */
+    gap: 20px;
+    /* Spacing between buttons */
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .button-grid li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    height: 100px;
+    border: 3px solid transparent;
+  
+  }
+  
+  .button-grid li:hover {
+    border: 3px solid var(--darkBlue);
+    cursor: pointer;
+  }
+  
+  .step-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  
+  .final-step-button {
+    justify-content: flex-end;
+  }
+  
+  /* dimenion form */
+  .form-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 800px;
+    margin: 20px;
+  }
+  
+  .column {
+    width: 48%;
+  }
+  
+  .column label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .column select,
+  .column input[type="checkbox"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .auto-setting {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .auto-setting label {
+    font-size: 12px;
+  }
+  
+  h3 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: #004080;
+  }
+  
+  /* stone settings */
+  .stone-setting {
+    border-color: transparent;
+    background: #fff;
+  }
+  
+  .active-stone-setting {
+    border-color: var(--darkBlue);
+  }
+  
+  .container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Hide the browser's default radio button */
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  /* Create a custom radio button */
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .container:hover input~.checkmark {
+    background-color: #ccc;
+  }
+  
+  /* When the radio button is checked, add a blue background */
+  .container input:checked~.checkmark {
+    background-color: #2196F3;
+  }
+  
+  /* Create the indicator (the dot/circle - hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the indicator (dot/circle) when checked */
+  .container input:checked~.checkmark:after {
+    display: block;
+  }
+  
+  /* Style the indicator (dot/circle) */
+  .container .checkmark:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+  }
+  
+  /* METAL AND SURFACE */
+  
+  .precious-metals-form {
+    margin: 0px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .ring-color {
+    background-position: 80% 80%;
+    width: 30px;
+    height: 30px;
+  }
+  
+  .dropdown-hover {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    border: 3px solid var(--darkBlue);
+  }
+  
+  /* split screen */
+  .split-screen {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  
+  .placeholder-three-js {
+    width: 40%;
+    height: 400px;
+  }
+  
+  .screen-two {
+    width: 45.9%;
+    background-color: #F9F9FA;
+  }
+  
+  .button-group-active {
+    border: 3px solid var(--darkBlue);
+    border-color: white;
+  }
+
+  /* #myIframe{
+
+
+  } */
