@@ -11,7 +11,7 @@ function App() {
   };
 
   return (
-    <div className="max-w-[1450px] mx-auto">
+    <div className="max-w-[1450px] mx-auto lg:px-9 pt-5">
       <div className="mb-5 flex items-center">
         <label htmlFor="expertToggle" className="mr-2">
           Expert Mode:

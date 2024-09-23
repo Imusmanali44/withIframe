@@ -33,26 +33,25 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
     const handleMessage = (event) => {
       // Optional: Check event.origin to ensure the message is from a trusted source
       // console.log('Message received from Profile:', event.data);
-      
+
       // Send message to iframe if it's loaded
       if (iframeRef.current) {
-        iframeRef.current.contentWindow.postMessage(event.data, '*');
+        iframeRef.current.contentWindow.postMessage(event.data, "*");
       }
     };
 
-    window.addEventListener('message', handleMessage);
+    window.addEventListener("message", handleMessage);
 
     // Cleanup event listener on component unmount
     return () => {
-      window.removeEventListener('message', handleMessage);
+      window.removeEventListener("message", handleMessage);
     };
   }, []);
-
   return (
     <div>
       <Tabs
         setStep={setActiveStep}
-        handleBack={setActiveStep}
+        handleBack={handleBack}
         handleNext={handleNext}
         step={activeStep}
         isExpertMode={isExpertMode}
@@ -65,20 +64,20 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
         setRings={setRings}
       />
 
-      <div className="flex flex-col lg:flex-row">
-        <div className="lg:w-1/2 bg-gray-300" style={{ height: '80vh' }}>
-          <iframe 
+      <div className="flex flex-col lg:flex-row bg-[#f9f9fa] gap-2">
+        <div className="lg:w-1/2">
+          <iframe
             ref={iframeRef} // Attach the ref here
             id="myIframe"
-            src="threejs/index.html"  
-            width="100%" 
-            height="100%" 
+            src="threejs/index.html"
+            width="100%"
+            height="100%"
             style={{ border: "none", overflow: "hidden" }}
             title="embedded-content"
           />
         </div>
 
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 p-4 lg:p-0">
           <TabContent
             isExpertMode={isExpertMode}
             step={activeStep}

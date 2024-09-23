@@ -88,7 +88,6 @@
     color: #000;
     border-right: 2px solid #fff;
     font-size: 14px;
-    font-weight: 700;
     background-color: var(--lightBlue);
     height: 50px;
   }
@@ -139,7 +138,7 @@
   
   .profile-container {
     background: #F9F9FA;
-    margin: 20px
+    /* margin: 20px */
   }
   
   /* buttons for Profile Form */

@@ -22,6 +22,8 @@ export const TopBar = ({ isPair, toggleIsPair, rings, setRings }) => {
     setActiveRing(ring.id);
   };
 
+  console.log(isPair);
+
   return (
     <div className="flex items-center mt-1 bg-[#f1f1f3] lg:px-5 lg:py-2.5">
       <button
@@ -31,7 +33,7 @@ export const TopBar = ({ isPair, toggleIsPair, rings, setRings }) => {
         <i icon="ring-add" className="mr-2">
           <AddRemoveRingSvg />
         </i>
-        <span className="max-w-28 text-xs font-bold text-start">
+        <span className="max-w-28 text-xs font-semibold text-start">
           Add or remove rings
         </span>
       </button>
@@ -61,8 +63,8 @@ export const TopBar = ({ isPair, toggleIsPair, rings, setRings }) => {
                 >
                   <i
                     icon="connect"
-                    className={`svg-icon bg-white rounded-full block text-center ${
-                      isPair ? "bg-[#205fa8]" : ""
+                    className={`svg-icon  rounded-full block text-center ${
+                      isPair ? "bg-[#205fa8]" : "bg-white"
                     }`}
                   >
                     <ConnectRingSvg className={isPair ? "#fff" : "#000"} />

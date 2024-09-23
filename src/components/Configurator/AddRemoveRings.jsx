@@ -16,12 +16,56 @@ import { CloseSvg } from "../../static/SvgImages";
 
 const ringImages = {
   Engagement: [
-    { id: 1, name: "Engagement", src: Ring1 },
-    { id: 2, name: "Engagement", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
+    { id: 1, name: "Engagement 1", src: Ring1 },
+    { id: 2, name: "Engagement 2", src: Ring1 },
   ],
   Memoir: [
-    { id: 1, name: "Memoir", src: Ring1 },
-    { id: 2, name: "Memoir", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 1, name: "Memoir 1", src: Ring1 },
+    { id: 2, name: "Memoir 2", src: Ring1 },
   ],
 };
 
@@ -58,7 +102,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
     setSelectedType(null);
   };
 
-  console.log(selectedRing)
+  console.log(selectedRing);
 
   return (
     <>
@@ -84,7 +128,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
       </div>
 
       <div
-        className={`cards flex flex-col lg:flex-row items-center gap-3 ${
+        className={`cards flex flex-col lg:flex-row items-center gap-1 ${
           selectedType && "hidden"
         }`}
       >
@@ -94,7 +138,9 @@ const AddRemoveRings = ({ rings, setRings }) => {
             className="ring-card border lg:min-h-96 mt-2 p-3.5 lg:w-1/4 flex flex-row lg:flex-col items-center"
           >
             <div className="ring-card-top text-center w-1/3 lg:w-auto">
-              <div className="label-dark mb-5 font-bold">{ring.type} Ring</div>
+              <div className="label-dark mb-5 font-semibold">
+                {ring.type} Ring
+              </div>
               <i className="ring-card-img max-w-32">
                 {ring.type === "Wedding" && <WeddingRingSVg />}
                 {ring.type === "Engagement" && <EngagementRingSvg />}
@@ -171,11 +217,11 @@ const AddRemoveRings = ({ rings, setRings }) => {
         )}
       </div>
       {selectedType && (
-        <div className="bg-white rounded-lg flex flex-wrap gap-3 w-full">
+        <div className="bg-white rounded-lg flex flex-wrap w-full max-h-[80vh] lg:max-h-[60vh] overflow-auto">
           {ringImages[selectedType]?.map((ring, index) => (
             <div
               key={index}
-              className="cursor-pointer w-1/4"
+              className="cursor-pointer w-1/2 lg:w-1/4"
               onClick={() => selectRing(ring)}
             >
               <img src={ring.src} alt={ring.name} className="w-full h-auto" />

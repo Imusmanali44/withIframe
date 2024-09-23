@@ -21,7 +21,7 @@ export const Tabs = ({
         {options?.map((tab) => (
           <div
             key={tab.id}
-            className={`options lg:flex items-center justify-center lg:flex-1 lg:max-w-56 hidden lg:w-52 w-full ${
+            className={`options font-semibold lg:flex items-center justify-center lg:flex-1 lg:max-w-56 hidden lg:w-52 w-full ${
               tab.id === step && "option-active !flex"
             }`}
             onClick={() => setStep(tab.id)}
