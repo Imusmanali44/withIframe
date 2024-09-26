@@ -21,7 +21,7 @@ export const tabOptions = [
   },
   {
     id: 2,
-    title: "Dimensions",
+    title: "Sizes",
   },
   {
     id: 3,

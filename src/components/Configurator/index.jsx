@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Tabs } from "../Tabs/Tabs";
 import { TabContent } from "../Tabs/TabContent";
 import { TopBar } from "./TopBar";
+import TabContentFooter from "../Tabs/TabContentFooter";
+import ConfiguratorFooter from "./Footer";
 
 const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
   const [isPair, setIsPair] = useState(true);
@@ -66,18 +68,22 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
 
       <div className="flex flex-col lg:flex-row bg-[#f9f9fa] gap-2">
         <div className="lg:w-1/2">
-          <iframe
-            ref={iframeRef} // Attach the ref here
-            id="myIframe"
-            src="threejs/index.html"
-            width="100%"
-            height="100%"
-            style={{ border: "none", overflow: "hidden" }}
-            title="embedded-content"
-          />
+          <div className="h-[275px] lg:h-[590px]">
+            <iframe
+              ref={iframeRef}
+              id="myIframe"
+              src="/three.html"
+              width="100%"
+              height="100%"
+              style={{ border: "none", overflow: "hidden" }}
+              title="embedded-content"
+            />
+          </div>
+
+          <ConfiguratorFooter />
         </div>
 
-        <div className="lg:w-1/2 p-4 lg:p-0">
+        <div className="lg:w-1/2 p-4 lg:p-0 flex flex-col">
           <TabContent
             isExpertMode={isExpertMode}
             step={activeStep}
@@ -86,6 +92,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
             isPair={isPair}
             toggleIsPair={toggleIsPair}
           />
+          <TabContentFooter />
         </div>
       </div>
     </div>

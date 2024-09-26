@@ -14,7 +14,7 @@ export const Tabs = ({
     <nav className="flex items-center flex-row w-full">
       <a className="config-arrow config-arrow-left" onClick={handleBack}>
         <i className="svg-icon svg-icon-step-left active">
-          <StepLeftSvg />
+          <StepLeftSvg width={12} height={24} />
         </i>
       </a>
       <div className="flex justify-start items-center flex-1 overflow-auto">
@@ -34,7 +34,7 @@ export const Tabs = ({
       </div>
       <a className="config-arrow" onClick={handleNext}>
         <i className="svg-icon svg-icon-step-right">
-          <StepRightSvg />
+          <StepRightSvg width={12} height={24} />
         </i>
       </a>
     </nav>

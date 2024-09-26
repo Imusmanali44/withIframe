@@ -22,8 +22,6 @@ export const TopBar = ({ isPair, toggleIsPair, rings, setRings }) => {
     setActiveRing(ring.id);
   };
 
-  console.log(isPair);
-
   return (
     <div className="flex items-center mt-1 bg-[#f1f1f3] lg:px-5 lg:py-2.5">
       <button

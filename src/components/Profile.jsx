@@ -12,7 +12,7 @@ export const Profile = ({ isPair, toggleIsPair }) => {
   };
 
   return (
-    <>
+    <div className="mb-auto">
       <div className="py-3 flex items-center bg-white">
         <input
           id="expertToggle"
@@ -35,7 +35,7 @@ export const Profile = ({ isPair, toggleIsPair }) => {
               <li
                 key={index}
                 className={`border w-[calc(34%-10px)] lg:w-[calc(25%-10px)] bg-cover bg-center bg-no-repeat cursor-pointer ${
-                  activeProfile === profile.title ? "border-[#205FA8]" : "" // Apply active class conditionally
+                  activeProfile === profile.title ? "border-[#205FA8]" : ""
                 }`}
                 onClick={() => activeDesign(profile.title)}
               >
@@ -45,6 +45,6 @@ export const Profile = ({ isPair, toggleIsPair }) => {
           </ul>
         </div>
       </div>
-    </>
+    </div>
   );
 };
