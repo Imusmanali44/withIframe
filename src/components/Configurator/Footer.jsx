@@ -6,6 +6,10 @@ import RingDetails from "./RingDetails";
 const ConfiguratorFooter = () => {
   const { isOpen, openModal, closeModal } = useModal();
 
+  const handleResetConfiguration = () => {
+    console.log('Reset configuration')
+  };
+
   return (
     <div className="flex flex-col-reverse lg:flex-row p-4 w-full bg-[#f1f1f3]">
       <div className="lg:w-[60%] px-5 lg:border-r-2 border-white pt-3 lg:pt-0">
@@ -26,8 +30,8 @@ const ConfiguratorFooter = () => {
           </div>
         </div>
       </div>
-      <div className="flex justify-between lg:flex-col px-7 border-b-2 border-white pb-3 lg:pb-0">
-        <button className="btn-inline flex items-center gap-1.5 lg:mb-2.5">
+      <div className="flex justify-between lg:flex-col px-7 border-b-2 lg:border-b-0 border-white pb-3 lg:pb-0">
+        <button className="btn-inline flex items-center gap-1.5 lg:mb-2.5" onClick={handleResetConfiguration}>
           <i className="text-primary svg-icon svg-icon-refresh">
             <RefreshSvg />
           </i>

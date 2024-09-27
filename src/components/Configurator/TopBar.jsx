@@ -20,6 +20,7 @@ export const TopBar = ({ isPair, toggleIsPair, rings, setRings }) => {
 
   const handleRingClick = (ring) => {
     setActiveRing(ring.id);
+    console.log(ring)
   };
 
   return (

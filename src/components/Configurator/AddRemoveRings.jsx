@@ -58,6 +58,8 @@ const AddRemoveRings = ({ rings, setRings }) => {
   const [selectedRing, setSelectedRing] = useState(null);
 
   const addRing = (type) => {
+    console.log("add ring", type);
+
     if (rings.length < 4) {
       setRings([
         ...rings,
@@ -68,6 +70,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
 
   const deleteRing = (id) => {
     setRings(rings.filter((ring) => ring.id !== id));
+    console.log("delete", id);
   };
 
   const handleInputChange = (id, value) => {
@@ -83,9 +86,8 @@ const AddRemoveRings = ({ rings, setRings }) => {
       ]);
     }
     setSelectedType(null);
+    console.log(selectedRing & "select ring", selectedRing);
   };
-
-  console.log(selectedRing);
 
   return (
     <>

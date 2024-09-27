@@ -1,4 +1,4 @@
-import { DimensionForm } from "../DimensionForm";
+import { Sizes } from "../Sizes";
 import EngravingOptions from "../Engraving";
 import { GroveAndEdge } from "../GroveAndEdge";
 import { PreciousMetal } from "../PreciousMetal";
@@ -36,7 +36,7 @@ export const TabContent = ({
       case 2:
         return (
           <>
-            <DimensionForm />
+            <Sizes />
             {stepButton()}
           </>
         );

@@ -1,11 +1,36 @@
 import { useState } from "react";
 
-export const DimensionForm = () => {
+export const Sizes = () => {
   const [isRing1Auto, setIsRing1Auto] = useState(false);
   const [isRing2Auto, setIsRing2Auto] = useState(false);
 
+  const handleRing1WidthChange = (e) => {
+    console.log(`Ring 1 Width selected: ${e.target.value}`);
+  };
+
+  const handleRing1ThicknessChange = (e) => {
+    console.log(`Ring 1 Thickness selected: ${e.target.value}`);
+  };
+
+  const handleRing1SizeChange = (e) => {
+    console.log(`Ring 1 Size selected: ${e.target.value}`);
+  };
+
+  const handleRing2WidthChange = (e) => {
+    console.log(`Ring 2 Width selected: ${e.target.value}`);
+  };
+
+  const handleRing2ThicknessChange = (e) => {
+    console.log(`Ring 2 Thickness selected: ${e.target.value}`);
+  };
+
+  const handleRing2SizeChange = (e) => {
+    console.log(`Ring 2 Size selected: ${e.target.value}`);
+  };
+
   return (
     <div className="flex flex-col lg:flex-row justify-between w-full max-w-[500px] mx-auto px-3 py-5 gap-5 mb-auto">
+      {/* Ring 1 */}
       <div className="lg:w-1/2 lg:ml-12">
         <h3 className="mb-2 font-semibold text-sm">Ring 1</h3>
         <div className="flex flex-row lg:flex-col justify-between gap-4 lg:gap-0">
@@ -13,7 +38,7 @@ export const DimensionForm = () => {
             <label className="block mb-1 font-semibold text-sm">
               Ring width
             </label>
-            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3" onChange={handleRing1WidthChange}>
               {[...Array(12)].map((_, i) => {
                 const size = i + 1;
                 return (
@@ -32,6 +57,7 @@ export const DimensionForm = () => {
             <select
               className="w-full border hover:border-[#909090] rounded px-2 py-3"
               disabled={isRing1Auto}
+              onChange={handleRing1ThicknessChange}
             >
               {[...Array(12)].map((_, i) => {
                 const size = i + 1;
@@ -60,13 +86,13 @@ export const DimensionForm = () => {
         <div className="ring-width-3-before relative">
           <label className="block mb-1 font-semibold text-sm">Ring size</label>
           <div className="flex">
-            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3" onChange={handleRing1SizeChange}>
               <option value="UK">UK</option>
               <option value="ES">ES</option>
               <option value="PL">PL</option>
               <option value="US">US</option>
             </select>
-            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3" onChange={handleRing1SizeChange}>
               <option value="F">F</option>
               <option value="F½">F½</option>
               <option value="G">G</option>
@@ -82,6 +108,7 @@ export const DimensionForm = () => {
         </div>
       </div>
 
+      {/* Ring 2 */}
       <div className="lg:w-1/2">
         <h3 className="mb-2 font-semibold text-sm">Ring 2</h3>
         <div className="flex flex-row lg:flex-col justify-between gap-4 lg:gap-0">
@@ -89,7 +116,7 @@ export const DimensionForm = () => {
             <label className="block mb-1 font-semibold text-sm">
               Ring width
             </label>
-            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3" onChange={handleRing2WidthChange}>
               {[...Array(12)].map((_, i) => {
                 const size = i + 1;
                 return (
@@ -108,6 +135,7 @@ export const DimensionForm = () => {
             <select
               className="w-full border hover:border-[#909090] rounded px-2 py-3"
               disabled={isRing2Auto}
+              onChange={handleRing2ThicknessChange}
             >
               {[...Array(12)].map((_, i) => {
                 const size = i + 1;
@@ -137,13 +165,13 @@ export const DimensionForm = () => {
         <div className="relative">
           <label className="block mb-1 font-semibold text-sm">Ring size</label>
           <div className="flex">
-            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3" onChange={handleRing2SizeChange}>
               <option value="UK">UK</option>
               <option value="ES">ES</option>
               <option value="PL">PL</option>
               <option value="US">US</option>
             </select>
-            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3" onChange={handleRing2SizeChange}>
               <option value="F">F</option>
               <option value="F½">F½</option>
               <option value="G">G</option>
