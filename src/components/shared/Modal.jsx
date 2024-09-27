@@ -11,8 +11,8 @@ const Modal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg  max-w-3xl w-full h-full lg:h-auto">
+    <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 z-50 overflow-auto">
+      <div className="bg-white p-6 rounded-lg shadow-lg  max-w-3xl w-full mx-auto lg:my-10 min-h-screen lg:min-h-fit">
         <div className="modal-header flex items-center justify-between border-b pb-3">
           <h2 className="text-2xl">{title}</h2>
           <button

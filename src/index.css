@@ -61,7 +61,6 @@ svg.active {
   width: 80.81vw;
 }
 
-
 @media (min-width: 1024px) {
   .ring-width-1-before::before {
     content: "";
@@ -75,7 +74,7 @@ svg.active {
     margin-left: -50px;
     background-image: url("https://ui.cdn.confmetrix.com/auronia/production/12.3.5/dimension-width.8d226d4f6bfd98c3ca9e.svg");
   }
-  
+
   .ring-width-2-before::before {
     content: "";
     position: absolute;
@@ -88,7 +87,7 @@ svg.active {
     margin-left: -50px;
     background-image: url("https://ui.cdn.confmetrix.com/auronia/production/12.3.5/dimension-height.8bd26271ff2b092a74f0.svg");
   }
-  
+
   .ring-width-3-before::before {
     content: "";
     position: absolute;
@@ -101,6 +100,11 @@ svg.active {
     margin-left: -50px;
     background-image: url("https://ui.cdn.confmetrix.com/auronia/production/12.3.5/dimension-size.e81027ac7062d2a68cc7.svg");
   }
+}
+
+.ring-detail-table {
+  border-collapse: inherit;
+  border-spacing: 20px 0;
 }
 .options {
   color: #000;

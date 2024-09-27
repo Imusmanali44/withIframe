@@ -1,4 +1,9 @@
+import { useState } from "react";
+
 export const DimensionForm = () => {
+  const [isRing1Auto, setIsRing1Auto] = useState(false);
+  const [isRing2Auto, setIsRing2Auto] = useState(false);
+
   return (
     <div className="flex flex-col lg:flex-row justify-between w-full max-w-[500px] mx-auto px-3 py-5 gap-5 mb-auto">
       <div className="lg:w-1/2 lg:ml-12">
@@ -26,7 +31,7 @@ export const DimensionForm = () => {
             </label>
             <select
               className="w-full border hover:border-[#909090] rounded px-2 py-3"
-              disabled
+              disabled={isRing1Auto}
             >
               {[...Array(12)].map((_, i) => {
                 const size = i + 1;
@@ -41,17 +46,39 @@ export const DimensionForm = () => {
         </div>
 
         <div className="flex mb-3 auto-setting">
-          <input type="checkbox" id="auto-thickness-1" className="mr-2" />
-          <label className=" font-semibold text-sm">
+          <input
+            type="checkbox"
+            className="mr-2"
+            checked={isRing1Auto}
+            onChange={() => setIsRing1Auto(!isRing1Auto)}
+          />
+          <label className="font-semibold text-sm">
             Automatically set the optimal thickness
           </label>
         </div>
 
         <div className="ring-width-3-before relative">
           <label className="block mb-1 font-semibold text-sm">Ring size</label>
-          <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
-            <option value="T½">T½</option>
-          </select>
+          <div className="flex">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+              <option value="UK">UK</option>
+              <option value="ES">ES</option>
+              <option value="PL">PL</option>
+              <option value="US">US</option>
+            </select>
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+              <option value="F">F</option>
+              <option value="F½">F½</option>
+              <option value="G">G</option>
+              <option value="G½">G½</option>
+              <option value="H">H</option>
+              <option value="H½">H½</option>
+              <option value="I">I</option>
+              <option value="I½">I½</option>
+              <option value="J">J</option>
+              <option value="J½">J½</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -80,7 +107,7 @@ export const DimensionForm = () => {
             </label>
             <select
               className="w-full border hover:border-[#909090] rounded px-2 py-3"
-              disabled
+              disabled={isRing2Auto}
             >
               {[...Array(12)].map((_, i) => {
                 const size = i + 1;
@@ -93,18 +120,42 @@ export const DimensionForm = () => {
             </select>
           </div>
         </div>
+
         <div className="flex items-center mb-3 auto-setting">
-          <input type="checkbox" id="auto-thickness-2" className="mr-2" />
+          <input
+            type="checkbox"
+            id="auto-thickness-2"
+            className="mr-2"
+            checked={isRing2Auto}
+            onChange={() => setIsRing2Auto(!isRing2Auto)}
+          />
           <label htmlFor="auto-thickness-2">
             Automatically set the optimal thickness
           </label>
         </div>
 
-        <div className="">
+        <div className="relative">
           <label className="block mb-1 font-semibold text-sm">Ring size</label>
-          <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
-            <option value="T½">T½</option>
-          </select>
+          <div className="flex">
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+              <option value="UK">UK</option>
+              <option value="ES">ES</option>
+              <option value="PL">PL</option>
+              <option value="US">US</option>
+            </select>
+            <select className="w-full border hover:border-[#909090] rounded px-2 py-3">
+              <option value="F">F</option>
+              <option value="F½">F½</option>
+              <option value="G">G</option>
+              <option value="G½">G½</option>
+              <option value="H">H</option>
+              <option value="H½">H½</option>
+              <option value="I">I</option>
+              <option value="I½">I½</option>
+              <option value="J">J</option>
+              <option value="J½">J½</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
