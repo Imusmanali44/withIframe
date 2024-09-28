@@ -4,36 +4,35 @@ export const DropDown = ({
   selectedOption,
   isImageLess,
 }) => {
-  const url =
-    selectedOption.url ||
-    "ui.cdn.confmetrix.com/auronia/production/12.3.5/images/disc/color/585_rotgold.png";
+  // Fallback URL if none is provided for an option
+  const defaultUrl =
+    "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/disc/color/585_rotgold.png";
+
+  // Get URL from selected option, or use default
+  const url = selectedOption?.url || defaultUrl;
 
   return (
-    <div className="dropdown-hover">
+    <div className="relative flex">
       {!isImageLess && (
         <div
-          className="ring-color"
-          style={{
-            backgroundImage: !isImageLess ? `url(${url})` : "",
-          }}
+          className="w-10 h-10 mb-2 bg-cover bg-center"
+          style={{ backgroundImage: `url(${url})` }}
         ></div>
       )}
 
       <select
-        id="dropdown"
-        className="dropdown"
+        className="block w-full border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 p-2"
         style={{ width: isImageLess ? "150px" : "400px" }}
-        value={selectedOption}
-        onChange={(e) => setSelectedOption(e.target.value)}
+        value={selectedOption.value}
+        onChange={(e) => {
+          const selected = options.find(
+            (option) => option.value === e.target.value
+          );
+          setSelectedOption(selected);
+        }}
       >
-        {options.map((option) => (
-          <option key={option.vale} value={option.value}>
-            <div
-              className="ring-color"
-              style={{
-                backgroundImage: `url(${url ?? "default"})`,
-              }}
-            ></div>
+        {options.map((option, index) => (
+          <option key={index} value={option.value}>
             {option.value}
           </option>
         ))}

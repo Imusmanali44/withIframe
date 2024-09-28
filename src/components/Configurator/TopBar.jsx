@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect } from "react";
 import Modal from "../shared/Modal";
 import useModal from "../../hooks/useModal";
 import AddRemoveRings from "./AddRemoveRings";
@@ -14,13 +14,26 @@ const ringSvgMap = {
   Memoir: SelectWeddingRingSvg,
 };
 
-export const TopBar = ({ isPair, toggleIsPair, rings, setRings }) => {
+export const TopBar = ({
+  isPair,
+  toggleIsPair,
+  rings,
+  setRings,
+  activeRing,
+  setActiveRing,
+}) => {
   const { isOpen, openModal, closeModal } = useModal();
-  const [activeRing, setActiveRing] = useState(null);
+
+  useEffect(() => {
+    if (rings.length >= 2) {
+      setActiveRing([rings[0], rings[1]]);
+    }
+  }, [rings]);
+
 
   const handleRingClick = (ring) => {
-    setActiveRing(ring.id);
-    console.log(ring)
+    setActiveRing(ring);
+    console.log(ring);
   };
 
   return (
@@ -40,13 +53,15 @@ export const TopBar = ({ isPair, toggleIsPair, rings, setRings }) => {
       <div className="flex justify-between items-center relative w-full lg:w-auto">
         {rings.map((ring, index) => {
           const RingSvg = ringSvgMap[ring.type];
-          const isActive = ring.id === activeRing;
+          const isActive = Array.isArray(activeRing)
+          ? activeRing.some((r) => r.id === ring.id)
+          : ring.id === activeRing?.id;
           return (
             <Fragment key={index}>
               <button
                 key={index}
                 onClick={() => handleRingClick(ring)}
-                className={`ring-mode-ring ring-mode-ring-profile px-3.5 pb-1 mx-1 cursor-pointer flex-1 border-r lg:border-none border-white ${
+                className={`ring-mode-ring ring-mode-ring-profile px-3.5 pb-1 mx-1 cursor-pointer  border-r lg:border-none border-white ${
                   isActive ? "border-b border-[#205fa8]" : ""
                 }`}
               >

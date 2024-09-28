@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { DropDown } from "./DropDown";
+import SelectField from "./shared/SelectField";
 
-export const PreciousMetal = ({ isPair, toggleIsPair, isExpert }) => {
+export const PreciousMetal = ({
+  isPair,
+  toggleIsPair,
+  isExpert,
+  activeRing,
+}) => {
   const [purity, setPurity] = useState(9);
   const [partition, setPartition] = useState("Single");
 
@@ -41,102 +47,78 @@ export const PreciousMetal = ({ isPair, toggleIsPair, isExpert }) => {
   const [selectedMetalOption, setSelectedMetalOption] = useState(
     metalOptions[0].value
   );
-
   const [selectedSurfaceOption, setSelectedSurfaceOption] = useState(
     surfaceOptions[0].value
   );
 
   return (
-    <>
-      <div
-        style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}
-      >
-        <input
-          id="expertToggle"
-          type="checkbox"
-          checked={isPair}
-          onChange={toggleIsPair}
-        />
-        <label  style={{ marginRight: "10px" }}>
-          Use the same settings for both rings
-        </label>
+    <div className="precious-metals-form">
+      {/* Partition Selection */}
+      {isExpert && (
+        <>
+          <label className="block text-sm font-medium mb-2">Partition</label>
+          <div className="flex space-x-2">
+            {partitionOptions.map((item, index) => (
+              <button
+                key={index}
+                onClick={() => setPartition(item)}
+                className={`w-16 h-16 flex items-center justify-center border rounded-md ${
+                  partition === item ? "bg-blue-500 text-white" : "bg-gray-200"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Dropdowns for Metal and Surface */}
+      <label className="block text-sm font-medium mt-4 mb-2">
+        Color and Surface
+      </label>
+
+      <DropDown
+        options={metalOptions}
+        setSelectedOption={setSelectedMetalOption}
+        selectedOption={selectedMetalOption}
+      />
+      <DropDown
+        options={surfaceOptions}
+        selectedOption={selectedSurfaceOption}
+        setSelectedOption={setSelectedSurfaceOption}
+      />
+
+      {/* Purity Display */}
+      <div className="mt-4">
+        <span className="text-sm">Purity - {selectedMetalOption}</span>
       </div>
 
-      <div className="precious-metals-form">
-        {isExpert && (
-          <>
-            <label htmlFor="partition">Partition</label>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                flexDirection: "row",
-              }}
-            >
-              {partitionOptions.map((item, index) => (
-                <button
-                  style={{
-                    width: "70px",
-                    height: "70px",
-                  }}
-                  key={index}
-                  onClick={() => setPartition(item)}
-                  className={`stone-setting ${
-                    partition === item && "active-stone-setting"
-                  } `}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
+      {/* Purity Selection */}
+      <div className="mt-4 flex space-x-2">
+        {purityOptions.map((item, index) => (
+          <button
+            key={index}
+            onClick={() => setPurity(item)}
+            className={`w-12 h-12 flex items-center justify-center border rounded-md ${
+              purity === item ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            {item} ct
+          </button>
+        ))}
+      </div>
 
-        <label htmlFor="dropdown">Color and surface</label>
-        <DropDown
-          options={metalOptions}
-          setSelectedOption={setSelectedMetalOption}
-          selectedOption={selectedMetalOption}
-        />
-        <DropDown
-          options={surfaceOptions}
-          selectedOption={selectedSurfaceOption}
-          setSelectedOption={setSelectedSurfaceOption}
-        />
-        <div>Purity - {selectedMetalOption || ""}</div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-start",
-            flexDirection: "row",
-          }}
-        >
-          {purityOptions.map((item, index) => (
-            <button
-              style={{
-                width: "50px",
-                height: "50px",
-              }}
-              key={index}
-              onClick={() => setPurity(item)}
-              className={`stone-setting ${
-                purity === item && "active-stone-setting"
-              } `}
-            >
-              {item} ct
-            </button>
-          ))}
-        </div>
-
-        {isExpert && (
+      {/* Expert Surface Selection */}
+      {isExpert && (
+        <div className="mt-4">
           <DropDown
             options={[{ value: "Select Different Surfaces", url: null }]}
             setSelectedOption={() => {}}
             selectedOption={"Select Different Surfaces"}
           />
-        )}
-      </div>
-    </>
+        </div>
+      )}
+    </div>
   );
 };

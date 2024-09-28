@@ -13,6 +13,8 @@ export const TabContent = ({
   handleBack,
   toggleIsPair,
   isPair,
+  rings,
+  activeRing,
 }) => {
   const stepButton = () => (
     <StepButtons
@@ -36,7 +38,7 @@ export const TabContent = ({
       case 2:
         return (
           <>
-            <Sizes />
+            <Sizes rings={rings} activeRing={activeRing} />
             {stepButton()}
           </>
         );

@@ -11,7 +11,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
     { type: "Wedding", id: 1, name: "Ring 1" },
     { type: "Wedding", id: 2, name: "Ring 2" },
   ]);
-
+  const [activeRing, setActiveRing] = useState(null);
   const iframeRef = useRef(null); // Create a reference for the iframe
 
   const handleNext = () => {
@@ -64,6 +64,8 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
         isPair={isPair}
         rings={rings}
         setRings={setRings}
+        activeRing={activeRing}
+        setActiveRing={setActiveRing}
       />
 
       <div className="flex flex-col lg:flex-row bg-[#f9f9fa] gap-2">
@@ -91,6 +93,8 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
             handleBack={handleBack}
             isPair={isPair}
             toggleIsPair={toggleIsPair}
+            rings={rings}
+            activeRing={activeRing}
           />
           <TabContentFooter />
         </div>
