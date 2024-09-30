@@ -1,12 +1,13 @@
-import { Sizes } from "../Sizes";
-import EngravingOptions from "../Engraving";
-import { GroveAndEdge } from "../GroveAndEdge";
-import { PreciousMetal } from "../PreciousMetal";
-import { Profile } from "../Profile";
-import StepButtons from "../StepButtons";
-import { Stone } from "../Stone";
+import { Profile } from "./TabsContentDetails/Profile";
+import { Sizes } from "./TabsContentDetails/Sizes";
+import { PreciousMetal } from "./TabsContentDetails/PreciousMetal/PreciousMetal";
+import { GroveAndEdge } from "./TabsContentDetails/GroveAndEdge";
+import { Stone } from "./TabsContentDetails/Stone";
+import EngravingOptions from "./TabsContentDetails/Engraving";
 
-export const TabContent = ({
+import StepButtons from "./TabsContentDetails/StepButtons";
+
+const TabContent = ({
   step,
   isExpertMode,
   handleNext,
@@ -49,6 +50,8 @@ export const TabContent = ({
               isExpert
               isPair={isPair}
               toggleIsPair={toggleIsPair}
+              rings={rings}
+              activeRing={activeRing}
             />
             {stepButton()}
           </>
@@ -93,3 +96,5 @@ export const TabContent = ({
     }
   }
 };
+
+export default TabContent;

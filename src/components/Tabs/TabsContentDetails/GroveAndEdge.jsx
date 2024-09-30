@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { DropDown } from "./DropDown";
+import { PreciousMetalSelectBox } from "./PreciousMetal/PreciousMetalSelectBox";
 
-export const GroveAndEdge = ({isPair, toggleIsPair}) => {
+export const GroveAndEdge = ({ isPair, toggleIsPair }) => {
   const [groove, setGroove] = useState("Without");
 
   const grooveOption = [
@@ -23,7 +23,7 @@ export const GroveAndEdge = ({isPair, toggleIsPair}) => {
   );
   return (
     <div style={{ margin: "20px 20px" }}>
-            <div
+      <div
         style={{ marginBottom: "20px", display: "flex", alignItems: "center" }}
       >
         <input
@@ -102,7 +102,7 @@ export const GroveAndEdge = ({isPair, toggleIsPair}) => {
         >
           <div>
             <label htmlFor="edge-width">Width</label> <br />
-            <DropDown
+            <PreciousMetalSelectBox
               isImageLess
               options={widthOptions}
               selectedOption={selectedLeftWidthOption}
@@ -113,7 +113,7 @@ export const GroveAndEdge = ({isPair, toggleIsPair}) => {
           <div style={{ marginLeft: "10px" }}>
             <label htmlFor="edge-width">Depth</label>
             <br />
-            <DropDown
+            <PreciousMetalSelectBox
               isImageLess
               options={widthOptions}
               selectedOption={selectedLeftWidthOption}
@@ -123,7 +123,7 @@ export const GroveAndEdge = ({isPair, toggleIsPair}) => {
           <div style={{ marginLeft: "10px" }}>
             <label htmlFor="edge-width">Surface</label>
             <br />
-            <DropDown
+            <PreciousMetalSelectBox
               isImageLess
               options={widthOptions}
               selectedOption={selectedLeftWidthOption}
@@ -172,7 +172,7 @@ export const GroveAndEdge = ({isPair, toggleIsPair}) => {
         >
           <div>
             <label htmlFor="edge-width">Width</label> <br />
-            <DropDown
+            <PreciousMetalSelectBox
               isImageLess
               options={widthOptions}
               selectedOption={selectedLeftWidthOption}
@@ -183,7 +183,7 @@ export const GroveAndEdge = ({isPair, toggleIsPair}) => {
           <div style={{ marginLeft: "10px" }}>
             <label htmlFor="edge-width">Depth</label>
             <br />
-            <DropDown
+            <PreciousMetalSelectBox
               isImageLess
               options={widthOptions}
               selectedOption={selectedLeftWidthOption}
@@ -193,7 +193,7 @@ export const GroveAndEdge = ({isPair, toggleIsPair}) => {
           <div style={{ marginLeft: "10px" }}>
             <label htmlFor="edge-width">Surface</label>
             <br />
-            <DropDown
+            <PreciousMetalSelectBox
               isImageLess
               options={widthOptions}
               selectedOption={selectedLeftWidthOption}

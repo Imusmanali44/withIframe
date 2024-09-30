@@ -22,7 +22,7 @@ const Modal = ({
             onClick={closeModal}
           >
             <i className="svg-icon svg-icon-close">
-              <CloseSvg />
+              <CloseSvg width={30} height={30} />
             </i>
           </button>
         </div>

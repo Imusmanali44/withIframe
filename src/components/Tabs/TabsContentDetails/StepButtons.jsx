@@ -1,4 +1,4 @@
-import { StepLeftSvg, StepRightSvg } from "../static/SvgImages";
+import { StepLeftSvg, StepRightSvg } from "../../../static/SvgImages";
 
 const StepButtons = ({ limit, handleNext, step, handleBack }) => {
   return (

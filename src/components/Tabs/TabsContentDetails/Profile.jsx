@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { profileOptions } from "../utils";
+import { profileOptions } from "../../../utils";
 
 export const Profile = ({ isPair, toggleIsPair }) => {
   const [activeProfile, setActiveProfile] = useState(null); // State to store the active profile

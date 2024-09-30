@@ -1,6 +1,6 @@
-export const CloseSvg = () => {
+export const CloseSvg = ({ width, height }) => {
   return (
-    <svg id="close" viewBox="0 0 30 30" width="30" height="30">
+    <svg className="cursor-pointer" id="close" viewBox="0 0 30 30" width={width} height={height}>
       <line
         x1="7.03"
         y1="6.01"

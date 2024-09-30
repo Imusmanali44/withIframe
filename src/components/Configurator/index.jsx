@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Tabs } from "../Tabs/Tabs";
-import { TabContent } from "../Tabs/TabContent";
+import TabContent from "../Tabs/TabsContent";
 import { TopBar } from "./TopBar";
 import TabContentFooter from "../Tabs/TabContentFooter";
 import ConfiguratorFooter from "./Footer";

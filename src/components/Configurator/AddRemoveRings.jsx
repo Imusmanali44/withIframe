@@ -108,7 +108,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
           }`}
           onClick={() => setSelectedType(null)}
         >
-          <CloseSvg /> Cancel
+          <CloseSvg width={30} height={30} /> Cancel
         </button>
       </div>
 
