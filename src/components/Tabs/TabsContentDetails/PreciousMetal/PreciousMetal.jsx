@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { PreciousMetalSelectBox } from "./PreciousMetalSelectBox";
 import DistributionImg1 from "../../../../../public/profile/none.svg";
 import DistributionImg2 from "../../../../../public/profile/two-color.svg";
 import DistributionImg3 from "../../../../../public/profile/three-color.svg";
 import { Dropdown } from "./Dropdown";
+import { RangeSlider } from "../../../shared/RangeSlider";
+import { ColorSurface } from "./ColorSurface";
 
 const metalOptions = [
   {
@@ -286,141 +287,19 @@ export const PreciousMetal = ({
             </div>
           </>
         )}
-
         {/* Dropdowns for Metal and Surface */}
-        <label className="block text-sm font-medium mt-4">
-          Color and Surface
-        </label>
-        <div className="flex gap-3">
-          {/* Single Partition */}
-          <div className="flex-1">
-            <PreciousMetalSelectBox
-              options={metalOptions}
-              setSelectedOption={(value) =>
-                updateSelection("single", "metal", value)
-              }
-              selectedOption={selections.single.metal}
-            />
-            {isWeddingRing && isExpert && (
-              <PreciousMetalSelectBox
-                options={surfaceOptions}
-                selectedOption={selections.single.surface}
-                setSelectedOption={(value) =>
-                  updateSelection("single", "surface", value)
-                }
-              />
-            )}
-            {/* Purity Selection */}
-            <div className="py-1">
-              <span className="text-sm font-semibold">
-                Cleanliness - {selections.single.metal.value}
-              </span>
-            </div>
-            <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
-              {purityOptions.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => updateSelection("single", "purity", item)}
-                  className={`px-2.5 py-3 flex items-center justify-center border rounded-0 ${
-                    selections.single.purity === item
-                      ? "border border-[#205fa8]"
-                      : "bg-white"
-                  }`}
-                >
-                  {item} kt
-                </button>
-              ))}
-            </div>
-          </div>
 
-          {/* Two Tone Partition */}
-          {selectedPartitionTwotoneImg && (
-            <div className="flex-1">
-              <PreciousMetalSelectBox
-                options={metalOptions}
-                setSelectedOption={(value) =>
-                  updateSelection("twoTone", "metal", value)
-                }
-                selectedOption={selections.twoTone.metal}
-              />
-              {isWeddingRing && isExpert && (
-                <PreciousMetalSelectBox
-                  options={surfaceOptions}
-                  selectedOption={selections.twoTone.surface}
-                  setSelectedOption={(value) =>
-                    updateSelection("twoTone", "surface", value)
-                  }
-                />
-              )}
-              {/* Purity Selection */}
-              <div className="py-1">
-                <span className="text-sm font-semibold">
-                  Cleanliness - {selections.twoTone.metal.value}
-                </span>
-              </div>
-              <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
-                {purityOptions.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() => updateSelection("twoTone", "purity", item)}
-                    className={`px-2.5 py-3 flex items-center justify-center border rounded-0 ${
-                      selections.twoTone.purity === item
-                        ? "border border-[#205fa8]"
-                        : "bg-white"
-                    }`}
-                  >
-                    {item} kt
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Tri Colored Partition */}
-          {selectedPartitionTriColoredImg && (
-            <div className="flex-1">
-              <PreciousMetalSelectBox
-                options={metalOptions}
-                setSelectedOption={(value) =>
-                  updateSelection("triColored", "metal", value)
-                }
-                selectedOption={selections.triColored.metal}
-              />
-              {isWeddingRing && isExpert && (
-                <PreciousMetalSelectBox
-                  options={surfaceOptions}
-                  selectedOption={selections.triColored.surface}
-                  setSelectedOption={(value) =>
-                    updateSelection("triColored", "surface", value)
-                  }
-                />
-              )}
-              {/* Purity Selection */}
-              <div className="py-1">
-                <span className="text-sm font-semibold">
-                  Cleanliness - {selections.triColored.metal.value}
-                </span>
-              </div>
-              <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
-                {purityOptions.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() =>
-                      updateSelection("triColored", "purity", item)
-                    }
-                    className={`px-2.5 py-3 flex items-center justify-center border rounded-0 ${
-                      selections.triColored.purity === item
-                        ? "border border-[#205fa8]"
-                        : "bg-white"
-                    }`}
-                  >
-                    {item} kt
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        <ColorSurface
+          isWeddingRing={isWeddingRing}
+          isExpert={isExpert}
+          metalOptions={metalOptions}
+          updateSelection={updateSelection}
+          surfaceOptions={surfaceOptions}
+          purityOptions={purityOptions}
+          selections={selections}
+          selectedPartitionTwotoneImg={selectedPartitionTwotoneImg}
+          selectedPartitionTriColoredImg={selectedPartitionTriColoredImg}
+        />
 
         {/* Surface Dropdown */}
         {isWeddingRing &&
@@ -443,6 +322,9 @@ export const PreciousMetal = ({
               )}
             </div>
           )}
+        {isWeddingRing && selectedPartitionTwotoneImg && (
+          <RangeSlider min={10} max={200} step={5} defaultValue={75} />
+        )}
       </div>
     </div>
   );

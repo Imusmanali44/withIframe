@@ -69,8 +69,8 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
       />
 
       <div className="flex flex-col lg:flex-row bg-[#f9f9fa] gap-2">
-        <div className="lg:w-1/2">
-          <div className="h-[275px] lg:h-[590px]">
+        <div className="lg:w-1/2 flex flex-col">
+          <div className="h-[275px] lg:h-[590px] mb-auto">
             <iframe
               ref={iframeRef}
               id="myIframe"
