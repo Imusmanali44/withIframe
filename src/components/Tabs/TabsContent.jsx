@@ -90,7 +90,12 @@ const TabContent = ({
       case 3:
         return <div>Step 3: Engraving Form Content</div>;
       case 4:
-        return <div>Step 4: Dimensions Form Content</div>;
+        return (
+          <>
+            <Sizes rings={rings} activeRing={activeRing} />
+            {stepButton()}
+          </>
+        );
       default:
         return <div>Unknown step</div>;
     }

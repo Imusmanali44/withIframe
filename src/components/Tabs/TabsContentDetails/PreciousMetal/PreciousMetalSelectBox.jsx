@@ -11,8 +11,6 @@ export const PreciousMetalSelectBox = ({
   // Get URL from selected option, or use default
   // const url = selectedOption?.url || defaultUrl;
 
-  console.log(selectedOption);
-
   return (
     <div className="relative flex items-center mb-3">
       {!isImageLess && (

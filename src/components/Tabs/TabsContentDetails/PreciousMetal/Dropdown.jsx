@@ -9,7 +9,7 @@ export const Dropdown = ({
   setSelectedOption,
 }) => {
   const handleSelect = (option) => {
-    setSelectedOption(option);
+    setSelectedOption({name: title, ...option});
     setIsOpen(false);
   };
 
