@@ -212,7 +212,7 @@ export const PreciousMetal = ({
   console.log("selectedPartitionImg", selectedPartitionTwotoneImg);
 
   return (
-    <div className=" mb-auto ">
+    <div className="mb-auto">
       {isWeddingRing && isExpert && (
         <div className="py-3 flex items-center bg-white">
           <input
@@ -257,7 +257,6 @@ export const PreciousMetal = ({
                       disabled={item.disabled}
                     >
                       <span>{item.name}</span>
-                      {/* Show updated image if dropdown option is selected */}
                       <img
                         src={
                           item.name === "Two tone" &&
