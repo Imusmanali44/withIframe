@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const Sizes = ({ rings, activeRing }) => {
+export const Sizes = ({ activeRing }) => {
   const [isRing1Auto, setIsRing1Auto] = useState(false);
   const [isRing2Auto, setIsRing2Auto] = useState(false);
 

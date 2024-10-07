@@ -26,7 +26,7 @@ export const TopBar = ({
 
   useEffect(() => {
     if (rings.length >= 2) {
-      setActiveRing([rings[0], rings[1]]);
+      setActiveRing(rings[0]);
     }
   }, [rings]);
 

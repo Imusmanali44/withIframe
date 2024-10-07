@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 export const RangeSlider = ({
+  title,
   min = 0,
   max = 100,
   step = 1,
@@ -20,7 +21,7 @@ export const RangeSlider = ({
         htmlFor="dynamic-range-slider"
         className="font-medium text-start py-1"
       >
-        Selected Value: {value}
+        {title}: {value}
       </label>
       <div className="bg-white w-full px-2.5 py-7">
         <input

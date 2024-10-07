@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "../shared/InputField";
 import {
   WeddingRingSVg,
@@ -35,20 +35,22 @@ const ringImages = {
   Memoir: [
     { id: 1, name: "Memoir 1", src: Ring1 },
     { id: 2, name: "Memoir 2", src: Ring1 },
-    { id: 1, name: "Memoir 1", src: Ring1 },
-    { id: 2, name: "Memoir 2", src: Ring1 },
-    { id: 1, name: "Memoir 1", src: Ring1 },
-    { id: 2, name: "Memoir 2", src: Ring1 },
-    { id: 1, name: "Memoir 1", src: Ring1 },
-    { id: 2, name: "Memoir 2", src: Ring1 },
-    { id: 1, name: "Memoir 1", src: Ring1 },
-    { id: 2, name: "Memoir 2", src: Ring1 },
-    { id: 1, name: "Memoir 1", src: Ring1 },
-    { id: 2, name: "Memoir 2", src: Ring1 },
-    { id: 1, name: "Memoir 1", src: Ring1 },
-    { id: 2, name: "Memoir 2", src: Ring1 },
-    { id: 1, name: "Memoir 1", src: Ring1 },
-    { id: 2, name: "Memoir 2", src: Ring1 },
+    { id: 3, name: "Memoir 3", src: Ring1 },
+    { id: 4, name: "Memoir 4", src: Ring1 },
+    { id: 5, name: "Memoir 5", src: Ring1 },
+    { id: 6, name: "Memoir 6", src: Ring1 },
+    { id: 7, name: "Memoir 7", src: Ring1 },
+    { id: 8, name: "Memoir 8", src: Ring1 },
+    { id: 9, name: "Memoir 9", src: Ring1 },
+    { id: 10, name: "Memoir 10", src: Ring1 },
+    { id: 11, name: "Memoir 11", src: Ring1 },
+    { id: 12, name: "Memoir 12", src: Ring1 },
+    { id: 13, name: "Memoir 13", src: Ring1 },
+    { id: 14, name: "Memoir 14", src: Ring1 },
+    { id: 15, name: "Memoir 15", src: Ring1 },
+
+
+
   ],
 };
 
@@ -57,10 +59,19 @@ const AddRemoveRings = ({ rings, setRings }) => {
   const [selectedType, setSelectedType] = useState(null);
   const [selectedRing, setSelectedRing] = useState(null);
 
+  // Effect to send a message when the selectedRing is updated
+  useEffect(() => {
+    if (selectedRing) {
+      window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
+    }
+  }, [selectedRing]);
+
   const addRing = (type) => {
     console.log("add ring", type);
 
     if (rings.length < 4) {
+      // Send the message to the parent window (index.jsx)
+      window.parent.postMessage({ action: 'addRing', type }, "*");
       setRings([
         ...rings,
         { type, id: rings.length + 1, name: `Ring ${rings.length + 1}` },
@@ -69,6 +80,8 @@ const AddRemoveRings = ({ rings, setRings }) => {
   };
 
   const deleteRing = (id) => {
+    window.parent.postMessage({ action: 'removeRing', id }, "*");
+
     setRings(rings.filter((ring) => ring.id !== id));
     console.log("delete", id);
   };
@@ -78,15 +91,14 @@ const AddRemoveRings = ({ rings, setRings }) => {
   };
 
   const selectRing = (ring) => {
-    setSelectedRing(ring);
+    setSelectedRing(ring); // Set the ring as selected
     if (rings.length < 4) {
       setRings([
         ...rings,
         { type: selectedType, id: rings.length + 1, name: ring.name },
       ]);
     }
-    setSelectedType(null);
-    console.log(selectedRing & "select ring", selectedRing);
+    setSelectedType(null); // Close the selection after choosing a ring
   };
 
   return (
@@ -175,7 +187,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
               className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
               onClick={() => addRing("Wedding")}
             >
-              <i className="svg-icon text-center" onClick={""}>
+              <i className="svg-icon text-center">
                 <AddWeddingRingSvg />
               </i>
               <h4>Wedding</h4>

@@ -1,7 +1,7 @@
 import { Profile } from "./TabsContentDetails/Profile";
 import { Sizes } from "./TabsContentDetails/Sizes";
 import { PreciousMetal } from "./TabsContentDetails/PreciousMetal/PreciousMetal";
-import { GroveAndEdge } from "./TabsContentDetails/GroveAndEdge";
+import { GrooveAndEdge } from "./TabsContentDetails/GrooveAndEdge/GrooveAndEdge";
 import { Stone } from "./TabsContentDetails/Stone";
 import EngravingOptions from "./TabsContentDetails/Engraving";
 
@@ -60,7 +60,11 @@ const TabContent = ({
       case 4:
         return (
           <>
-            <GroveAndEdge isPair={isPair} toggleIsPair={toggleIsPair} />
+            <GrooveAndEdge
+              isPair={isPair}
+              toggleIsPair={toggleIsPair}
+              activeRing={activeRing}
+            />
             {stepButton()}
           </>
         );

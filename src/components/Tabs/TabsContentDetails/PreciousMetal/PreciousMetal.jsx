@@ -322,7 +322,13 @@ export const PreciousMetal = ({
             </div>
           )}
         {isWeddingRing && selectedPartitionTwotoneImg && (
-          <RangeSlider min={10} max={200} step={5} defaultValue={75} />
+          <RangeSlider
+            title={"Selected Value"}
+            min={10}
+            max={200}
+            step={5}
+            defaultValue={75}
+          />
         )}
       </div>
     </div>
