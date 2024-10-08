@@ -8,7 +8,7 @@ export const Profile = ({ isPair, toggleIsPair }) => {
     setActiveProfile(id); // Set the clicked profile as active
 
     // Send a message to the parent window
-    window.parent.postMessage(`${id}`, "*"); // Send message to Configurator
+    window.parent.postMessage({ action: 'changeModel', modelId: id }, "*");  // Send message to Configurator
   };
 
   return (
