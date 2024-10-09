@@ -5,6 +5,7 @@ import DistributionImg3 from "../../../../../public/profile/three-color.svg";
 import { Dropdown } from "./Dropdown";
 import { RangeSlider } from "../../../shared/RangeSlider";
 import { ColorSurface } from "./ColorSurface";
+import IsPair from "../../../shared/IsPair";
 
 const metalOptions = [
   {
@@ -128,8 +129,9 @@ const options = [
 ];
 
 export const PreciousMetal = ({
+  rings,
   isPair,
-  toggleIsPair,
+  setIsPair,
   isExpert,
   activeRing,
 }) => {
@@ -213,20 +215,15 @@ export const PreciousMetal = ({
 
   return (
     <div className="mb-auto">
-      {isWeddingRing && isExpert && (
-        <div className="py-3 flex items-center bg-white">
-          <input
-            id="expertToggle"
-            type="checkbox"
-            checked={isPair}
-            onChange={toggleIsPair}
-            className="mr-2"
+      {rings &&
+        (rings[0]?.type === rings[1]?.type ||
+          rings[2]?.type === rings[3]?.type) && (
+          <IsPair
+            activeRing={activeRing}
+            isPair={isPair}
+            setIsPair={setIsPair}
           />
-          <label className="text-sm font-semibold">
-            Use the same settings for both rings
-          </label>
-        </div>
-      )}
+        )}
       <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
         {/* Partition Selection */}
         {isWeddingRing && isExpert && (

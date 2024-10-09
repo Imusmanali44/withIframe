@@ -1,8 +1,9 @@
 import { useState } from "react";
 import StepTab from "./StepTab";
 import StepGroove from "./StepGroove";
+import IsPair from "../../../shared/IsPair";
 
-export const GrooveAndEdge = ({ isPair, toggleIsPair, activeRing }) => {
+export const GrooveAndEdge = ({rings, isPair, setIsPair, activeRing }) => {
   const [activeTab, setActiveTab] = useState("grooves");
 
   const [selectedGrooveOptions, setSelectedGrooveOptions] = useState({
@@ -56,18 +57,15 @@ export const GrooveAndEdge = ({ isPair, toggleIsPair, activeRing }) => {
 
   return (
     <div className="mb-auto">
-      <div className="py-3 flex items-center bg-white">
-        <input
-          id="expertToggle"
-          type="checkbox"
-          checked={isPair}
-          onChange={toggleIsPair}
-          className="mr-2"
-        />
-        <label className="text-sm font-semibold">
-          Use the same settings for both rings
-        </label>
-      </div>
+      {rings &&
+        (rings[0]?.type === rings[1]?.type ||
+          rings[2]?.type === rings[3]?.type) && (
+          <IsPair
+            activeRing={activeRing}
+            isPair={isPair}
+            setIsPair={setIsPair}
+          />
+        )}
 
       {/* Tab buttons */}
       <div className="bg-[#e1e1e1] flex">

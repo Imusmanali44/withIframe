@@ -12,7 +12,7 @@ const TabContent = ({
   isExpertMode,
   handleNext,
   handleBack,
-  toggleIsPair,
+  setIsPair,
   isPair,
   rings,
   activeRing,
@@ -31,7 +31,12 @@ const TabContent = ({
       case 1:
         return (
           <>
-            <Profile isPair={isPair} toggleIsPair={toggleIsPair} />
+            <Profile
+              rings={rings}
+              activeRing={activeRing}
+              isPair={isPair}
+              setIsPair={setIsPair}
+            />
 
             {stepButton()}
           </>
@@ -49,7 +54,7 @@ const TabContent = ({
             <PreciousMetal
               isExpert
               isPair={isPair}
-              toggleIsPair={toggleIsPair}
+              setIsPair={setIsPair}
               rings={rings}
               activeRing={activeRing}
             />
@@ -62,7 +67,8 @@ const TabContent = ({
           <>
             <GrooveAndEdge
               isPair={isPair}
-              toggleIsPair={toggleIsPair}
+              setIsPair={setIsPair}
+              rings={rings}
               activeRing={activeRing}
             />
             {stepButton()}
@@ -78,7 +84,7 @@ const TabContent = ({
       case 6:
         return (
           <>
-            <EngravingOptions isPair={isPair} toggleIsPair={toggleIsPair} />
+            <EngravingOptions isPair={isPair} toggleIsPair={setIsPair} />
             {stepButton()}
           </>
         );
@@ -88,7 +94,7 @@ const TabContent = ({
   } else {
     switch (step) {
       case 1:
-        return <PreciousMetal isPair={isPair} toggleIsPair={toggleIsPair} />;
+        return <PreciousMetal isPair={isPair} toggleIsPair={setIsPair} />;
       case 2:
         return <div>Step 2: Stone Setting Form Content</div>;
       case 3:

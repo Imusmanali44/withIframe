@@ -6,7 +6,10 @@ import TabContentFooter from "../Tabs/TabContentFooter";
 import ConfiguratorFooter from "./Footer";
 
 const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
-  const [isPair, setIsPair] = useState(true);
+  const [isPair, setIsPair] = useState({
+    pair1: false,
+    pair2: false,
+  });
   const [rings, setRings] = useState([
     { type: "Wedding", id: 1, name: "Ring 1" },
     { type: "Wedding", id: 2, name: "Ring 2" },
@@ -18,10 +21,6 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
     if (isExpertMode ? activeStep < 6 : activeStep < 4) {
       setActiveStep((prevStep) => prevStep + 1);
     }
-  };
-
-  const toggleIsPair = () => {
-    setIsPair((prev) => !prev);
   };
 
   const handleBack = () => {
@@ -49,6 +48,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
       window.removeEventListener("message", handleMessage);
     };
   }, []);
+  console.log(isPair)
   return (
     <div>
       <Tabs
@@ -60,7 +60,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
       />
 
       <TopBar
-        toggleIsPair={toggleIsPair}
+        setIsPair={setIsPair}
         isPair={isPair}
         rings={rings}
         setRings={setRings}
@@ -92,7 +92,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
             handleNext={handleNext}
             handleBack={handleBack}
             isPair={isPair}
-            toggleIsPair={toggleIsPair}
+            setIsPair={setIsPair}
             rings={rings}
             activeRing={activeRing}
           />

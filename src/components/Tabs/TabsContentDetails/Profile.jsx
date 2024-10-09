@@ -1,30 +1,28 @@
 import { useState } from "react";
 import { profileOptions } from "../../../utils";
+import IsPair from "../../shared/IsPair";
 
-export const Profile = ({ isPair, toggleIsPair }) => {
+export const Profile = ({ rings, activeRing, isPair, setIsPair }) => {
   const [activeProfile, setActiveProfile] = useState(null); // State to store the active profile
 
   const activeDesign = (id) => {
     setActiveProfile(id); // Set the clicked profile as active
 
     // Send a message to the parent window
-    window.parent.postMessage({ action: 'changeModel', modelId: id }, "*");  // Send message to Configurator
+    window.parent.postMessage({ action: "changeModel", modelId: id }, "*"); // Send message to Configurator
   };
 
   return (
     <div className="mb-auto">
-      <div className="py-3 flex items-center bg-white">
-        <input
-          id="expertToggle"
-          type="checkbox"
-          checked={isPair}
-          onChange={toggleIsPair}
-          className="mr-2"
-        />
-        <label className="text-sm font-semibold">
-          Use the same settings for both rings
-        </label>
-      </div>
+      {rings &&
+        (rings[0]?.type === rings[1]?.type ||
+          rings[2]?.type === rings[3]?.type) && (
+          <IsPair
+            activeRing={activeRing}
+            isPair={isPair}
+            setIsPair={setIsPair}
+          />
+        )}
 
       <div className="py-5 max-w-lg mx-auto">
         <p className="py-1 mb-2.5 font-semibold">Profile</p>

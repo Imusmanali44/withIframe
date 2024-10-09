@@ -16,7 +16,7 @@ const ringSvgMap = {
 
 export const TopBar = ({
   isPair,
-  toggleIsPair,
+  setIsPair,
   rings,
   setRings,
   activeRing,
@@ -29,7 +29,6 @@ export const TopBar = ({
       setActiveRing(rings[0]);
     }
   }, [rings]);
-
 
   const handleRingClick = (ring) => {
     setActiveRing(ring);
@@ -54,8 +53,8 @@ export const TopBar = ({
         {rings.map((ring, index) => {
           const RingSvg = ringSvgMap[ring.type];
           const isActive = Array.isArray(activeRing)
-          ? activeRing.some((r) => r.id === ring.id)
-          : ring.id === activeRing?.id;
+            ? activeRing.some((r) => r.id === ring.id)
+            : ring.id === activeRing?.id;
           return (
             <Fragment key={index}>
               <button
@@ -70,18 +69,49 @@ export const TopBar = ({
                 </i>
                 <div className="ring-mode-ring-label">{ring.name}</div>
               </button>
-              {index === 0 && rings.length > 1 && (
+              {index === 0 &&
+                rings.length > 1 &&
+                rings[0]?.type === rings[1]?.type && (
+                  <div
+                    className="ring-mode-connect cursor-pointer mx-2 absolute lg:static left-[45%]"
+                    onClick={() =>
+                      setIsPair((prevState) => ({
+                        ...prevState,
+                        pair1: !isPair.pair1,
+                      }))
+                    }
+                  >
+                    <i
+                      icon="connect"
+                      className={`svg-icon  rounded-full block text-center ${
+                        isPair.pair1 ? "bg-[#205fa8]" : "bg-white"
+                      }`}
+                    >
+                      <ConnectRingSvg className={isPair.pair1 ? "#fff" : "#000"} />
+                    </i>
+                    <span className="connect-label hidden lg:block">
+                      Ring pair
+                    </span>
+                  </div>
+                )}
+
+              {index === 2 && rings[2]?.type === rings[3]?.type && (
                 <div
                   className="ring-mode-connect cursor-pointer mx-2 absolute lg:static left-[45%]"
-                  onClick={toggleIsPair}
+                  onClick={() =>
+                    setIsPair((prevState) => ({
+                      ...prevState,
+                      pair2: !isPair.pair2,
+                    }))
+                  }
                 >
                   <i
                     icon="connect"
                     className={`svg-icon  rounded-full block text-center ${
-                      isPair ? "bg-[#205fa8]" : "bg-white"
+                      isPair.pair2 ? "bg-[#205fa8]" : "bg-white"
                     }`}
                   >
-                    <ConnectRingSvg className={isPair ? "#fff" : "#000"} />
+                    <ConnectRingSvg className={isPair.pair2 ? "#fff" : "#000"} />
                   </i>
                   <span className="connect-label hidden lg:block">
                     Ring pair

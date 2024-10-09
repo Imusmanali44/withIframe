@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const Sizes = ({ activeRing }) => {
+export const Sizes = ({ rings, activeRing }) => {
   const [isRing1Auto, setIsRing1Auto] = useState(false);
   const [isRing2Auto, setIsRing2Auto] = useState(false);
 
@@ -29,6 +29,7 @@ export const Sizes = ({ activeRing }) => {
   };
   
   console.log("Active Ring(s):", activeRing);
+  console.log("rings", rings)
 
   return (
     <div className="flex flex-col lg:flex-row justify-between w-full max-w-[500px] mx-auto px-3 py-5 gap-5 mb-auto">
