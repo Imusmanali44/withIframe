@@ -6,6 +6,7 @@ export const Sizes = ({ rings, activeRing }) => {
 
   const handleRing1WidthChange = (e) => {
     console.log(`Ring 1 Width selected: ${e.target.value}`);
+    window.parent.postMessage({ action: 'changeWidth',selectedRing: activeRing, value: e.target.value }, "*");
   };
 
   const handleRing1ThicknessChange = (e) => {

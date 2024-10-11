@@ -7,6 +7,7 @@ export class ModelManager {
     this.models = [];
     this.currentDisplayedModels = [];
     this.currentModelIndex = 0;
+    this.selectedModel = 0
     this.loader = new GLTFLoader();
   }
 
@@ -38,13 +39,45 @@ export class ModelManager {
     });
   }
 
+  changeRingWidth(selectedRingId, width, isPair = true) {
+    const widthValue = parseFloat(width.replace(',', '.')); // Parse width from string to number
+    if (isNaN(widthValue)) {
+      console.warn('Invalid width value:', width);
+      return;
+    }
+
+    const model = this.currentDisplayedModels[selectedRingId-1];
+    if (!model) {
+      console.warn('Model not found for selectedRingId:', selectedRingId);
+      return;
+    }
+
+    // Set the width of the selected ring
+    model.scale.setX(widthValue * 15); // Multiply by 10 to convert to model scale
+
+    // If isPair is true, apply the same width to the second ring
+    // if (isPair && this.currentDisplayedModels.length > 1) {
+    //   const secondRing = this.currentDisplayedModels[1]; // Assuming the second ring is at index 1
+    //   secondRing.scale.setX(widthValue * 10); // Apply the same width to the second ring
+    // }
+
+    console.log(`Ring ${selectedRingId} width changed to: ${widthValue}mm`);
+  }
+
+  // Existing methods (loadModels, switchModel, etc.) will remain unchanged...
+
+  
+  currentSelectedRing(id){
+    console.log("id is ", id)
+  }
+
   // Switch to a new pair of models based on the current index
   switchModel(index) {
     if (index < 0 || index >= this.models.length) {
       console.warn('Invalid model index:', index);
       return;
     }
-
+    console.log("current ring selected", this.selectedModel)
     this.currentModelIndex = index;
     this.showCurrentModels(index);
   }

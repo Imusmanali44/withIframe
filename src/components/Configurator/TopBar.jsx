@@ -33,6 +33,8 @@ export const TopBar = ({
   const handleRingClick = (ring) => {
     setActiveRing(ring);
     console.log(ring);
+    window.parent.postMessage({ action: 'selectModel', modelId: ring.id }, "*");
+
   };
 
   return (
