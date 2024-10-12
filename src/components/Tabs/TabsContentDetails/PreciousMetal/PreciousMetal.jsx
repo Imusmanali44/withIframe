@@ -277,7 +277,7 @@ export const PreciousMetal = ({
                   options={options}
                   setIsOpen={setIsPartitionDropdownOpen}
                   selectedOption={selectedOption}
-                  setSelectedOption={handleOptionSelect} // Updated handle function
+                  setSelectedOption={handleOptionSelect}
                 />
               )}
             </div>
