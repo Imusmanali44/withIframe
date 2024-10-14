@@ -7,7 +7,7 @@ export class ModelManager {
     this.models = [];
     this.currentDisplayedModels = [];
     this.currentModelIndex = 0;
-    this.selectedModel = 0
+    this.selectedModel = 1
     this.loader = new GLTFLoader();
   }
 
@@ -34,7 +34,7 @@ export class ModelManager {
         model.scale.set(100, 100, 100);
         model.visible = false;
         this.scene.add(model);
-        this.switchModel(0);
+        this.switchModel(0, 1,true,false);
       });
     });
   }
@@ -69,82 +69,220 @@ export class ModelManager {
   
   currentSelectedRing(id){
     console.log("id is ", id)
+    this.selectedModel = id
   }
 
   // Switch to a new pair of models based on the current index
-  switchModel(index) {
-    if (index < 0 || index >= this.models.length) {
-      console.warn('Invalid model index:', index);
-      return;
+//   switchModel(index, selectedRingId = 1) {
+//     if (index < 0 || index >= this.models.length) {
+//       console.warn('Invalid model index:', index);
+//       return;
+//     }
+
+//     // Determine which ring is currently selected for switching
+//     if (selectedRingId === 1 || selectedRingId === 2) {
+//         this.currentModelIndex = index;
+//         this.showCurrentModels(index);
+//     } else if (selectedRingId === 3 && this.currentDisplayedModels[2]) {
+//         this.currentModelIndex = index;
+//         this.showThirdModel(index);  // Add showThirdModel method
+//     } else if (selectedRingId === 4 && this.currentDisplayedModels[3]) {
+//         this.currentModelIndex = index;
+//         this.showFourthModel(index);  // Add showFourthModel method
+//     } else {
+//         console.warn("Invalid ring selection for model switching.");
+//     }
+// }
+
+switchModel(index, selectedRingId = 1, pair1 = false, pair2 = false) {
+  if (index < 0 || index >= this.models.length) {
+    console.warn('Invalid model index:', index);
+    return;
+  }
+  console.log("what is happening 1")
+
+  // Handle pairing logic
+  if (pair1 && !pair2 && selectedRingId==1 || selectedRingId==2) {
+  console.log("what is happening 2")
+
+    // Change both 1st and 2nd rings
+    this.showCurrentModels(index,pair1); // For 1st and 2nd rings
+  } else if (pair2) {
+  console.log("what is happening 3")
+
+    // Change both 3rd and 4th rings
+    this.showThirdModel(index,pair2);  // For 3rd ring
+    this.showFourthModel(index,pair2); // For 4th ring
+  } else {
+    // Only change the selected ring
+    console.log("what is happening 6")
+    if (selectedRingId === 1 || selectedRingId === 2) {
+      this.currentModelIndex = index;
+      this.showCurrentModels(index);
+    } else if (selectedRingId === 3 && this.currentDisplayedModels[2]) {
+      this.currentModelIndex = index;
+      console.log("what is happening 7",index)
+
+      this.showThirdModel(index);
+    } else if (selectedRingId === 4 && this.currentDisplayedModels[3]) {
+      this.currentModelIndex = index;
+      this.showFourthModel(index);
+    } else {
+      console.warn("Invalid ring selection for model switching.");
     }
-    console.log("current ring selected", this.selectedModel)
-    this.currentModelIndex = index;
-    this.showCurrentModels(index);
+  }
+}
+
+showThirdModel(index, pair2 = false) {
+  const model = this.models[index].clone();
+  const model3 = this.models[index].clone();
+  const model4 = this.models[index].clone();
+  console.log("hello ????",this.currentDisplayedModels[3] )
+
+  // If pairing for 3rd and 4th models is active
+  if (pair2) {
+    console.log("hello pair",this.currentDisplayedModels[3] )
+
+    this.scene.remove(this.currentDisplayedModels[2]);
+    this.scene.remove(this.currentDisplayedModels[3]);
+
+    model3.position.set(1.0, 0, 0); // Position the third model
+    model4.position.set(1.5, 0, 0); // Position the fourth model
+    model4.scale.set(85, 85, 85); // Scale down the fourth model
+
+    this.scene.add(model3);
+    this.scene.add(model4);
+    model3.visible = true;
+    model4.visible = true;
+    this.currentDisplayedModels[2] = model3;
+    this.currentDisplayedModels[3] = model4;
+  } else {
+    // Only switch the third model if no pair is active
+    if(!this.currentDisplayedModels[3]){
+      console.log("hello",this.currentDisplayedModels[3] )
+    this.scene.remove(this.currentDisplayedModels[2]); // Remove old third model
+    model3.position.set(1.0, 0, 0); // Position new third model 
+    this.scene.add(model3);
+    model3.visible = true;
+    this.currentDisplayedModels[2] = model3;
+    }
+    else{
+      console.log("hello 2",this.currentDisplayedModels[3] )
+
+      this.scene.remove(this.currentDisplayedModels[2]); // Remove old third model
+      model3.position.set(0.5, 0, 0); // Position new third model 
+      this.scene.add(model3);
+      model3.visible = true;
+      this.currentDisplayedModels[2] = model3;  
+
+
+
+    }
+
+    
+  }
+}
+
+
+
+
+showFourthModel(index, pair2 = false) {
+  const model4 = this.models[index].clone();
+  const model3 = this.models[index].clone();  // Also handle third model if pair2 is true
+
+  if (pair2) {
+    // Remove both third and fourth models
+    this.scene.remove(this.currentDisplayedModels[2]);
+    this.scene.remove(this.currentDisplayedModels[3]);
+    console.log("pair yes 2")
+    // Set positions for third and fourth models
+    model3.position.set(0.5, 0, 0);  // Position third model
+    model4.position.set(1.5, 0, 0);  // Position fourth model
+    model4.scale.set(85, 85, 85);    // Scale down the fourth model
+
+    // Add both models back to the scene
+    this.scene.add(model3);
+    this.scene.add(model4);
+    model3.visible = true;
+    model4.visible = true;
+
+    // Update displayed models array
+    this.currentDisplayedModels[2] = model3;
+    this.currentDisplayedModels[3] = model4;
+  } else {
+    // If no pairing, just switch the fourth model
+    console.log("pair no 2")
+
+    this.scene.remove(this.currentDisplayedModels[3]);  // Remove the current fourth model
+    model4.position.set(1.5, 0, 0);  // Set position for new fourth model
+    model4.scale.set(100, 100, 100); // Reset scale
+    this.scene.add(model4);
+    model4.visible = true;
+
+    // Update the fourth model in the array
+    this.currentDisplayedModels[3] = model4;
+  }
+}
+
+showCurrentModels(index, pair1 = false) {
+  const model = this.models[index];
+  const model1 = model.clone();
+  const model2 = model.clone();
+
+  if (pair1) {
+    // Hide both models before showing new ones
+    this.hideFirstTwoModels();
+
+    // Set positions for both models
+    model1.position.set(-0.7, 0, 0); // First model (left)
+    model2.position.set(0.7, -0.15, 0); // Second model (right)
+    model2.scale.set(85, 85, 85); // Scale down the second model
+
+    // Add both models back to the scene
+    this.scene.add(model1);
+    model1.visible = true;
+    this.currentDisplayedModels[0] = model1;
+
+    this.scene.add(model2);
+    model2.visible = true;
+    this.currentDisplayedModels[1] = model2;
+  } else {
+    // Only hide and switch the selected model, keep the other intact
+    if (this.selectedModel === 1) {
+      this.scene.remove(this.currentDisplayedModels[0]); // Remove old first model
+      model1.position.set(-0.7, 0, 0); // Place new model in the left position
+      this.scene.add(model1);
+      model1.visible = true;
+      this.currentDisplayedModels[0] = model1; // Update the first model
+    } else if (this.selectedModel === 2) {
+      this.scene.remove(this.currentDisplayedModels[1]); // Remove old second model
+
+      // Adjust positioning based on whether third and fourth models exist
+      if (this.currentDisplayedModels.length > 3) {
+        model2.position.set(-0.5, 0, 0); // Shift second model left if third and fourth exist
+        this.currentDisplayedModels[2].position.set(0.5, 0, 0); // Adjust third model
+      } else {
+        model2.position.set(0.7, -0.15, 0); // Keep second model on the right if no third or fourth models
+      }
+
+      model2.scale.set(85, 85, 85); // Scale down the second model
+      this.scene.add(model2);
+      model2.visible = true;
+      this.currentDisplayedModels[1] = model2; // Update the second model
+    }
   }
 
-  // Show a pair of models based on the current index
-  showCurrentModels(index) {
-    const isSingleModel = this.currentDisplayedModels.length === 1; // Check if only one model is displayed
-  
-    // Hide the first two models if not switching only a single model
-    if (!isSingleModel) {
-      this.hideFirstTwoModels();
-    }
-  
-    // Create the new models to display
-    const model = this.models[index];
-    const model1 = model.clone();
-  
-    if (isSingleModel) {
-      // Case where only one model is displayed
-      model1.position.set(0, 0, 0); // Center the single model
-      this.scene.remove(this.currentDisplayedModels[0]); // Remove the old single model
-      this.scene.add(model1);
-      model1.visible = true;
-      this.currentDisplayedModels[0] = model1; // Replace the single model in the array
-    } else {
-      // Case where two models are displayed
-  
-      // Create the second model
-      const model2 = model.clone();
-  
-      // Position the first two models based on how many other models are displayed
-      if (!this.currentDisplayedModels[2]) {
-        // No third model is displayed
-        model1.position.set(-0.7, 0, 0); // Position first model to the left
-        model2.position.set(0.7, -0.15, 0); // Position second model to the right
-        model2.scale.set(85, 85, 85); // Scale down the second model
-      } else if (!this.currentDisplayedModels[3]) {
-        // Third model exists but not the fourth
-        model1.position.set(-1.0, 0, 0); // Position first model
-        model2.position.set(0, -0.15, 0); // Position second model
-        model2.scale.set(85, 85, 85); // Scale down the second model
-      } else {
-        // Both third and fourth models exist
-        model1.position.set(-1.5, 0, 0); // First model left
-        model2.position.set(-0.5, 0, 0); // Second model left-mid
-        this.currentDisplayedModels[2].position.set(0.5, 0, 0); // Keep third model in position
-      }
-  
-      // Add the new models to the scene
-      this.scene.add(model1);
-      this.scene.add(model2);
-      model1.visible = true;
-      model2.visible = true;
-  
-      // Update the displayed models array
-      this.currentDisplayedModels[0] = model1;
-      this.currentDisplayedModels[1] = model2;
-    }
-  
-    // Maintain third and fourth models in their existing positions
-    if (this.currentDisplayedModels.length > 2) {
-      this.scene.add(this.currentDisplayedModels[2]); // Re-add third model
-    }
-    if (this.currentDisplayedModels.length > 3) {
-      this.scene.add(this.currentDisplayedModels[3]); // Re-add fourth model
-    }
+  // Maintain third and fourth models if they exist
+  if (this.currentDisplayedModels.length > 2) {
+    this.scene.add(this.currentDisplayedModels[2]); // Re-add third model
   }
+  if (this.currentDisplayedModels.length > 3) {
+    this.scene.add(this.currentDisplayedModels[3]); // Re-add fourth model
+  }
+}
+
+  
+  
   
   
   // Hide only the first two models
