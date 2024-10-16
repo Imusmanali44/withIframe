@@ -34,6 +34,11 @@ export class MessageHandler {
         console.log('changeWidth action received:', value, selectedRing.id);
         this.modelManager.changeRingWidth(selectedRing.id, value);
         break;
+      case 'changeHeight':
+        // console.log("change size called",value, selectedRing) 
+        console.log('Height action received:', value, selectedRing.id);
+        this.modelManager.changeRingThickness(selectedRing.id, value);
+        break;
 
       default:
         console.warn('Unknown action:', action);
@@ -102,58 +107,7 @@ export class MessageHandler {
 
 
   }
-  //   iframeMsgToSwitchModel(modelId, selectedRingId = 1,pair1,pair2) {
-  //     switch (modelId) {
-  //         case "P1":
-  //             this.modelManager.switchModel(0, selectedRingId);
-  //             break;
-  //         case "P2":
-  //             this.modelManager.switchModel(1, selectedRingId);
-  //             break;
-  //         case "P3":
-  //             this.modelManager.switchModel(2, selectedRingId);
-  //             break;
-  //         case "P4":
-  //             this.modelManager.switchModel(3, selectedRingId);
-  //             break;
-  //         case "P5":
-  //             this.modelManager.switchModel(4, selectedRingId);
-  //             break;
-  //         case "P6":
-  //             this.modelManager.switchModel(5, selectedRingId);
-  //             break;
-  //         case "P7":
-  //             this.modelManager.switchModel(6, selectedRingId);
-  //             break;
-  //         case "P8":
-  //             this.modelManager.switchModel(7, selectedRingId);
-  //             break;
-  //         case "P9":
-  //             this.modelManager.switchModel(8, selectedRingId);
-  //             break;
-  //         case "P10":
-  //             this.modelManager.switchModel(9, selectedRingId);
-  //             break;
-  //         case "P11":
-  //             this.modelManager.switchModel(10, selectedRingId);
-  //             break;
-  //         case "P12":
-  //             this.modelManager.switchModel(11, selectedRingId);
-  //             break;
-  //         case "P13":
-  //             this.modelManager.switchModel(12, selectedRingId);
-  //             break;
-  //         case "P14":
-  //             this.modelManager.switchModel(13, selectedRingId);
-  //             break;
-  //         case "P15":
-  //             this.modelManager.switchModel(14, selectedRingId);
-  //             break;
-  //         default:
-  //             console.warn("Unknown model identifier:", modelId);
-  //             break;
-  //     }
-  // }
+
   iframeMsgToSwitchModel(modelId, selectedRingId, pair1 = false, pair2 = false) {
     switch (modelId) {
       case "P1":
@@ -163,43 +117,43 @@ export class MessageHandler {
         this.modelManager.switchModel(1, selectedRingId, pair1, pair2);
         break;
       case "P3":
-        this.modelManager.switchModel(2, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(2, selectedRingId, pair1, pair2);
         break;
       case "P4":
-        this.modelManager.switchModel(3, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(3, selectedRingId, pair1, pair2);
         break;
       case "P5":
-        this.modelManager.switchModel(4, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(4, selectedRingId, pair1, pair2);
         break;
       case "P6":
-        this.modelManager.switchModel(5, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(5, selectedRingId, pair1, pair2);
         break;
       case "P7":
-        this.modelManager.switchModel(6, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(6, selectedRingId, pair1, pair2);
         break;
       case "P8":
-        this.modelManager.switchModel(7, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(7, selectedRingId, pair1, pair2);
         break;
       case "P9":
-        this.modelManager.switchModel(8, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(8, selectedRingId, pair1, pair2);
         break;
       case "P10":
-        this.modelManager.switchModel(9, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(9, selectedRingId, pair1, pair2);
         break;
       case "P11":
-        this.modelManager.switchModel(10, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(10, selectedRingId, pair1, pair2);
         break;
       case "P12":
-        this.modelManager.switchModel(11, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(11, selectedRingId, pair1, pair2);
         break;
       case "P13":
-        this.modelManager.switchModel(12, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(12, selectedRingId, pair1, pair2);
         break;
       case "P14":
-        this.modelManager.switchModel(13, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(13, selectedRingId, pair1, pair2);
         break;
       case "P15":
-        this.modelManager.switchModel(14, selectedRingId,pair1, pair2);
+        this.modelManager.switchModel(14, selectedRingId, pair1, pair2);
         break;
       default:
         console.warn("Unknown model identifier:", modelId);

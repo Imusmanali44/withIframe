@@ -11,6 +11,8 @@ export const Sizes = ({ rings, activeRing }) => {
 
   const handleRing1ThicknessChange = (e) => {
     console.log(`Ring 1 Thickness selected: ${e.target.value}`);
+    window.parent.postMessage({ action: 'changeHeight',selectedRing: activeRing, value: e.target.value }, "*");
+
   };
 
   const handleRing1SizeChange = (e) => {
@@ -31,6 +33,11 @@ export const Sizes = ({ rings, activeRing }) => {
   
   console.log("Active Ring(s):", activeRing);
   console.log("rings", rings)
+    const thicknessOptions = [
+    "1,20 mm", "1,30 mm", "1,40 mm", "1,50 mm", "1,60 mm", 
+    "1,70 mm", "1,80 mm", "1,90 mm", "2,00 mm", "2,10 mm", 
+    "2,20 mm", "2,30 mm"
+  ];
 
   return (
     <div className="flex flex-col lg:flex-row justify-between w-full max-w-[500px] mx-auto px-3 py-5 gap-5 mb-auto">
@@ -155,7 +162,7 @@ export const Sizes = ({ rings, activeRing }) => {
                   disabled={isRing2Auto}
                   onChange={handleRing2ThicknessChange}
                 >
-                  {[...Array(12)].map((_, i) => {
+                  {[...Array(12)].map((_, i=2) => {
                     const size = i + 1;
                     return (
                       <option key={size} value={`${size},00 mm`}>
@@ -242,19 +249,17 @@ export const Sizes = ({ rings, activeRing }) => {
                     Ring thickness
                   </label>
                   <select
-                    className="w-full border hover:border-[#909090] rounded px-2 py-3"
-                    disabled={isRing1Auto}
-                    onChange={handleRing1ThicknessChange}
-                  >
-                    {[...Array(12)].map((_, i) => {
-                      const size = i + 1;
-                      return (
-                        <option key={size} value={`${size},00 mm`}>
-                          {`${size},00 mm`}
-                        </option>
-                      );
-                    })}
-                  </select>
+              className="w-full border hover:border-[#909090] rounded px-2 py-3"
+              disabled={isRing1Auto}
+              onChange={handleRing1ThicknessChange}
+            >
+              {/* Custom options */}
+              {thicknessOptions.map((size, index) => (
+                <option key={index} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
                 </div>
               </div>
 

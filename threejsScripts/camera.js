@@ -9,7 +9,7 @@ export class Camera {
 
   initCamera() {
     this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-    this.camera.position.set(1, 1, 5);
+    this.camera.position.set(1, 1, 3);
     
     // Add the camera to the scene if required
     this.scene.add(this.camera);

@@ -11,7 +11,7 @@ import { MessageHandler } from './threejsScripts/MessageHandler.js'; // Import M
 
 
 
-var isPair = true;
+// var isPair = true;
 
 class RotatingRingApp {
   constructor() {

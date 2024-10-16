@@ -22,7 +22,7 @@ export class Floor {
     });
 
     reflector.rotation.x = -Math.PI / 2; // Rotate to lie flat
-    reflector.position.y = -1.10; // Set the floor height
+    reflector.position.y = -1.40; // Set the floor height
     this.scene.add(reflector);
 
     // Optionally, you can add shadow support as well
@@ -40,7 +40,7 @@ export class Floor {
     
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.rotation.x = -Math.PI / 2; // Same rotation as the reflector
-    plane.position.y = -1.05; // Slightly above the reflector
+    plane.position.y = -1.30; // Slightly above the reflector
     this.scene.add(plane);
   }
 }

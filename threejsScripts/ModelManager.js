@@ -21,11 +21,11 @@ export class ModelManager {
         model.traverse((child) => {
           if (child.isMesh) {
             child.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color('#FEEB75'),
+              color: new THREE.Color('#FDFEFF'),
               metalness: 0.8,
               roughness: 0,
-              emissive: new THREE.Color(0x111111),
-              emissiveIntensity: 0.5,
+              // emissive: new THREE.Color(0x111111),
+              // emissiveIntensity: 1,
             });
             child.castShadow = true;
           }
@@ -65,34 +65,59 @@ export class ModelManager {
   }
 
   // Existing methods (loadModels, switchModel, etc.) will remain unchanged...
-
+  changeRingThickness(selectedRingId, thickness, isPair = false) {
+    // Convert thickness value to a float
+    const thicknessValue = parseFloat(thickness.replace(',', '.'));
+    if (isNaN(thicknessValue)) {
+      console.warn('Invalid thickness value:', thickness);
+      return;
+    }
+  
+    const minThickness = 1.0;  // Define the minimum thickness (based on UI options)
+    const maxThickness = 12.0; // Define the maximum thickness (based on UI options)
+  
+    // Normalize thickness scaling based on a factor (adjust the factor as necessary for your model)
+    let thicknessFactor;
+    if(selectedRingId==2)
+{  thicknessFactor = 80;}
+    else{
+       thicknessFactor = 100;
+    }
+    // const thicknessFactor = 100; // Adjust this based on the visual difference you want
+    const normalizedThickness = (thicknessValue - minThickness) / (maxThickness - minThickness) + 1;
+  
+    // Retrieve the current model for the selected ring
+    const model = this.currentDisplayedModels[selectedRingId - 1];
+    if (!model) {
+      console.warn('Model not found for selectedRingId:', selectedRingId);
+      return;
+    }
+  
+    // Apply thickness scaling based on normalized thickness
+    model.scale.setY(normalizedThickness * thicknessFactor); // Adjust for Y axis
+    model.scale.setZ(normalizedThickness * thicknessFactor); // Adjust for Z axis
+  
+    // If pairing is enabled, apply the same scaling to the second ring in the pair
+    // if (isPair && this.currentDisplayedModels.length > selectedRingId) {
+    //   const secondRing = this.currentDisplayedModels[selectedRingId]; // Assuming the next ring in the pair
+    //   secondRing.scale.setY(normalizedThickness * thicknessFactor); // Adjust Y axis for second ring
+    //   secondRing.scale.setZ(normalizedThickness * thicknessFactor); // Adjust Z axis for second ring
+    // }
+  
+    console.log(`Ring ${selectedRingId} thickness changed to: ${thicknessValue}mm`);
+  }
+  
+  
+  
   
   currentSelectedRing(id){
     console.log("id is ", id)
     this.selectedModel = id
   }
 
-  // Switch to a new pair of models based on the current index
-//   switchModel(index, selectedRingId = 1) {
-//     if (index < 0 || index >= this.models.length) {
-//       console.warn('Invalid model index:', index);
-//       return;
-//     }
 
-//     // Determine which ring is currently selected for switching
-//     if (selectedRingId === 1 || selectedRingId === 2) {
-//         this.currentModelIndex = index;
-//         this.showCurrentModels(index);
-//     } else if (selectedRingId === 3 && this.currentDisplayedModels[2]) {
-//         this.currentModelIndex = index;
-//         this.showThirdModel(index);  // Add showThirdModel method
-//     } else if (selectedRingId === 4 && this.currentDisplayedModels[3]) {
-//         this.currentModelIndex = index;
-//         this.showFourthModel(index);  // Add showFourthModel method
-//     } else {
-//         console.warn("Invalid ring selection for model switching.");
-//     }
-// }
+
+
 
 switchModel(index, selectedRingId = 1, pair1 = false, pair2 = false) {
   if (index < 0 || index >= this.models.length) {
