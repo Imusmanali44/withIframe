@@ -91,7 +91,14 @@ export const Sizes = ({ rings, activeRing }) => {
                 type="checkbox"
                 className="mr-2"
                 checked={isRing1Auto}
-                onChange={() => setIsRing1Auto(!isRing1Auto)}
+                onChange={() => {
+                  setIsRing1Auto(!isRing1Auto);
+                  console.log(
+                    isRing1Auto
+                      ? "Automatically set the optimal thickness is unchecked"
+                      : "Automatically set the optimal thickness is checked"
+                  );
+                }}
               />
               <label className="font-semibold text-sm">
                 Automatically set the optimal thickness
@@ -268,7 +275,23 @@ export const Sizes = ({ rings, activeRing }) => {
                   type="checkbox"
                   className="mr-2"
                   checked={isRing1Auto}
-                  onChange={() => setIsRing1Auto(!isRing1Auto)}
+                  onChange={() => {
+                    const newValue = !isRing1Auto;
+                    setIsRing1Auto(newValue);
+              
+                    // Log the state
+                    console.log(
+                      newValue
+                        ? "Automatically set the optimal thickness is checked"
+                        : "Automatically set the optimal thickness is unchecked"
+                    );
+              
+                    // Send postMessage to iframe with the updated value
+                    window.parent.postMessage(
+                      { action: 'optimalHeight', value: newValue }, 
+                      "*"
+                    );
+                  }}
                 />
                 <label className="font-semibold text-sm">
                   Automatically set the optimal thickness

@@ -39,6 +39,10 @@ export class MessageHandler {
         console.log('Height action received:', value, selectedRing.id);
         this.modelManager.changeRingThickness(selectedRing.id, value);
         break;
+      case 'optimalHeight':
+        // console.log('optimalHeight checked ?:', value);
+        this.modelManager.optimalThicknessBool(value);
+
 
       default:
         console.warn('Unknown action:', action);
