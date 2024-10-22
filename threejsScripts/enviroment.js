@@ -12,7 +12,7 @@ export class Environment {
     const loader = new RGBELoader();
     loader.setDataType(THREE.FloatType);
 
-    loader.load(`./bg/moonless_golf_1k.hdr`, (texture) => {
+    loader.load(`./bg/silver4.hdr`, (texture) => {
       texture.mapping = THREE.EquirectangularReflectionMapping;
       texture.needsUpdate = true;
 

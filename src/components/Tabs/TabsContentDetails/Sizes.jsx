@@ -6,12 +6,12 @@ export const Sizes = ({ rings, activeRing }) => {
 
   const handleRing1WidthChange = (e) => {
     console.log(`Ring 1 Width selected: ${e.target.value}`);
-    window.parent.postMessage({ action: 'changeWidth',selectedRing: activeRing, value: e.target.value }, "*");
+    window.parent.postMessage({ action: 'changeWidth', selectedRing: activeRing, value: e.target.value }, "*");
   };
 
   const handleRing1ThicknessChange = (e) => {
     console.log(`Ring 1 Thickness selected: ${e.target.value}`);
-    window.parent.postMessage({ action: 'changeHeight',selectedRing: activeRing, value: e.target.value }, "*");
+    window.parent.postMessage({ action: 'changeHeight', selectedRing: activeRing, value: e.target.value }, "*");
 
   };
 
@@ -30,12 +30,12 @@ export const Sizes = ({ rings, activeRing }) => {
   const handleRing2SizeChange = (e) => {
     console.log(`Ring 2 Size selected: ${e.target.value}`);
   };
-  
+
   console.log("Active Ring(s):", activeRing);
   console.log("rings", rings)
-    const thicknessOptions = [
-    "1,20 mm", "1,30 mm", "1,40 mm", "1,50 mm", "1,60 mm", 
-    "1,70 mm", "1,80 mm", "1,90 mm", "2,00 mm", "2,10 mm", 
+  const thicknessOptions = [
+    "1,20 mm", "1,30 mm", "1,40 mm", "1,50 mm", "1,60 mm",
+    "1,70 mm", "1,80 mm", "1,90 mm", "2,00 mm", "2,10 mm",
     "2,20 mm", "2,30 mm"
   ];
 
@@ -169,7 +169,7 @@ export const Sizes = ({ rings, activeRing }) => {
                   disabled={isRing2Auto}
                   onChange={handleRing2ThicknessChange}
                 >
-                  {[...Array(12)].map((_, i=2) => {
+                  {[...Array(12)].map((_, i = 2) => {
                     const size = i + 1;
                     return (
                       <option key={size} value={`${size},00 mm`}>
@@ -256,17 +256,17 @@ export const Sizes = ({ rings, activeRing }) => {
                     Ring thickness
                   </label>
                   <select
-              className="w-full border hover:border-[#909090] rounded px-2 py-3"
-              disabled={isRing1Auto}
-              onChange={handleRing1ThicknessChange}
-            >
-              {/* Custom options */}
-              {thicknessOptions.map((size, index) => (
-                <option key={index} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
+                    className="w-full border hover:border-[#909090] rounded px-2 py-3"
+                    disabled={isRing1Auto}
+                    onChange={handleRing1ThicknessChange}
+                  >
+                    {/* Custom options */}
+                    {thicknessOptions.map((size, index) => (
+                      <option key={index} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -278,17 +278,17 @@ export const Sizes = ({ rings, activeRing }) => {
                   onChange={() => {
                     const newValue = !isRing1Auto;
                     setIsRing1Auto(newValue);
-              
+
                     // Log the state
                     console.log(
                       newValue
                         ? "Automatically set the optimal thickness is checked"
                         : "Automatically set the optimal thickness is unchecked"
                     );
-              
+
                     // Send postMessage to iframe with the updated value
                     window.parent.postMessage(
-                      { action: 'optimalHeight', value: newValue }, 
+                      { action: 'optimalHeight', value: newValue },
                       "*"
                     );
                   }}
@@ -315,7 +315,13 @@ export const Sizes = ({ rings, activeRing }) => {
               </select>
               <select
                 className="w-full border hover:border-[#909090] rounded px-2 py-3"
-                onChange={handleRing1SizeChange}
+                onChange={(e) => {
+                  console.log(`Ring Size (second select) selected: ${e.target.value}`);
+                  window.parent.postMessage(
+                    { action: 'countrySize', selectedRing: activeRing, value: e.target.value },
+                    "*"
+                  );
+                }}
               >
                 <option value="F">F</option>
                 <option value="F½">F½</option>

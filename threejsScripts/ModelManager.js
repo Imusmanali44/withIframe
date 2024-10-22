@@ -21,9 +21,9 @@ export class ModelManager {
         model.traverse((child) => {
           if (child.isMesh) {
             child.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color('#FDFEFF'),
-              metalness: 0.8,
-              roughness: 0,
+              color: new THREE.Color('#A09F9D'),
+              metalness: 0.95,
+              roughness: 0.05,
               // emissive: new THREE.Color(0x111111),
               // emissiveIntensity: 1,
             });
@@ -139,7 +139,40 @@ export class ModelManager {
 
     console.log(`Ring ${selectedRingId} thickness changed to: ${thicknessValue}mm`);
   }
+  setSizeCountryWise(value){
+    if(value == 'F'){
+      this.changeRingThickness(this.selectedModel,'1,20 mm')
+    }
+    else   if(value == 'F½'){
+      this.changeRingThickness(this.selectedModel,'1,40 mm')
+    }
+    else   if(value == 'G'){
+      this.changeRingThickness(this.selectedModel,'1,60 mm')
+    }
+    else   if(value == 'G½'){
+      this.changeRingThickness(this.selectedModel,'1,80 mm')
+    }
+    else   if(value == 'H'){
+      this.changeRingThickness(this.selectedModel,'2,00 mm')
+    }
+    else   if(value == 'H½'){
+      this.changeRingThickness(this.selectedModel,'2,20 mm')
+    }
+    else   if(value == 'I'){
+      this.changeRingThickness(this.selectedModel,'2,40 mm')
+    }
+    else   if(value == 'I½'){
+      this.changeRingThickness(this.selectedModel,'2,50 mm')
+    }
+    else   if(value == 'J'){
+      this.changeRingThickness(this.selectedModel,'2,70 mm')
+    }
+    else   if(value == 'J½'){
+      this.changeRingThickness(this.selectedModel,'2,70 mm')
+    }
+   
 
+  }
 
 
 

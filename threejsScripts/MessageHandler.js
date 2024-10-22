@@ -42,6 +42,10 @@ export class MessageHandler {
       case 'optimalHeight':
         // console.log('optimalHeight checked ?:', value);
         this.modelManager.optimalThicknessBool(value);
+      case 'countrySize':
+        this.modelManager.setSizeCountryWise(value);
+        // console.log("value",value)
+        break;  
 
 
       default:
