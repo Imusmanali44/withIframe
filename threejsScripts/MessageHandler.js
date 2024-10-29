@@ -1,5 +1,7 @@
 // MessageHandler.js
 
+import IsPair from "../src/components/shared/IsPair";
+
 export class MessageHandler {
   constructor(modelManager, orbitControlHandler) {
     this.modelManager = modelManager;
@@ -29,6 +31,10 @@ export class MessageHandler {
         this.currentSelectedRing(modelId)
         // console.log("current selected model",modelId)
         break;
+      case 'updatePairStatus':
+        console.log("ipair",value)
+        this.modelManager.currentPairUpdate(value)  
+        break;
       case 'changeWidth':
         // console.log("change size called",value, selectedRing) 
         console.log('changeWidth action received:', value, selectedRing.id);
@@ -46,7 +52,10 @@ export class MessageHandler {
         this.modelManager.setSizeCountryWise(value);
         // console.log("value",value)
         break;  
-
+      case 'changeColor':
+        this.modelManager.changeModelColor(value.colorCode)
+        console.log("value",value.colorCode, value.value)
+        break;
 
       default:
         console.warn('Unknown action:', action);

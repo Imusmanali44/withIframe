@@ -10,15 +10,15 @@ import IsPair from "../../../shared/IsPair";
 const metalOptions = [
   {
     value: "Gold",
-    colorCode: "#FFD700",
+    colorCode: "#DAB04A",
   },
   {
     value: "Silver",
-    colorCode: "#C0C0C0",
+    colorCode: "#A09F9D",
   },
   {
     value: "Platinum",
-    colorCode: "#E5E4E2",
+    colorCode: "#BFBFBF",
   },
   {
     value: "Apricot Gold",
@@ -35,15 +35,7 @@ const metalOptions = [
   {
     value: "Red Gold",
     colorCode: "#C2412D",
-  },
-  {
-    value: "White Gold",
-    colorCode: "#F5F5F5",
-  },
-  {
-    value: "Yellow Gold",
-    colorCode: "#FFD700",
-  },
+  }
 ];
 
 const surfaceOptions = [
@@ -141,17 +133,17 @@ export const PreciousMetal = ({
 
   const [selections, setSelections] = useState({
     single: {
-      metal: { value: "Gold", colorCode: "#FFD700" },
+      metal: { value: "Silver", colorCode: "#A09F9D" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },
     twoTone: {
-      metal: { value: "Gold", colorCode: "#FFD700" },
+      metal: { value: "Silver", colorCode: "#FFD700" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },
     triColored: {
-      metal: { value: "Gold", colorCode: "#FFD700" },
+      metal: { value: "Silver", colorCode: "#FFD700" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },
@@ -197,20 +189,25 @@ export const PreciousMetal = ({
   };
 
   // Function to handle selection from the dropdown
-  const handleOptionSelect = (option) => {
-    if (option.name === "Two tone") {
-      setSelectedPartitionTwotoneImg(option);
-    } else {
-      setSelectedPartitionTriColoredImg(option);
-    }
-    setSelectedOption(option);
-    setIsPartitionDropdownOpen(false);
-  };
+// Function to handle selection from the dropdown
+const handleOptionSelect = (option) => {
+  if (option.name === "Two tone") {
+    setSelectedPartitionTwotoneImg(option);
+  } else {
+    setSelectedPartitionTriColoredImg(option);
+  }
+  setSelectedOption(option);
+  setIsPartitionDropdownOpen(false);
+
+  // Log the selection to the console
+  console.log(`Option selected: ${option.label}, Value: ${option.img}`);
+};
+
 
   // console.log("purity", purity);
   // console.log("partition", partition);
   // console.log("activeRing:", activeRing);
-  console.log("selectedOption", selectedOption);
+  // console.log("selectedOption", selectedOption);
   console.log("selectedPartitionImg", selectedPartitionTwotoneImg);
 
   return (
@@ -278,6 +275,7 @@ export const PreciousMetal = ({
                   setIsOpen={setIsPartitionDropdownOpen}
                   selectedOption={selectedOption}
                   setSelectedOption={handleOptionSelect}
+                  
                 />
               )}
             </div>
@@ -286,16 +284,25 @@ export const PreciousMetal = ({
         {/* Dropdowns for Metal and Surface */}
 
         <ColorSurface
-          isWeddingRing={isWeddingRing}
-          isExpert={isExpert}
-          metalOptions={metalOptions}
-          updateSelection={updateSelection}
-          surfaceOptions={surfaceOptions}
-          purityOptions={purityOptions}
-          selections={selections}
-          selectedPartitionTwotoneImg={selectedPartitionTwotoneImg}
-          selectedPartitionTriColoredImg={selectedPartitionTriColoredImg}
-        />
+  isWeddingRing={isWeddingRing}
+  isExpert={isExpert}
+  metalOptions={metalOptions}
+  updateSelection={(partition, field, value) => {
+    console.log("Updated selection in ColorSurface:", {
+      partition,
+      field,
+      value,
+    });
+    window.parent.postMessage({ action: "changeColor", value }, "*"); // Send message to Configurator
+
+    updateSelection(partition, field, value);
+  }}
+  surfaceOptions={surfaceOptions}
+  purityOptions={purityOptions}
+  selections={selections}
+  selectedPartitionTwotoneImg={selectedPartitionTwotoneImg}
+  selectedPartitionTriColoredImg={selectedPartitionTriColoredImg}
+/>
 
         {/* Surface Dropdown */}
         {isWeddingRing &&

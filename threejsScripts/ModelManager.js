@@ -8,6 +8,8 @@ export class ModelManager {
     this.currentDisplayedModels = [];
     this.currentModelIndex = 0;
     this.selectedModel = 1
+    this.pair1 = false
+    this.pair2 = false
     this.loader = new GLTFLoader();
   }
 
@@ -179,6 +181,12 @@ export class ModelManager {
   currentSelectedRing(id) {
     console.log("id is ", id)
     this.selectedModel = id
+  }
+  currentPairUpdate(value){
+
+    this.pair1 = value.pair1
+    this.pair2 = value.pair2
+    console.log("this.pap", this.pair1,this.pair2)
   }
 
 
@@ -522,5 +530,46 @@ export class ModelManager {
     // Re-position the first model to the center
     this.currentDisplayedModels[0].position.set(0, 0, 0);
   }
+  changeModelColor(colorValue, isPair = false) {
+    // Helper function to apply color to a given model
+    const applyColor = (model) => {
+        model.traverse((child) => {
+            if (child.isMesh) {
+                child.material = child.material.clone();
+                child.material.color = new THREE.Color(colorValue); // Set the new color
+                child.material.needsUpdate = true; // Update the material to apply changes
+            }
+        });
+    };
+
+    // Apply color to the selected model
+    const model = this.currentDisplayedModels[this.selectedModel - 1];
+    if (!model) {
+        console.warn('Model not found for selectedRingId:', this.selectedModel);
+        return;
+    }
+    applyColor(model);
+    console.log(`Color changed for ring ${this.selectedModel} to: ${colorValue}`);
+
+    // If pair1 is active and isPair is true, change color for both ring 1 and ring 2
+    if (this.pair1  && this.currentDisplayedModels.length > 1) {
+        const ring1 = this.currentDisplayedModels[0]; // Ring 1
+        const ring2 = this.currentDisplayedModels[1]; // Ring 2
+        applyColor(ring1);
+        applyColor(ring2);
+        console.log(`Color changed for pair1 (ring 1 and ring 2) to: ${colorValue}`);
+    }
+
+    // If pair2 is active and isPair is true, change color for both ring 3 and ring 4
+    if (this.pair2  && this.currentDisplayedModels.length > 3) {
+        const ring3 = this.currentDisplayedModels[2]; // Ring 3
+        const ring4 = this.currentDisplayedModels[3]; // Ring 4
+        applyColor(ring3);
+        applyColor(ring4);
+        console.log(`Color changed for pair2 (ring 3 and ring 4) to: ${colorValue}`);
+    }
+}
+
+
 
 }

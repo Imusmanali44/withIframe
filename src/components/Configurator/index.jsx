@@ -15,7 +15,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
     { type: "Wedding", id: 2, name: "Ring 2" },
   ]);
   const [activeRing, setActiveRing] = useState(null);
-  const iframeRef = useRef(null); // Create a reference for the iframe
+  const iframeRef = useRef(null);
 
   const handleNext = () => {
     if (isExpertMode ? activeStep < 6 : activeStep < 4) {
@@ -29,26 +29,27 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
     }
   };
 
-  // Handle messages from the Profile component
   useEffect(() => {
     const handleMessage = (event) => {
-      // Optional: Check event.origin to ensure the message is from a trusted source
-      // console.log('Message received from Profile:', event.data);
-
-      // Send message to iframe if it's loaded
       if (iframeRef.current) {
         iframeRef.current.contentWindow.postMessage(event.data, "*");
       }
     };
 
     window.addEventListener("message", handleMessage);
-
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener("message", handleMessage);
     };
   }, []);
-  console.log(isPair)
+
+  // Add useEffect to watch for changes in isPair
+  useEffect(() => {
+    console.log("Pair status updated:", isPair);
+    if (iframeRef.current) {
+      iframeRef.current.contentWindow.postMessage({ action: 'updatePairStatus',value: isPair }, "*");
+    }
+  }, [isPair]); // Trigger whenever isPair changes
+
   return (
     <div>
       <Tabs
