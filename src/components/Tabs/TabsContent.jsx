@@ -2,7 +2,7 @@ import { Profile } from "./TabsContentDetails/Profile";
 import { Sizes } from "./TabsContentDetails/Sizes";
 import { PreciousMetal } from "./TabsContentDetails/PreciousMetal/PreciousMetal";
 import { GrooveAndEdge } from "./TabsContentDetails/GrooveAndEdge/GrooveAndEdge";
-import { Stone } from "./TabsContentDetails/Stone";
+import { Stone } from "./TabsContentDetails/Stone/Stone";
 import EngravingOptions from "./TabsContentDetails/Engraving/Engraving";
 
 import StepButtons from "./TabsContentDetails/StepButtons";
@@ -77,7 +77,13 @@ const TabContent = ({
       case 5:
         return (
           <>
-            <Stone />
+            <Stone
+              isPair={isPair}
+              setIsPair={setIsPair}
+              rings={rings}
+              activeRing={activeRing}
+              isExpertMode={isExpertMode}
+            />
             {stepButton()}
           </>
         );
@@ -99,11 +105,37 @@ const TabContent = ({
   } else {
     switch (step) {
       case 1:
-        return <PreciousMetal isPair={isPair} toggleIsPair={setIsPair} />;
+        return (
+          <>
+            <PreciousMetal isPair={isPair} toggleIsPair={setIsPair} />
+            {stepButton()}
+          </>
+        );
       case 2:
-        return <div>Step 2: Stone Setting Form Content</div>;
+        return (
+          <>
+            <Stone
+              isPair={isPair}
+              setIsPair={setIsPair}
+              rings={rings}
+              activeRing={activeRing}
+              isExpertMode={isExpertMode}
+            />
+            {stepButton()}
+          </>
+        );
       case 3:
-        return <div>Step 3: Engraving Form Content</div>;
+        return (
+          <>
+            <EngravingOptions
+              isPair={isPair}
+              setIsPair={setIsPair}
+              rings={rings}
+              activeRing={activeRing}
+            />
+            {stepButton()}
+          </>
+        );
       case 4:
         return (
           <>

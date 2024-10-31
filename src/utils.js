@@ -56,7 +56,7 @@ export const nonExpertTabOptions = [
   },
   {
     id: 4,
-    title: "Dimensions",
+    title: "Sizes",
   },
 ];
 

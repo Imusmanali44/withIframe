@@ -234,14 +234,6 @@ h3 {
 }
 
 /* stone settings */
-.stone-setting {
-  border-color: transparent;
-  background: #fff;
-}
-
-.active-stone-setting {
-  border-color: var(--darkBlue);
-}
 
 .container {
   display: block;
