@@ -20,6 +20,7 @@ export const Stone = ({
   const [option, setOption] = useState(2);
   const [stones, setStones] = useState([]);
   const [activeTab, setActiveTab] = useState(1);
+  const [stoneSize, setStoneSize] = useState("0.005 ct. (Ø 1.0 mm)");
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
@@ -68,6 +69,8 @@ export const Stone = ({
           setStones={setStones}
           addStone={addStone}
           removeStone={removeStone}
+          stoneSize={stoneSize}
+          setStoneSize={setStoneSize}
         />
       )}
       <div className="max-w-lg mx-auto">
@@ -113,32 +116,17 @@ export const Stone = ({
               </button>
             </div>
             {option === 1 && (
-              <>
-                {stones.map((stone) => (
-                  <div key={stone.id}>
-                    {activeTab === stone.id && (
-                      <div className="py-10 flex items-center gap-2">
-                        <CheckSvg />
-                        <p className="text-black font-semibold">
-                          1 x 0.015 ct G/SI Brilliant Pavé for Stone {stone.id}
-                        </p>
-                      </div>
-                    )}
-                    <StoneColorPurity
-                      selectedOption={selectedOption}
-                      handleChange={handleChange}
-                    />
-                  </div>
-                ))}
-                {stones.length < 3 && (
-                  <button
-                    onClick={addStone}
-                    className={`p-3 mt-4 uppercase bg-white font-semibold text-sm border flex items-center gap-2 border-[#205fa8]`}
-                  >
-                    Add another stone
-                  </button>
-                )}
-              </>
+              <div>
+                <div className="py-10 flex items-center gap-2">
+                  <CheckSvg />
+                  <p className="text-black font-semibold">{stoneSize}</p>
+                </div>
+                <StoneColorPurity
+                  stoneSize={stoneSize}
+                  selectedOption={selectedOption}
+                  handleChange={handleChange}
+                />
+              </div>
             )}
           </>
         )}
