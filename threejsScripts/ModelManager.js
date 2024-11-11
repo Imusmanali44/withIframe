@@ -11,8 +11,25 @@ export class ModelManager {
     this.pair1 = false
     this.pair2 = false
     this.loader = new GLTFLoader();
+    this.loadMatCapTextures();
   }
+  loadMatCapTextures() {
+    const textureLoader = new THREE.TextureLoader();
 
+    // Load the MatCap texture
+    textureLoader.load('./models/mat/MatCap.jpg', (texture) => {
+      this.matcapTexture = texture;
+      this.matcapTexture.needsUpdate = true;
+    });
+
+    // Load the highlight texture if needed
+    textureLoader.load('./models/mat/MatCap.jpg', (texture) => {
+      this.highlightTexture = texture;
+      this.highlightTexture.needsUpdate = true;
+    });
+
+    console.log("hi",this.matcapTexture)
+  }
   // Load all models based on the provided modelData
   loadModels(modelData) {
     modelData.forEach((data, index) => {
@@ -22,12 +39,10 @@ export class ModelManager {
 
         model.traverse((child) => {
           if (child.isMesh) {
-            child.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color('#A09F9D'),
-              metalness: 0.95,
-              roughness: 0.05,
-              // emissive: new THREE.Color(0x111111),
-              // emissiveIntensity: 1,
+            // Use MatCap material with loaded MatCap texture
+            child.material = new THREE.MeshMatcapMaterial({
+              matcap: this.matcapTexture, 
+              color: "#A09F9D"// Apply the MatCap texture here
             });
             child.castShadow = true;
           }
@@ -84,7 +99,7 @@ export class ModelManager {
     }
   
     // Set the width of the selected ring
-    model.scale.setX(widthValue * 15); // Multiply by a factor to convert to model scale
+    model.scale.setX(widthValue * 50); // Multiply by a factor to convert to model scale
     console.log(`Ring ${selectedRingId} width changed to: ${widthValue}mm`);
   
     // If this.optimalThickness is true, set optimal thickness based on the width
@@ -198,29 +213,24 @@ export class ModelManager {
       console.warn('Invalid model index:', index);
       return;
     }
-    console.log("what is happening 1")
 
     // Handle pairing logic
     if (pair1 && !pair2 && selectedRingId == 1 || selectedRingId == 2) {
-      console.log("what is happening 2")
 
       // Change both 1st and 2nd rings
       this.showCurrentModels(index, pair1); // For 1st and 2nd rings
     } else if (pair2) {
-      console.log("what is happening 3")
 
       // Change both 3rd and 4th rings
       this.showThirdModel(index, pair2);  // For 3rd ring
       this.showFourthModel(index, pair2); // For 4th ring
     } else {
       // Only change the selected ring
-      console.log("what is happening 6")
       if (selectedRingId === 1 || selectedRingId === 2) {
         this.currentModelIndex = index;
         this.showCurrentModels(index);
       } else if (selectedRingId === 3 && this.currentDisplayedModels[2]) {
         this.currentModelIndex = index;
-        console.log("what is happening 7", index)
 
         this.showThirdModel(index);
       } else if (selectedRingId === 4 && this.currentDisplayedModels[3]) {
@@ -236,11 +246,9 @@ export class ModelManager {
     const model = this.models[index].clone();
     const model3 = this.models[index].clone();
     const model4 = this.models[index].clone();
-    console.log("hello ????", this.currentDisplayedModels[3])
 
     // If pairing for 3rd and 4th models is active
     if (pair2) {
-      console.log("hello pair", this.currentDisplayedModels[3])
 
       this.scene.remove(this.currentDisplayedModels[2]);
       this.scene.remove(this.currentDisplayedModels[3]);

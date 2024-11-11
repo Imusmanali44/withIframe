@@ -133,7 +133,7 @@ export const PreciousMetal = ({
 
   const [selections, setSelections] = useState({
     single: {
-      metal: { value: "Silver", colorCode: "#A09F9D" },
+      metal: { value: "Silver", colorCode: "#BFBFBF" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },

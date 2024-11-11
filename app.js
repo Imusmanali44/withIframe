@@ -17,7 +17,7 @@ class RotatingRingApp {
   constructor() {
     // Set up the scene, camera, and renderer
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#FAF9F6'); // Light gray background
+    this.scene.background = new THREE.Color('#FFFFFF'); // Light gray background
 
     this.modelManager = new ModelManager(this.scene);
     this.cameraInstance = new Camera(this.scene);
@@ -65,6 +65,7 @@ class RotatingRingApp {
 
     // Start the render loop
     this.animate();
+    console.log("loaded")
   }
 
   showCurrentModels() {

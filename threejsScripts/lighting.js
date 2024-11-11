@@ -8,10 +8,10 @@ export class Lighting {
 
   initLighting() {
     console.log("init lighting");
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight("#FAF9F6", 1);
     this.scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0);
     directionalLight.position.set(0, 10, 0);
     directionalLight.castShadow = true;
 
