@@ -71,6 +71,8 @@ export const Stone = ({
           removeStone={removeStone}
           stoneSize={stoneSize}
           setStoneSize={setStoneSize}
+          selectedOption={selectedOption}
+          handleChange={handleChange}
         />
       )}
       <div className="max-w-lg mx-auto">
