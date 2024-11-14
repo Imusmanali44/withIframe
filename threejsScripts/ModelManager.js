@@ -99,7 +99,7 @@ export class ModelManager {
     }
   
     // Set the width of the selected ring
-    model.scale.setX(widthValue * 50); // Multiply by a factor to convert to model scale
+    model.scale.setX(widthValue * 15); // Multiply by a factor to convert to model scale
     console.log(`Ring ${selectedRingId} width changed to: ${widthValue}mm`);
   
     // If this.optimalThickness is true, set optimal thickness based on the width

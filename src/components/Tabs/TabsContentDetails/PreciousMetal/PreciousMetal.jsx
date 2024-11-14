@@ -10,7 +10,7 @@ import IsPair from "../../../shared/IsPair";
 const metalOptions = [
   {
     value: "Gold",
-    colorCode: "#DAB04A",
+    colorCode: "#BB9951",
   },
   {
     value: "Silver",
@@ -133,7 +133,7 @@ export const PreciousMetal = ({
 
   const [selections, setSelections] = useState({
     single: {
-      metal: { value: "Silver", colorCode: "#BFBFBF" },
+      metal: { value: "Silver", colorCode: "#A09F9D" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },

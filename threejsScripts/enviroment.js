@@ -43,7 +43,7 @@ export class Environment {
 
     // Set the loaded cubemap as the background
     // this.scene.background = textureCube;
-     this.scene.environment = textureCube;
+    //  this.scene.environment = textureCube;
 
     // this.scene.backgroundBlurriness = 1;
   }
