@@ -55,11 +55,13 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
     const symbolLabel = selectedSymbolObj ? selectedSymbolObj.label : "";
 
     setEngravingText((prev) => `${prev}${symbolLabel}`);
+    window.parent.postMessage({ action: "EngraveSymbol", value:selectedSymbolObj }, "*"); // Send message to Configurator
   };
 
 
   console.log(selectedSymbol);
   console.log(selectedFont);
+
 
   return (
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">

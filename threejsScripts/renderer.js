@@ -31,6 +31,8 @@ export class Renderer {
     this.renderer.toneMappingExposure = params.exposure;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
+    
+
     THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
       'vec3 CustomToneMapping( vec3 color ) { return color; }',
       `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )

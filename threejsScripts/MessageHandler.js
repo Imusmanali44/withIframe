@@ -56,7 +56,18 @@ export class MessageHandler {
         this.modelManager.changeModelColor(value.colorCode)
         console.log("value",value.colorCode, value.value)
         break;
-
+      case 'EngraveSymbol':
+        console.log("hello",value)
+        if(value.value=="double-heart"){
+          this.modelManager.engraveTextOnModel("GG")
+        }
+        else if(value.value=="heart"){
+          this.modelManager.engraveTextOnModel("G")
+        }
+        else if(value.value=="double-ring"){
+          this.modelManager.engraveTextOnModel("MGN")
+        }
+        break;
       default:
         console.warn('Unknown action:', action);
         break;

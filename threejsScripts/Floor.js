@@ -7,7 +7,7 @@ export class Floor {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
-    this.initFloor();
+    // this.initFloor();
   }
 
   initFloor() {
