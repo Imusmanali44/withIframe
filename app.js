@@ -100,10 +100,10 @@ class RotatingRingApp {
 
   
   switchModelLocal(event) {
-    this.camera.position.set(1, 1, 5);
-    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+    // this.camera.position.set(1, 1, 5);
+    // if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
      
-    }
+    // }
   }
 
 

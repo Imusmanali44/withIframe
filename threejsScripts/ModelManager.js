@@ -15,94 +15,124 @@ export class ModelManager {
     this.loader = new GLTFLoader();
     this.fontLoader = new FontLoader(); 
     this.currentFont = "";
+    this.currentColor = "";
     this.loadMatCapTextures();
   }
   loadMatCapTextures() {
     const textureLoader = new THREE.TextureLoader();
-
-    // Load the MatCap texture
-    textureLoader.load('./models/mat/e3.jpg', (texture) => {
-      this.matcapTexture = texture;
-      this.matcapTexture.needsUpdate = true;
+  
+    // Create promises for matcap and highlight textures
+    this.matcapPromise = new Promise((resolve, reject) => {
+      textureLoader.load('./models/mat/MatCap.jpg', (texture) => {
+        this.matcapTexture = texture;
+        this.matcapTexture.needsUpdate = true;
+        resolve();
+      }, undefined, (err) => reject(err));
     });
-
-    // Load the highlight texture if needed
-    textureLoader.load('./models/mat/MatCap.jpg', (texture) => {
-      this.highlightTexture = texture;
-      this.highlightTexture.needsUpdate = true;
+  
+    this.highlightPromise = new Promise((resolve, reject) => {
+      textureLoader.load('./models/mat/MatCap2.jpg', (texture) => {
+        this.highlightTexture = texture;
+        this.highlightTexture.needsUpdate = true;
+        resolve();
+      }, undefined, (err) => reject(err));
     });
-
-    console.log("hi",this.matcapTexture)
+  
+    console.log("Loading matcaps...");
   }
-  // Load all models based on the provided modelData
+  
+  // Load models only after textures are loaded
   loadModels(modelData) {
-    modelData.forEach((data, index) => {
-      this.loader.load(data.glbPath, (gltf) => {
-        const model = gltf.scene;
-        this.models.push(model);
+    // Wait for both matcap and highlight textures to load
+    Promise.all([this.matcapPromise, this.highlightPromise])
+      .then(() => {
+        console.log("Matcaps loaded. Loading models...");
   
-        model.traverse((child) => {
-          if (child.isMesh) {
-            // Apply custom shader material combining both MatCaps
-            child.material = new THREE.ShaderMaterial({
-              uniforms: {
-                matcapTexture: { value: this.matcapTexture },
-                highlightTexture: { value: this.highlightTexture },
-                blendFactor: { value: 0.1 }, // Adjust to control blend between textures
-                color: { value: new THREE.Color('#CED0DD') }
-              },
-              vertexShader: `
-                varying vec3 vNormal;
-                varying vec3 vViewPosition;
-                varying vec2 vUv;
+        const modelLoadPromises = modelData.map((data, index) => {
+          return new Promise((resolve, reject) => {
+            this.loader.load(data.glbPath, (gltf) => {
+              const model = gltf.scene;
+              this.models.push(model);
   
-                void main() {
-                  vUv = uv;
-                  vNormal = normalize(normalMatrix * normal);
-                  vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-                  vViewPosition = -modelViewPosition.xyz;
-                  gl_Position = projectionMatrix * modelViewPosition;
+              model.traverse((child) => {
+                if (child.isMesh) {
+                  // Apply custom shader material combining both MatCaps
+                  child.material = new THREE.ShaderMaterial({
+                    uniforms: {
+                      matcapTexture: { value: this.matcapTexture },
+                      highlightTexture: { value: this.highlightTexture },
+                      blendFactor: { value: 0.1 }, // Adjust to control blend between textures
+                      color: { value: new THREE.Color('#A09F9D') },
+                    },
+                    vertexShader: `
+                      varying vec3 vNormal;
+                      varying vec3 vViewPosition;
+                      varying vec2 vUv;
+  
+                      void main() {
+                        vUv = uv;
+                        vNormal = normalize(normalMatrix * normal);
+                        vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+                        vViewPosition = -modelViewPosition.xyz;
+                        gl_Position = projectionMatrix * modelViewPosition;
+                      }
+                    `,
+                    fragmentShader: `
+                      uniform sampler2D matcapTexture;
+                      uniform sampler2D highlightTexture;
+                      uniform float blendFactor;
+                      uniform vec3 color; // Color uniform
+  
+                      varying vec3 vNormal;
+                      varying vec3 vViewPosition;
+                      varying vec2 vUv;
+  
+                      void main() {
+                        vec3 viewDir = normalize(vViewPosition);
+                        vec3 reflectedDir = reflect(viewDir, normalize(vNormal));
+                        float m = 2.82842712474619 * sqrt(reflectedDir.z + 1.5);
+                        vec2 uv = reflectedDir.xy / m + 0.7;
+  
+                        // Sample both MatCap textures and increase their brightness
+                        vec4 matcapColor = texture2D(matcapTexture, uv) * 1.3;
+                        vec4 highlightColor = texture2D(highlightTexture, uv) * 1.3;
+  
+                        // Blend the textures with an adjusted factor
+                        vec4 blendedColor = mix(matcapColor, highlightColor, blendFactor);
+  
+                        // Apply the color tint with increased intensity
+                        gl_FragColor = vec4(blendedColor.rgb * color * 2.0, blendedColor.a);
+                      }
+                    `,
+                    // transparent: true,
+                  });
                 }
-              `,
-              fragmentShader: `
-              uniform sampler2D matcapTexture;
-              uniform sampler2D highlightTexture;
-              uniform float blendFactor;
-              uniform vec3 color; // Color uniform
-              
-              varying vec3 vNormal;
-              varying vec3 vViewPosition;
-              varying vec2 vUv;
-              
-              void main() {
-                vec3 viewDir = normalize(vViewPosition);
-                vec3 reflectedDir = reflect(viewDir, normalize(vNormal));
-                float m = 2.82842712474619 * sqrt(reflectedDir.z + 1.5);
-                vec2 uv = reflectedDir.xy / m + 0.7;
-              
-                // Sample both MatCap textures and increase their brightness
-                vec4 matcapColor = texture2D(matcapTexture, uv)  * 1.3;
-                vec4 highlightColor = texture2D(highlightTexture, uv) * 1.3;
-              
-                // Blend the textures with an adjusted factor
-                vec4 blendedColor = mix(matcapColor, highlightColor, blendFactor);
-              
-                // Apply the color tint with increased intensity
-                gl_FragColor = vec4(blendedColor.rgb * color * 2.0, blendedColor.a);
-              }
-            `,
-              // transparent: true,
-            });
-          }
+              });
+  
+              model.scale.set(100, 100, 100);
+              model.visible = false;
+              this.scene.add(model);
+              resolve(model); // Resolve the promise when the model is loaded
+            }, undefined, (err) => reject(err));
+          });
         });
   
-        model.scale.set(100, 100, 100);
-        model.visible = false;
-        this.scene.add(model);
-        this.switchModel(0, 1, true, false);
+        // Wait for all models to load
+        Promise.all(modelLoadPromises)
+          .then((models) => {
+            console.log("All models loaded.");
+            this.currentColor = "#A09F9D";
+            this.switchModel(0, 1, true, false); // Show the first model
+          })
+          .catch((err) => {
+            console.error("Error loading models:", err);
+          });
+      })
+      .catch((err) => {
+        console.error("Error loading matcaps:", err);
       });
-    });
   }
+  
   optimalThicknessBool(value){
     if (value){
     this.optimalThickness = true
@@ -257,6 +287,7 @@ export class ModelManager {
 
 
   switchModel(index, selectedRingId = 1, pair1 = false, pair2 = false) {
+    this.currentColor = "#A09F9D";
     if (index < 0 || index >= this.models.length) {
       console.warn('Invalid model index:', index);
       return;
@@ -587,14 +618,61 @@ export class ModelManager {
     this.currentDisplayedModels[0].position.set(0, 0, 0);
   }
   changeModelColor(colorValue, isPair = false) {
-    // Helper function to apply color to a given model
-    
-    const applyColor = (model) => {
+    // Helper function to apply color using the custom ShaderMaterial
+    this.currentColor = colorValue
+    const applyColorToShaderMaterial = (model) => {
         model.traverse((child) => {
             if (child.isMesh) {
-                child.material = child.material.clone();
-                child.material.color = new THREE.Color(colorValue); // Set the new color
-                child.material.needsUpdate = true; // Update the material to apply changes
+                child.material = new THREE.ShaderMaterial({
+                    uniforms: {
+                        matcapTexture: { value: this.matcapTexture },
+                        highlightTexture: { value: this.highlightTexture },
+                        blendFactor: { value: 0.1 }, // Adjust to control blend between textures
+                        color: { value: new THREE.Color(colorValue) }, // Apply dynamic color
+                    },
+                    vertexShader: `
+                      varying vec3 vNormal;
+                      varying vec3 vViewPosition;
+                      varying vec2 vUv;
+
+                      void main() {
+                        vUv = uv;
+                        vNormal = normalize(normalMatrix * normal);
+                        vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
+                        vViewPosition = -modelViewPosition.xyz;
+                        gl_Position = projectionMatrix * modelViewPosition;
+                      }
+                    `,
+                    fragmentShader: `
+                      uniform sampler2D matcapTexture;
+                      uniform sampler2D highlightTexture;
+                      uniform float blendFactor;
+                      uniform vec3 color; // Color uniform
+
+                      varying vec3 vNormal;
+                      varying vec3 vViewPosition;
+                      varying vec2 vUv;
+
+                      void main() {
+                        vec3 viewDir = normalize(vViewPosition);
+                        vec3 reflectedDir = reflect(viewDir, normalize(vNormal));
+                        float m = 2.82842712474619 * sqrt(reflectedDir.z + 1.5);
+                        vec2 uv = reflectedDir.xy / m + 0.7;
+
+                        // Sample both MatCap textures and increase their brightness
+                        vec4 matcapColor = texture2D(matcapTexture, uv) * 1.3;
+                        vec4 highlightColor = texture2D(highlightTexture, uv) * 1.3;
+
+                        // Blend the textures with an adjusted factor
+                        vec4 blendedColor = mix(matcapColor, highlightColor, blendFactor);
+
+                        // Apply the color tint with increased intensity
+                        gl_FragColor = vec4(blendedColor.rgb * color *2.0, blendedColor.a);
+                      }
+                    `,
+                });
+
+                child.material.needsUpdate = true; // Ensure the material updates
             }
         });
     };
@@ -605,90 +683,102 @@ export class ModelManager {
         console.warn('Model not found for selectedRingId:', this.selectedModel);
         return;
     }
-    applyColor(model);
+    applyColorToShaderMaterial(model);
     console.log(`Color changed for ring ${this.selectedModel} to: ${colorValue}`);
 
     // If pair1 is active and isPair is true, change color for both ring 1 and ring 2
-    if (this.pair1  && this.currentDisplayedModels.length > 1) {
+    if (this.pair1 && this.currentDisplayedModels.length > 1) {
         const ring1 = this.currentDisplayedModels[0]; // Ring 1
         const ring2 = this.currentDisplayedModels[1]; // Ring 2
-        applyColor(ring1);
-        applyColor(ring2);
+        applyColorToShaderMaterial(ring1);
+        applyColorToShaderMaterial(ring2);
         console.log(`Color changed for pair1 (ring 1 and ring 2) to: ${colorValue}`);
     }
 
     // If pair2 is active and isPair is true, change color for both ring 3 and ring 4
-    if (this.pair2  && this.currentDisplayedModels.length > 3) {
+    if (this.pair2 && this.currentDisplayedModels.length > 3) {
         const ring3 = this.currentDisplayedModels[2]; // Ring 3
         const ring4 = this.currentDisplayedModels[3]; // Ring 4
-        applyColor(ring3);
-        applyColor(ring4);
+        applyColorToShaderMaterial(ring3);
+        applyColorToShaderMaterial(ring4);
         console.log(`Color changed for pair2 (ring 3 and ring 4) to: ${colorValue}`);
     }
 }
+
+
 engraveTextOnModel(text, options = {}) {
   // Set default options for engraving
-  
   console.log("engraving");
   const {
     size = 0.0024,
     height = 0.0007,
     depthOffset = 0.0017,
-    color = '#CED0DD',
+    color = this.currentColor,
     position = { x: 0, y: -0.005, z: -0.006 },
     rotation = { x: -0.6, y: 0.2, z: 1.5 },
   } = options;
-  this.changeFont(3);
+
+  this.changeFont(3); // Ensure the font is updated
+
   // Load font for engraving text
   this.fontLoader.load(this.currentFont, (font) => {
-    const textGeometry = new TextGeometry(text, {
-      font: font,
-      size: size,
-      height: height,
-      curveSegments: 120,
-      bevelEnabled: false,
-    });
-  
-    
+    const createEngraving = (model) => {
+      const textGeometry = new TextGeometry(text, {
+        font: font,
+        size: size,
+        height: height,
+        curveSegments: 30,
+        bevelEnabled: false,
+      });
 
-    // Center the text geometry
-    textGeometry.computeBoundingBox();
-    textGeometry.center();
+      // Center the text geometry
+      textGeometry.computeBoundingBox();
+      textGeometry.center();
 
-    const textMaterial = new THREE.MeshStandardMaterial({
-      color: color,
-      metalness: 0.8,
-      roughness: 0.1,
-    });
+      const textMaterial = new THREE.MeshStandardMaterial({
+        color: color,
+        metalness: 0.8,
+        roughness: 0.7,
+      });
 
-    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
-    // Set position and rotation on the model surface
-    textMesh.position.set(
-      position.x,
-      position.y,
-      position.z - depthOffset // Engrave slightly into the model
-    );
-    textMesh.rotation.set(rotation.x, rotation.y, rotation.z);
+      // Set position and rotation on the model surface
+      textMesh.position.set(
+        position.x,
+        position.y,
+        position.z - depthOffset // Engrave slightly into the model
+      );
+      textMesh.rotation.set(rotation.x, rotation.y, rotation.z);
 
-    // Get the current model
-    const model = this.currentDisplayedModels[this.selectedModel - 1];
-    if (!model) {
-      console.warn('Model not found for selectedRingId:', this.selectedModel);
-      return;
-    }
-
-    // Attach text as a child to the model for engraving effect
-    // setTimeout(() => {
-      console.log("EMGRA")
+      // Add text mesh as a child to the model
       model.add(textMesh);
-    // }, 7000);
-    // model.position.set(9000, 1000, 0);
-    // model.scale.set(100,100,100)                           // Fourth model far right
+      console.log(`Engraved text "${text}" on the model`);
+    };
 
-    console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
+    // Handle engraving for the selected model or both models in the pair
+    if (this.pair1 && this.currentDisplayedModels.length > 1) {
+      // Engrave on both ring 1 and ring 2 if pair1 is active
+      const ring1 = this.currentDisplayedModels[0];
+      const ring2 = this.currentDisplayedModels[1];
+
+      if (ring1) createEngraving(ring1);
+      if (ring2) createEngraving(ring2);
+
+      console.log(`Engraved text "${text}" on both pair1 rings.`);
+    } else {
+      // Engrave only on the selected model
+      const model = this.currentDisplayedModels[this.selectedModel - 1];
+      if (!model) {
+        console.warn('Model not found for selectedRingId:', this.selectedModel);
+        return;
+      }
+      createEngraving(model);
+      console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
+    }
   });
 }
+
 
 changeFont(fontIndex) {
   // Define the available font paths
