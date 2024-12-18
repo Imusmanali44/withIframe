@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Input from "../../../shared/InputField";
 
 // ButtonGroup Component
@@ -41,11 +41,28 @@ const symbols = [
 const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
   const [selectedSymbol, setSelectedSymbol] = useState("");
   const [selectedFont, setSelectedFont] = useState("svnfont00");
+  const typingTimeoutRef = useRef(null);
 
+  // Updated handleInputChange function
   const handleInputChange = (value) => {
     setEngravingText(value);
+
+    // Clear any previously set timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // Set a new timeout to log after 2 seconds of no typing
+    typingTimeoutRef.current = setTimeout(() => {
+      console.log(`Final Engraving Text: ${value}`);
+      window.parent.postMessage(
+        { action: "EngraveText", isEngraving: value },
+        "*"
+      );
+    }, 2000); // 2-second delay
   };
 
+  // Updated handleSymbolSelect function
   const handleSymbolSelect = (symbolVal) => {
     setSelectedSymbol(symbolVal);
     const selectedSymbolObj = symbols.find(
@@ -54,14 +71,17 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
 
     const symbolLabel = selectedSymbolObj ? selectedSymbolObj.label : "";
 
-    setEngravingText((prev) => `${prev}${symbolLabel}`);
-    window.parent.postMessage({ action: "EngraveSymbol", value:selectedSymbolObj }, "*"); // Send message to Configurator
+    // Append the symbol to the engraving text
+    setEngravingText((prev) => {
+      const newText = `${prev}${symbolLabel}`;
+      console.log(`Engraved Symbol Added: ${newText}`);
+      window.parent.postMessage(
+        { action: "EngraveSymbol", value: selectedSymbolObj },
+        "*"
+      ); // Send message to Configurator
+      return newText;
+    });
   };
-
-
-  console.log(selectedSymbol);
-  console.log(selectedFont);
-
 
   return (
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
@@ -74,7 +94,7 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
           placeholder=""
           value={engravingText}
           onChange={(e) => handleInputChange(e.target.value)}
-          maxLength={35}
+          maxLength={8}
         />
         <div className="text-right text-[#bdbdbd] text-sm">
           {35 - engravingText.length}
@@ -91,7 +111,7 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
             placeholder=""
             value={engravingText}
             onChange={(e) => handleInputChange(e.target.value)}
-            maxLength={35}
+            maxLength={8}
           />
           <div className="text-right text-[#bdbdbd] text-sm">
             {35 - engravingText.length}
@@ -106,10 +126,18 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
         label="Add symbol"
         className="w-14"
       />
-      <ButtonGroup
+          <ButtonGroup
         options={fonts}
         value={selectedFont}
-        onChange={setSelectedFont}
+        onChange={(font) => {
+          console.log(`Font changed to: ${font}`);
+          setSelectedFont(font);
+          setEngravingText("");
+          window.parent.postMessage(
+            { action: "FontChange", value: font },
+            "*"
+          );
+        }}
         label="Font"
       />
     </div>

@@ -10,7 +10,7 @@ import IsPair from "../../../shared/IsPair";
 const metalOptions = [
   {
     value: "Gold",
-    colorCode: "#BB9951",
+    colorCode: "#E9D4A4",
   },
   {
     value: "Silver",
@@ -31,11 +31,11 @@ const metalOptions = [
   {
     value: "Rose Gold",
     colorCode: "#B76E79",
-  },
-  {
-    value: "Red Gold",
-    colorCode: "#C2412D",
   }
+  // {
+  //   value: "Red Gold",
+  //   colorCode: "#C2412D",
+  // }
 ];
 
 const surfaceOptions = [

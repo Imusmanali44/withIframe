@@ -1,7 +1,13 @@
 import * as THREE from 'three';
+import { CatmullRomCurve3 } from 'three';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import { Flow } from 'three/examples/jsm/modifiers/CurveModifier.js';
+
+// import  CSG  from '/utils/CSGMesh.js'
+import Bender from '/utils/bender.js'
+
 
 export class ModelManager {
   constructor(scene) {
@@ -13,8 +19,9 @@ export class ModelManager {
     this.pair1 = false
     this.pair2 = false
     this.loader = new GLTFLoader();
+    this.tatt = new TextGeometry();
     this.fontLoader = new FontLoader(); 
-    this.currentFont = "";
+    this.currentFont = "./src/assets/fonts/Roboto_Regular.json";
     this.currentColor = "";
     this.loadMatCapTextures();
   }
@@ -220,11 +227,34 @@ export class ModelManager {
       console.warn('Model not found for selectedRingId:', selectedRingId);
       return;
     }
-
+    console.log("model", normalizedThickness);
     // Apply thickness scaling based on normalized thickness
     model.scale.setY(normalizedThickness * thicknessFactor); // Adjust for Y axis
     model.scale.setZ(normalizedThickness * thicknessFactor); // Adjust for Z axis
-
+    const applyThicknessScaling = (mesh) => {
+      if (mesh.name.includes('Sides')) {
+        // Sides mesh: Increase height vertically (Y-axis)
+        mesh.scale.y = normalizedThickness;
+      } else if ( mesh.name.includes('Outer')) {
+        // Inner and outer meshes: Scale X and Z to expand radius proportionally
+        // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
+        mesh.scale.y = normalizedThickness ;
+        // mesh.scale.z = normalizedThickness;
+      }
+      else if ( mesh.name.includes('Inner')) {
+        // Inner and outer meshes: Scale X and Z to expand radius proportionally
+        // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
+        mesh.scale.y += 0.1 ;
+        // mesh.scale.z = normalizedThickness;
+      }
+    };
+  
+    // Traverse the model and apply scaling
+    model.traverse((child) => {
+      if (child.isMesh) {
+        applyThicknessScaling(child);
+      }
+    });
     // If pairing is enabled, apply the same scaling to the second ring in the pair
     // if (isPair && this.currentDisplayedModels.length > selectedRingId) {
     //   const secondRing = this.currentDisplayedModels[selectedRingId]; // Assuming the next ring in the pair
@@ -581,7 +611,11 @@ export class ModelManager {
     this.currentDisplayedModels[0].position.set(-0.7, 0, 0);  // First model to the left
     this.currentDisplayedModels[1].position.set(0.7, 0, 0);   // Second model to the right
   }
+  setCurrentModelName(model){
+this.currentModel = model;
+console.log("current model name", model)
 
+  }
   // Remove the fourth model and adjust the positions
   removeFourthModel() {
     if (this.currentDisplayedModels.length < 4) {
@@ -618,9 +652,24 @@ export class ModelManager {
     this.currentDisplayedModels[0].position.set(0, 0, 0);
   }
   changeModelColor(colorValue, isPair = false) {
-    // Helper function to apply color using the custom ShaderMaterial
-    this.currentColor = colorValue
-    const applyColorToShaderMaterial = (model) => {
+    console.log("colorvalue",colorValue)
+    // Function to determine color intensity based on the color
+    const getColorIntensity = (color) => {
+        // Define custom intensities for specific colors
+        const intensityMap = {
+            '#A09F9D': 2.0, // silver
+            '#E9D4A4': 1.14, // Gold
+            '#D99058': 1.8, // apricot gold
+            '#B76E79': 1.2, //rose gold
+            '#C2412D': 1.0, // red Gold
+        };
+
+        return intensityMap[color.toUpperCase()] || 2.0; // Default intensity if color not listed
+    };
+
+    this.currentColor = colorValue;
+
+    const applyColorToShaderMaterial = (model, colorIntensity) => {
         model.traverse((child) => {
             if (child.isMesh) {
                 child.material = new THREE.ShaderMaterial({
@@ -629,6 +678,7 @@ export class ModelManager {
                         highlightTexture: { value: this.highlightTexture },
                         blendFactor: { value: 0.1 }, // Adjust to control blend between textures
                         color: { value: new THREE.Color(colorValue) }, // Apply dynamic color
+                        colorIntensity: { value: colorIntensity } // Dynamic intensity
                     },
                     vertexShader: `
                       varying vec3 vNormal;
@@ -647,7 +697,8 @@ export class ModelManager {
                       uniform sampler2D matcapTexture;
                       uniform sampler2D highlightTexture;
                       uniform float blendFactor;
-                      uniform vec3 color; // Color uniform
+                      uniform vec3 color;
+                      uniform float colorIntensity;
 
                       varying vec3 vNormal;
                       varying vec3 vViewPosition;
@@ -660,14 +711,14 @@ export class ModelManager {
                         vec2 uv = reflectedDir.xy / m + 0.7;
 
                         // Sample both MatCap textures and increase their brightness
-                        vec4 matcapColor = texture2D(matcapTexture, uv) * 1.3;
+                        vec4 matcapColor = texture2D(matcapTexture, uv) * 1.5;
                         vec4 highlightColor = texture2D(highlightTexture, uv) * 1.3;
 
                         // Blend the textures with an adjusted factor
                         vec4 blendedColor = mix(matcapColor, highlightColor, blendFactor);
 
-                        // Apply the color tint with increased intensity
-                        gl_FragColor = vec4(blendedColor.rgb * color *2.0, blendedColor.a);
+                        // Apply the color tint with dynamic intensity
+                        gl_FragColor = vec4(blendedColor.rgb * color * colorIntensity, blendedColor.a);
                       }
                     `,
                 });
@@ -677,128 +728,264 @@ export class ModelManager {
         });
     };
 
+    // Determine intensity for the selected color
+    const colorIntensity = getColorIntensity(colorValue);
+
     // Apply color to the selected model
     const model = this.currentDisplayedModels[this.selectedModel - 1];
     if (!model) {
         console.warn('Model not found for selectedRingId:', this.selectedModel);
         return;
     }
-    applyColorToShaderMaterial(model);
-    console.log(`Color changed for ring ${this.selectedModel} to: ${colorValue}`);
+    applyColorToShaderMaterial(model, colorIntensity);
+    console.log(`Color changed for ring ${this.selectedModel} to: ${colorValue} with intensity ${colorIntensity}`);
 
     // If pair1 is active and isPair is true, change color for both ring 1 and ring 2
     if (this.pair1 && this.currentDisplayedModels.length > 1) {
         const ring1 = this.currentDisplayedModels[0]; // Ring 1
         const ring2 = this.currentDisplayedModels[1]; // Ring 2
-        applyColorToShaderMaterial(ring1);
-        applyColorToShaderMaterial(ring2);
-        console.log(`Color changed for pair1 (ring 1 and ring 2) to: ${colorValue}`);
+        applyColorToShaderMaterial(ring1, colorIntensity);
+        applyColorToShaderMaterial(ring2, colorIntensity);
+        console.log(`Color changed for pair1 (ring 1 and ring 2) to: ${colorValue} with intensity ${colorIntensity}`);
     }
 
     // If pair2 is active and isPair is true, change color for both ring 3 and ring 4
     if (this.pair2 && this.currentDisplayedModels.length > 3) {
         const ring3 = this.currentDisplayedModels[2]; // Ring 3
         const ring4 = this.currentDisplayedModels[3]; // Ring 4
-        applyColorToShaderMaterial(ring3);
-        applyColorToShaderMaterial(ring4);
-        console.log(`Color changed for pair2 (ring 3 and ring 4) to: ${colorValue}`);
+        applyColorToShaderMaterial(ring3, colorIntensity);
+        applyColorToShaderMaterial(ring4, colorIntensity);
+        console.log(`Color changed for pair2 (ring 3 and ring 4) to: ${colorValue} with intensity ${colorIntensity}`);
     }
 }
 
 
+
+
+
 engraveTextOnModel(text, options = {}) {
-  // Set default options for engraving
-  console.log("engraving");
-  const {
-    size = 0.0024,
-    height = 0.0007,
-    depthOffset = 0.0017,
-    color = this.currentColor,
-    position = { x: 0, y: -0.005, z: -0.006 },
-    rotation = { x: -0.6, y: 0.2, z: 1.5 },
-  } = options;
+  console.log("Engraving text on the inner mesh...");
+  let sValue = 0.0005
+  this.tempPos = -0.0098
 
-  this.changeFont(3); // Ensure the font is updated
+  // if(this.currentModel=="P1"){
+  //     sValue = 0.0005
+  // }
+  // if( this.currentModel=="P2" || this.currentModel=="P3" ){
+  //   sValue = 0.0003
 
-  // Load font for engraving text
+  // }
+  // if( this.currentModel=="P4"){
+  //   sValue = 0.0004
+  //   this.tempPos = -0.0087
+  // }
+  // if( this.currentModel=="P5"){
+  //   sValue = 0.0004
+
+  // }
+  // Default configurations
+  const fontConfigurations = {
+    1: { size: 0.0009, height: sValue, rotation: { x: 0, y: 0, z: 0 } },
+    2: { size: 0.0009, height: sValue },
+    3: { size: 0.0009, height: sValue },
+    4: { size: 0.0009, height: sValue },
+    5: { size: 0.0009, height: sValue },
+  };
+
+  const config = { ...fontConfigurations[this.fontIndex || 1], ...options };
+
+  console.log("hello 22", this.fontIndex, this.currentFont)
+
+  // Load font
   this.fontLoader.load(this.currentFont, (font) => {
     const createEngraving = (model) => {
+      let innerMesh = null;
+
+      // Locate the Inner mesh
+      model.traverse((child) => {
+        if (child.isMesh && child.name.includes("Inner")) {
+          innerMesh = child;
+        }
+      });
+
+      if (!innerMesh) {
+        console.error("Inner mesh not found.");
+        return;
+      }
+
+      // Compute bounding box of the Inner mesh
+      innerMesh.geometry.computeBoundingBox();
+      const boundingBox = innerMesh.geometry.boundingBox;
+
+      const innerRadius = (boundingBox.max.x - boundingBox.min.x) / 2; // Approximate radius
+      const depthOffset = 0.0002; // Slight offset to make it visible on top of the surface
+
+      // Create the text geometry
       const textGeometry = new TextGeometry(text, {
         font: font,
-        size: size,
-        height: height,
-        curveSegments: 30,
+        size: config.size,
+        depth: config.height,
+        curveSegments: 12,
         bevelEnabled: false,
       });
 
-      // Center the text geometry
-      textGeometry.computeBoundingBox();
       textGeometry.center();
 
+      const bender = new Bender();
+      // Apply bending if needed
+      // bender.bend(textGeometry, "x", Math.PI / 16);
+
+      // Create text mesh
       const textMaterial = new THREE.MeshStandardMaterial({
-        color: color,
+        color: this.currentColor,
         metalness: 0.8,
-        roughness: 0.7,
+        roughness: 0.5,
       });
-
       const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      textMesh.name = "test"
+      // Position text slightly above the inner surface
+      textMesh.position.set(0, 0.00020,   this.tempPos);
+      textMesh.rotation.set(0, 0, 0); // Align text along the ring's curvature
 
-      // Set position and rotation on the model surface
-      textMesh.position.set(
-        position.x,
-        position.y,
-        position.z - depthOffset // Engrave slightly into the model
-      );
-      textMesh.rotation.set(rotation.x, rotation.y, rotation.z);
+      // Add the text mesh to the inner mesh
+      innerMesh.add(textMesh);
 
-      // Add text mesh as a child to the model
-      model.add(textMesh);
-      console.log(`Engraved text "${text}" on the model`);
+      console.log("Engraving applied to the inner mesh.", boundingBox.min.y);
     };
 
-    // Handle engraving for the selected model or both models in the pair
+    const engraveOnModels = (models) => {
+      models.forEach((model) => {
+        if (model) {
+          createEngraving(model);
+        } else {
+          console.warn("Model not found for engraving.");
+        }
+      });
+    };
+
+    // Check if pair1 is active and engrave on both rings
     if (this.pair1 && this.currentDisplayedModels.length > 1) {
-      // Engrave on both ring 1 and ring 2 if pair1 is active
       const ring1 = this.currentDisplayedModels[0];
       const ring2 = this.currentDisplayedModels[1];
-
-      if (ring1) createEngraving(ring1);
-      if (ring2) createEngraving(ring2);
-
+      engraveOnModels([ring1, ring2]);
       console.log(`Engraved text "${text}" on both pair1 rings.`);
     } else {
       // Engrave only on the selected model
       const model = this.currentDisplayedModels[this.selectedModel - 1];
-      if (!model) {
-        console.warn('Model not found for selectedRingId:', this.selectedModel);
-        return;
-      }
-      createEngraving(model);
+      engraveOnModels([model]);
       console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
     }
   });
 }
 
 
+
+
+
+
+removeEngraving() {
+  console.log("Removing engraving...");
+
+  const removeTextFromModel = (model) => {
+    const childrenToRemove = [];
+    model.traverse((child) => {
+      if (child.isMesh && child.name === "test") {
+        childrenToRemove.push(child);
+        
+      }
+    });
+    
+    // Remove the identified children
+    childrenToRemove.forEach((child) => {
+      // console.log("Removing engraving...2",child);
+      model.remove(child);
+      child.geometry.dispose();
+      child.material.dispose();
+      child.visible = false;
+      // console.log("Removing engraving...3",child);
+
+    });
+
+    // console.log("All meshes named 'test' removed from model.");
+  };
+
+  // Handle removal for both models in the pair if `pair1` is active
+  if (this.pair1 && this.currentDisplayedModels.length > 1) {
+    const ring1 = this.currentDisplayedModels[0];
+    const ring2 = this.currentDisplayedModels[1];
+
+    if (ring1) removeTextFromModel(ring1);
+    if (ring2) removeTextFromModel(ring2);
+
+    console.log("Engraving removed from both pair1 rings.");
+  } else {
+    // Remove engraving from the selected model
+    const model = this.currentDisplayedModels[this.selectedModel - 1];
+    if (!model) {
+      console.warn("Model not found for selectedRingId:", this.selectedModel);
+      return;
+    }
+    removeTextFromModel(model);
+    console.log(`Engraving removed from model ${this.selectedModel}`);
+  }
+}
+
+
+
+
 changeFont(fontIndex) {
-  // Define the available font paths
   const fontPaths = [
     './src/assets/fonts/Roboto_Regular.json', // Font 1
-    './src/assets/fonts/LEMON_MILK_Bold_Italic.json',  // Font 2
-    './src/assets/fonts/Love_Romance_Regular.json', // Font 3
-    './src/assets/fonts/Mentalis_Regular.json', // Font 4
+    './src/assets/fonts/optimer_regular.typeface.json', // Font 2
+    './src/assets/fonts/gentilis.json', // Font 3
+    './src/assets/fonts/optimer_regular.typeface.json', // Font 4
+    './src/assets/fonts/helvetiker_regular.typeface.json', // Font 5
+    './src/assets/fonts/droid_serif_regular.json', // Font 6
   ];
+
+  if (fontIndex === -1) {
+    this.currentFont = './src/assets/fonts/Love_Romance_Regular.json';
+    console.log(`Font changed to: ${this.currentFont}`);
+    return Promise.resolve(); // Resolve immediately for special case
+  }
 
   // Validate the font index
   if (fontIndex < 1 || fontIndex > fontPaths.length) {
-    console.warn(`Invalid font index: ${fontIndex}. Please choose a number between 1 and ${fontPaths.length}.`);
-    return;
+    console.warn(
+      `Invalid font index: ${fontIndex}. Please choose a number between 1 and ${fontPaths.length}.`
+    );
+    return Promise.reject(new Error("Invalid font index."));
   }
 
-  // Set the current font to the selected one
-  this.currentFont = fontPaths[fontIndex - 1];
-  console.log(`Font changed to: ${this.currentFont}`);
+  // Set the current font path
+  const selectedFontPath = fontPaths[fontIndex - 1];
+  this.currentFont = selectedFontPath;
+  this.fontIndex = fontIndex;
+
+  console.log(`Attempting to load font: ${this.currentFont}`);
+
+  // Load the font using fetch
+  return new Promise((resolve, reject) => {
+    fetch(this.currentFont)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Failed to load font: ${this.currentFont}, Status: ${response.status}`
+          );
+        }
+        return response.json(); // Ensure the response is valid JSON
+      })
+      .then((data) => {
+        console.log(`Font loaded successfully: ${this.currentFont}`);
+        resolve(data);
+      })
+      .catch((error) => {
+        console.error(`Error loading font: ${this.currentFont}`, error.message);
+        reject(error);
+      });
+  });
 }
+
 
 
 }

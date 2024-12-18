@@ -1,6 +1,6 @@
 // MessageHandler.js
 
-import IsPair from "../src/components/shared/IsPair";
+
 
 export class MessageHandler {
   constructor(modelManager, orbitControlHandler) {
@@ -12,7 +12,7 @@ export class MessageHandler {
   }
 
   handleMessage(event) {
-    const { action, modelId, type, id, selectedRing, value, pair } = event.data;
+    const { action, modelId, type, id, selectedRing, value, pair, isEngraving } = event.data;
     // console.log('Message received from parent:', event.data, action);
 
     switch (action) {
@@ -32,8 +32,8 @@ export class MessageHandler {
         // console.log("current selected model",modelId)
         break;
       case 'updatePairStatus':
-        console.log("ipair",value)
-        this.modelManager.currentPairUpdate(value)  
+        console.log("ipair", value)
+        this.modelManager.currentPairUpdate(value)
         break;
       case 'changeWidth':
         // console.log("change size called",value, selectedRing) 
@@ -51,23 +51,69 @@ export class MessageHandler {
       case 'countrySize':
         this.modelManager.setSizeCountryWise(value);
         // console.log("value",value)
-        break;  
+        break;
       case 'changeColor':
         this.modelManager.changeModelColor(value.colorCode)
-        console.log("value",value.colorCode, value.value)
+        console.log("value", value.colorCode, value.value)
         break;
       case 'EngraveSymbol':
-        console.log("hello",value)
-        if(value.value=="double-heart"){
+        console.log("hello", value)
+        this.modelManager.removeEngraving()
+
+        this.modelManager.changeFont(-1);
+        if (value.value == "double-heart") {
           this.modelManager.engraveTextOnModel("GG")
+          
         }
-        else if(value.value=="heart"){
+        else if (value.value == "heart") {
           this.modelManager.engraveTextOnModel("G")
         }
-        else if(value.value=="double-ring"){
+        else if (value.value == "double-ring") {
           this.modelManager.engraveTextOnModel("MGN")
         }
+        this.modelManager.changeFont(1);
+
+
         break;
+      case "EngraveText":
+        console.log("hello frm text", isEngraving)
+        // if (isEngraving == "") {
+
+          this.modelManager.removeEngraving()
+        // }
+        // else {
+          // this.modelManager.changeFont(2);
+          this.modelManager.engraveTextOnModel(isEngraving)
+        // }
+        break;
+      case "FontChange":
+        if(value=="svnfont00"){
+          this.modelManager.changeFont(1); 
+
+        }
+        else  if(value=="svnfont01"){
+          this.modelManager.changeFont(2); 
+
+        }
+        else  if(value=="svnfont02"){
+          this.modelManager.changeFont(5); 
+
+        }
+        else  if(value=="svnfont03"){
+          this.modelManager.changeFont(4); 
+
+        }
+        else  if(value=="svnfont04"){
+          this.modelManager.changeFont(5); 
+
+        }
+        else{
+          console.log("unknown font value", value)
+        }
+        this.modelManager.removeEngraving()
+
+break;
+
       default:
         console.warn('Unknown action:', action);
         break;
@@ -187,6 +233,8 @@ export class MessageHandler {
         console.warn("Unknown model identifier:", modelId);
         break;
     }
+    this.modelManager.setCurrentModelName(modelId)
+
   }
 
 }
