@@ -3,16 +3,17 @@
 
 
 export class MessageHandler {
-  constructor(modelManager, orbitControlHandler) {
+  constructor(modelManager, metalManager) {
+    this.pMetalManager = metalManager;
     this.modelManager = modelManager;
-    this.orbitControlHandler = orbitControlHandler;
+    // this.orbitControlHandler = orbitControlHandler;
 
     // Add the event listener for messages from the parent
     window.addEventListener('message', this.handleMessage.bind(this));
   }
 
   handleMessage(event) {
-    const { action, modelId, type, id, selectedRing, value, pair, isEngraving } = event.data;
+    const { action, modelId, type, id, selectedRing, value, pair, isEngraving,isBiCol,isTriCol,isMetal,field } = event.data;
     // console.log('Message received from parent:', event.data, action);
 
     switch (action) {
@@ -53,8 +54,47 @@ export class MessageHandler {
         // console.log("value",value)
         break;
       case 'changeColor':
+        // console.log("value aaaaaaa",isBiCol.name, value.colorCode, field)
+        if(isBiCol==null && isTriCol==null){
         this.modelManager.changeModelColor(value.colorCode)
-        console.log("value", value.colorCode, value.value)
+        console.log("value", value.colorCode, value.value)}
+        if(isBiCol.name=="Two tone" && field=="single"){ 
+          this.pMetalManager.colorChangeBi(value.colorCode,1)
+        }
+        else  if(isBiCol.name=="Two tone" && field=="twoTone"){
+          this.pMetalManager.colorChangeBi(value.colorCode,2)
+          
+        }
+        else  if(isBiCol.name=="Two tone" && field=="triColored"){
+          this.pMetalManager.colorChangeBi(value.colorCode,3)
+          
+        }
+
+        if(isBiCol.name=="Tri Colored"){
+          if(field=="single"){
+            this.pMetalManager.colorChangeBi(value.colorCode,1)
+
+          }
+          else if(field=="twoTone"){
+          this.pMetalManager.colorChangeBi(value.colorCode,3)
+            
+          }
+          else if(field=="triColored"){
+          this.pMetalManager.colorChangeBi(value.colorCode,2)
+            
+          }
+
+        }
+        // else if(isTriCol!=null ){
+        //   if(field=="single"){  // single means first field
+        //   this.pMetalManager.coloChangeTri(value.colorCode,1) }
+        // }
+        // else  if(field=="twoTone"){ // second color field
+        //   this.pMetalManager.coloChangeTri(value.colorCode,2) 
+        // }
+        // else  if(field=="triColored"){ // // third color field
+        //   this.pMetalManager.coloChangeTri(value.colorCode,3) 
+        // }
         break;
       case 'EngraveSymbol':
         console.log("hello", value)
@@ -85,6 +125,18 @@ export class MessageHandler {
           // this.modelManager.changeFont(2);
           this.modelManager.engraveTextOnModel(isEngraving)
         // }
+        break;
+      case "PreciousMetal":
+        console.log("cal", value,isBiCol)
+     let  lengthModels= this.modelManager.currentDisplayedModels.length
+        
+          if(lengthModels==1 && isBiCol){
+            this.pMetalManager.biColorOneRing(value);
+        }
+        else if(lengthModels==1 && (!isBiCol || isBiCol == null)){
+          this.pMetalManager.triColorOneRing(value);
+
+        }
         break;
       case "FontChange":
         if(value=="svnfont00"){

@@ -27,9 +27,10 @@ export class Renderer {
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.toneMapping = toneMappingOptions[params.NeutralToneMapping];
+    this.renderer.toneMapping = toneMappingOptions[params.toneMapping];
     this.renderer.toneMappingExposure = params.exposure;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.localClippingEnabled = true;
 
     
 

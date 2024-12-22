@@ -7,7 +7,7 @@ import { Renderer } from './threejsScripts/renderer.js';
 import { OrbitControlHandler } from './threejsScripts/OrbitControlManager.js'; // Import the new OrbitControlManager class
 import { ModelManager } from './threejsScripts/ModelManager.js'; // Import the new ModelManager class
 import { MessageHandler } from './threejsScripts/MessageHandler.js'; // Import MessageHandler
-
+import {PreciousMetal} from "./threejsScripts/PreciousMetal.js";
 
 
 
@@ -22,16 +22,17 @@ class RotatingRingApp {
     this.modelManager = new ModelManager(this.scene);
     this.cameraInstance = new Camera(this.scene);
     this.camera = this.cameraInstance.getCamera(); // Get the camera instance
-
     this.rendererInstance = new Renderer();
     this.renderer = this.rendererInstance.getRenderer(); 
-   
+    this.renderer.localClippingEnabled = true;
+    this.PreciousMetalins = new PreciousMetal(this.scene,this.modelManager, this.renderer );
+    
     this.lighting = new Lighting(this.scene);
     this.floor = new Floor(this.scene, this.camera, this.renderer);
     this.environment = new Environment(this.scene);
     this.OrbitControlHandler = new OrbitControlHandler(this.camera, this.renderer.domElement);
-     this.messageHandler = new MessageHandler(this.modelManager, this.OrbitControlHandler);
-
+    this.messageHandler = new MessageHandler(this.modelManager, this.PreciousMetalins);
+    
     document.body.appendChild(this.renderer.domElement);
 
     // Load GLB models

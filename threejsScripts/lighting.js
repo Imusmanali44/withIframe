@@ -3,7 +3,7 @@ import * as THREE from 'three';
 export class Lighting {
   constructor(scene) {
     this.scene = scene;
-    this.initLighting();
+    // this.initLighting();
   }
 
   initLighting() {

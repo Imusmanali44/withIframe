@@ -191,16 +191,26 @@ export const PreciousMetal = ({
   // Function to handle selection from the dropdown
 // Function to handle selection from the dropdown
 const handleOptionSelect = (option) => {
+  let isTwoTone = null;
   if (option.name === "Two tone") {
     setSelectedPartitionTwotoneImg(option);
+   isTwoTone = true;
+
   } else {
+    setSelectedPartitionTwotoneImg(option);
+
     setSelectedPartitionTriColoredImg(option);
+    isTwoTone = false;
   }
   setSelectedOption(option);
   setIsPartitionDropdownOpen(false);
 
   // Log the selection to the console
   console.log(`Option selected: ${option.label}, Value: ${option.img}`);
+  window.parent.postMessage(
+    { action: "PreciousMetal", value: option.label,isBiCol: isTwoTone },
+    "*"
+  );
 };
 
 
@@ -292,8 +302,10 @@ const handleOptionSelect = (option) => {
       partition,
       field,
       value,
+      selectedPartitionTwotoneImg,
+      selectedPartitionTriColoredImg
     });
-    window.parent.postMessage({ action: "changeColor", value }, "*"); // Send message to Configurator
+    window.parent.postMessage({ action: "changeColor", value,isBiCol: selectedPartitionTwotoneImg,isTriCol:selectedPartitionTriColoredImg,field: partition   }, "*"); // Send message to Configurator
 
     updateSelection(partition, field, value);
   }}
