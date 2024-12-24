@@ -192,3 +192,136 @@ engraveTextOnModel(text, options = {}) {
     }
   });
 }
+
+biColorPair(val) {                                                    
+  // this.removeHelperModelAndClipping(); // Ensure no duplicate models or clipping planes.
+  let selectedModel;
+  let offset = 0; // 0 for 1:1, 0.1 for 1:3|
+  let helperModelPosX = 0.7 
+  let helperModelPosY = 0
+  
+
+  const ring1 = this.modelManager.currentDisplayedModels[0];
+  const ring2 = this.modelManager.currentDisplayedModels[1];
+  if(this.modelManager.selectedModel==1){
+
+ 
+    selectedModel = ring1
+    offset = 0.7
+    helperModelPosX = -0.7
+    if (val === "1:1") {
+      // offset += 0.05;
+  }
+  else  if (val === "1:2") {
+      offset += 0.05;
+  }
+  else if(val === "1:3"){
+      offset += 0.07
+  }
+  
+}
+else{
+  selectedModel = ring2;
+  offset = -0.7
+  helperModelPosX = 0.7
+  helperModelPosY = -0.15
+  if (val === "1:1") {
+    // offset -= 0.05;
+  }
+  else  if (val === "1:2") {
+    offset += 0.1;
+  }
+  else if(val === "1:3"){
+      offset += 0.07
+    }
+  }
+  console.log("ring1", val,offset)
+  
+
+  if (!selectedModel) {
+      console.error("No selected model found.");
+      return;
+  }
+ 
+
+
+  if (selectedModel == ring1) {
+    this.removeHelperModelAndClipping(1); 
+    // offset = 0.7
+    helperModelPosX = -0.7
+  let helperModelPosY = 0
+
+      // Clone and add the helper model2w34
+      this.helperModel = this.cloneModelWithUniqueMaterial(selectedModel);
+      this.helperModel.position.set(helperModelPosX,helperModelPosY,0)
+      this.scene.add(this.helperModel);
+      this.applyColorToModel(this.helperModel, "#A09F9D");
+
+      // Create clipping planes
+      const clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
+      const clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
+
+      // Apply clipping planes to the materials
+      selectedModel.traverse((child) => {
+          if (child.isMesh) {
+              child.material.clippingPlanes = [clippingPlaneRing1];
+              child.material.clipShadows = true;
+              child.material.needsUpdate = true;
+          }
+      });
+
+      this.helperModel.traverse((child) => {
+          if (child.isMesh) {
+              child.material.clippingPlanes = [clippingPlaneRing2];
+              child.material.clipShadows = true;
+              child.material.needsUpdate = true;
+          }
+      });
+      
+     // First model on the left
+
+      console.log("aaaa 1")
+
+
+}
+else if(selectedModel == ring2){
+  this.removeHelperModelAndClipping(2); 
+
+  console.log("aaaa 2")
+
+  // offset = -0.7
+  helperModelPosX = 0.7
+let helperModelPosY = -0.15
+
+    // Clone and add the helper model
+    this.helperModelring2 = this.cloneModelWithUniqueMaterial(selectedModel);
+    this.helperModelring2.position.set(helperModelPosX,helperModelPosY,0)
+    this.scene.add(this.helperModelring2);
+    this.applyColorToModel(this.helperModelring2, "#A09F9D");
+
+    // Create clipping planes
+    const clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
+    const clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
+
+    // Apply clipping planes to the materials
+    selectedModel.traverse((child) => {
+        if (child.isMesh) {
+            child.material.clippingPlanes = [clippingPlaneRing1];
+            child.material.clipShadows = true;
+            child.material.needsUpdate = true;
+        }
+    });
+
+    this.helperModelring2.traverse((child) => {
+        if (child.isMesh) {
+            child.material.clippingPlanes = [clippingPlaneRing2];
+            child.material.clipShadows = true;
+            child.material.needsUpdate = true;
+        }
+    });
+
+
+}
+    
+      console.log("Clipping plane applied to the selected model and helper model.");
+  }

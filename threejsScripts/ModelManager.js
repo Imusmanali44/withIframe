@@ -4,14 +4,15 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { Flow } from 'three/examples/jsm/modifiers/CurveModifier.js';
-
+import { PreciousMetal } from "./PreciousMetal";
 // import  CSG  from '/utils/CSGMesh.js'
 import Bender from '/utils/bender.js'
 
 
 export class ModelManager {
-  constructor(scene) {
+  constructor(scene,PreciousMetal) {
     this.scene = scene;
+    this.PreciousMetal = PreciousMetal
     this.models = [];
     this.currentDisplayedModels = [];
     this.currentModelIndex = 0;
@@ -21,6 +22,7 @@ export class ModelManager {
     this.loader = new GLTFLoader();
     this.tatt = new TextGeometry();
     this.fontLoader = new FontLoader(); 
+    // this.PreciousMetalIns = new pre
     this.currentFont = "./src/assets/fonts/Roboto_Regular.json";
     this.currentColor = "";
     this.loadMatCapTextures();
@@ -333,6 +335,14 @@ export class ModelManager {
 
   switchModel(index, selectedRingId = 1, pair1 = false, pair2 = false) {
     this.currentColor = "#A09F9D";
+    if(this.PreciousMetal.isEnable == true){
+      this.PreciousMetal.removeHelperModelAndClipping(1);
+      this.PreciousMetal.removeHelperModelAndClipping(2);
+
+    }
+    else{
+      this.PreciousMetal.isEnable == false
+    }
     if (index < 0 || index >= this.models.length) {
       console.warn('Invalid model index:', index);
       return;
@@ -343,6 +353,28 @@ export class ModelManager {
 
       // Change both 1st and 2nd rings
       this.showCurrentModels(index, pair1); // For 1st and 2nd rings
+      console.log("chk")
+      let prevVal = 0
+      if(this.PreciousMetal.isEnable == true){ 
+        let ring1 = this.currentDisplayedModels[0]
+        let ring2 = this.currentDisplayedModels[1]
+        let triBool
+        if(this.PreciousMetal.currentVal){
+         prevVal = this.PreciousMetal.currentVal 
+      }
+      else{
+        prevVal = "1:1"
+      }
+      if(this.PreciousMetal.triBool){
+        triBool = this.PreciousMetal.triBool  
+      }
+      console.log("aa",prevVal,triBool)
+      this.PreciousMetal.removeHelperModelAndClipping(1);
+      this.PreciousMetal.removeHelperModelAndClipping(2);
+      this.PreciousMetal.handlePair(ring1,ring2,prevVal,triBool)
+
+      
+      }
     } else if (pair2) {
 
       // Change both 3rd and 4th rings
@@ -457,8 +489,8 @@ export class ModelManager {
 
   showCurrentModels(index, pair1 = false) {
     const model = this.models[index];
-    const model1 = model.clone();
-    const model2 = model.clone();
+    const model1 = this.cloneModelWithUniqueMaterial(model);
+    const model2 = this.cloneModelWithUniqueMaterial(model);
 
     if (pair1) {
       // Hide both models before showing new ones
@@ -501,6 +533,7 @@ export class ModelManager {
         model2.visible = true;
         this.currentDisplayedModels[1] = model2; // Update the second model
       }
+      
     }
 
     // Maintain third and fourth models if they exist

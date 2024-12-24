@@ -57,7 +57,8 @@ export class MessageHandler {
         // console.log("value aaaaaaa",isBiCol.name, value.colorCode, field)
         if(isBiCol==null && isTriCol==null){
         this.modelManager.changeModelColor(value.colorCode)
-        console.log("value", value.colorCode, value.value)}
+        console.log("value", value.colorCode, value.value)
+      return;}
         if(isBiCol.name=="Two tone" && field=="single"){ 
           this.pMetalManager.colorChangeBi(value.colorCode,1)
         }
@@ -127,7 +128,7 @@ export class MessageHandler {
         // }
         break;
       case "PreciousMetal":
-        console.log("cal", value,isBiCol)
+        console.log("cal", value,isBiCol,isTriCol)
      let  lengthModels= this.modelManager.currentDisplayedModels.length
         
           if(lengthModels==1 && isBiCol){
@@ -136,6 +137,12 @@ export class MessageHandler {
         else if(lengthModels==1 && (!isBiCol || isBiCol == null)){
           this.pMetalManager.triColorOneRing(value);
 
+        }
+        else if(lengthModels==2 && isBiCol){
+          this.pMetalManager.biTriPair(value);
+        }
+        else if(lengthModels==2 && (!isBiCol || isBiCol == null)){
+          this.pMetalManager.biTriPair(value,true);
         }
         break;
       case "FontChange":

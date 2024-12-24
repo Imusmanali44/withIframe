@@ -19,14 +19,25 @@ class RotatingRingApp {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color('#FFFFFF'); // Light gray background
 
-    this.modelManager = new ModelManager(this.scene);
+    // this.modelManager = new ModelManager(this.scene);
     this.cameraInstance = new Camera(this.scene);
     this.camera = this.cameraInstance.getCamera(); // Get the camera instance
     this.rendererInstance = new Renderer();
     this.renderer = this.rendererInstance.getRenderer(); 
     this.renderer.localClippingEnabled = true;
-    this.PreciousMetalins = new PreciousMetal(this.scene,this.modelManager, this.renderer );
+    // this.PreciousMetalins = new PreciousMetal(this.scene,this.modelManager, this.renderer );
     
+
+    this.PreciousMetalins = new PreciousMetal(this.scene, null, this.renderer);
+
+    // Create ModelManager and pass PreciousMetal instance
+    this.modelManager = new ModelManager(this.scene, this.PreciousMetalins);
+
+    // Update PreciousMetal with ModelManager instance
+    this.PreciousMetalins.modelManager = this.modelManager;
+
+
+
     this.lighting = new Lighting(this.scene);
     this.floor = new Floor(this.scene, this.camera, this.renderer);
     this.environment = new Environment(this.scene);
