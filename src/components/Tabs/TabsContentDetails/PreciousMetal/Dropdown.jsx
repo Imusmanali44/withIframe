@@ -21,11 +21,11 @@ export const Dropdown = ({
           <CloseSvg width={15} height={15} onClick={() => setIsOpen(false)} />
         </div>
       </div>
-      <ul className=" overflow-auto max-h-64 flex flex-wrap justify-start">
+      <ul className=" flex flex-wrap justify-start">
         {options.map((option, index) => (
           <li
             key={index}
-            className={`w-[calc(32%-10px)] lg:w-[calc(25%-10px)] mx-1 mb-2 bg-white p-2 cursor-pointer hover:bg-gray-100 border text-center ${
+            className={`w-[calc(32%-10px)] lg:w-[calc(25%-10px)] mx-1 mb-2 bg-white pt-2 cursor-pointer hover:bg-gray-100 border text-center ${
               selectedOption?.label === option.label
                 ? "border-[#205fa8]"
                 : "border-[#e1e1e1]"

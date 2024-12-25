@@ -31,7 +31,7 @@ const metalOptions = [
   {
     value: "Rose Gold",
     colorCode: "#B76E79",
-  }
+  },
   // {
   //   value: "Red Gold",
   //   colorCode: "#C2412D",
@@ -99,24 +99,108 @@ const options = [
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-3.svg",
   },
   {
+    label: "1:4",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-4.svg",
+  },
+  {
     label: "Golf 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-1.svg",
   },
   {
-    label: "Golf 1:2",
-    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-1.svg",
+    label: "Diagonaal 1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-1.svg",
   },
   {
-    label: "Golf 1:3",
-    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-2.svg",
+    label: "Segment 1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/segment-1-1.svg",
   },
   {
-    label: "Golf 1:4",
-    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-3.svg",
+    label: "Axiaal 1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/horizontal-1-1.svg",
   },
   {
-    label: "Golf 1:5",
-    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-1.svg",
+    label: " Vrij ",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-free-2.svg",
+  },
+  {
+    label: " Golf vrij ",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-free-2.svg",
+  },
+  {
+    label: " Diagonaal vrij ",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-free-2.svg",
+  },
+];
+
+const options2 = [
+  {
+    label: " 1:1:1 ",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-1-1.svg",
+  },
+  {
+    label: "1:2:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-2-1.svg",
+  },
+  {
+    label: "1:3:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-3-1.svg",
+  },
+  {
+    label: "1:4:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-4-1.svg",
+  },
+  {
+    label: "2:1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-2-1-1.svg",
+  },
+  {
+    label: "3:1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-3-1-1.svg",
+  },
+ 
+  {
+    label: "4:1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/horizontal-1-1.svg",
+  },
+  {
+    label: "2:1:2",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-2-1-2.svg",
+  },
+  {
+    label: "Golf 1:1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-1-1.svg",
+  },
+  {
+    label: "Golf 1:2:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-2-1.svg",
+  },
+  {
+    label: "Golf 2:1:2",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-2-1-2.svg",
+  },
+  {
+    label: "Diagonaal 1:1:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-1-1.svg",
+  },
+  {
+    label: "Diagonaal 1:2:1",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-2-1.svg",
+  },
+  {
+    label: "Diagonaal 2:1:2",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-2-1-2.svg",
+  },
+  {
+    label: "Vrij",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-free-3.svg",
+  },
+  {
+    label: "Golf Vrij",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-free-3.svg",
+  },
+  {
+    label: "Diagonaal vrij",
+    img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-free-3.svg",
   },
 ];
 
@@ -170,6 +254,7 @@ export const PreciousMetal = ({
     useState(null);
 
   const togglePartitionDropdown = (item) => {
+    console.log(item)
     setPartition(item);
     setIsPartitionDropdownOpen(!isPartitionDropdownOpen);
   };
@@ -189,37 +274,33 @@ export const PreciousMetal = ({
   };
 
   // Function to handle selection from the dropdown
-// Function to handle selection from the dropdown
-const handleOptionSelect = (option) => {
-  let isTwoTone = null;
-  if (option.name === "Two tone") {
-    setSelectedPartitionTwotoneImg(option);
-   isTwoTone = true;
+  // Function to handle selection from the dropdown
+  const handleOptionSelect = (option) => {
+    console.log(option)
+    let isTwoTone = null;
+    if (option.name === "Two tone") {
+      setSelectedPartitionTwotoneImg(option);
+      isTwoTone = true;
+    } else {
+      setSelectedPartitionTriColoredImg(option);
+      isTwoTone = false;
+    }
+    setSelectedOption(option);
+    setIsPartitionDropdownOpen(false);
 
-  } else {
-    setSelectedPartitionTwotoneImg(option);
-
-    setSelectedPartitionTriColoredImg(option);
-    isTwoTone = false;
-  }
-  setSelectedOption(option);
-  setIsPartitionDropdownOpen(false);
-
-  // Log the selection to the console
-  console.log(`Option selected: ${option.label}, Value: ${option.img}`);
-  window.parent.postMessage(
-    { action: "PreciousMetal", value: option.label,isBiCol: isTwoTone },
-    "*"
-  );
-};
-
+    // Log the selection to the console
+    console.log(`Option selected: ${option.label}, Value: ${option.img}`);
+    window.parent.postMessage(
+      { action: "PreciousMetal", value: option.label, isBiCol: isTwoTone },
+      "*"
+    );
+  };
 
   // console.log("purity", purity);
   // console.log("partition", partition);
   // console.log("activeRing:", activeRing);
   // console.log("selectedOption", selectedOption);
   console.log("selectedPartitionImg", selectedPartitionTwotoneImg);
-
   return (
     <div className="mb-auto">
       {rings &&
@@ -281,11 +362,10 @@ const handleOptionSelect = (option) => {
               {isPartitionDropdownOpen && (
                 <Dropdown
                   title={partition.name}
-                  options={options}
+                  options={partition.name === "Two tone" ? options : options2}
                   setIsOpen={setIsPartitionDropdownOpen}
                   selectedOption={selectedOption}
                   setSelectedOption={handleOptionSelect}
-                  
                 />
               )}
             </div>
@@ -294,27 +374,36 @@ const handleOptionSelect = (option) => {
         {/* Dropdowns for Metal and Surface */}
 
         <ColorSurface
-  isWeddingRing={isWeddingRing}
-  isExpert={isExpert}
-  metalOptions={metalOptions}
-  updateSelection={(partition, field, value) => {
-    console.log("Updated selection in ColorSurface:", {
-      partition,
-      field,
-      value,
-      selectedPartitionTwotoneImg,
-      selectedPartitionTriColoredImg
-    });
-    window.parent.postMessage({ action: "changeColor", value,isBiCol: selectedPartitionTwotoneImg,isTriCol:selectedPartitionTriColoredImg,field: partition   }, "*"); // Send message to Configurator
+          isWeddingRing={isWeddingRing}
+          isExpert={isExpert}
+          metalOptions={metalOptions}
+          updateSelection={(partition, field, value) => {
+            console.log("Updated selection in ColorSurface:", {
+              partition,
+              field,
+              value,
+              selectedPartitionTwotoneImg,
+              selectedPartitionTriColoredImg,
+            });
+            window.parent.postMessage(
+              {
+                action: "changeColor",
+                value,
+                isBiCol: selectedPartitionTwotoneImg,
+                isTriCol: selectedPartitionTriColoredImg,
+                field: partition,
+              },
+              "*"
+            ); // Send message to Configurator
 
-    updateSelection(partition, field, value);
-  }}
-  surfaceOptions={surfaceOptions}
-  purityOptions={purityOptions}
-  selections={selections}
-  selectedPartitionTwotoneImg={selectedPartitionTwotoneImg}
-  selectedPartitionTriColoredImg={selectedPartitionTriColoredImg}
-/>
+            updateSelection(partition, field, value);
+          }}
+          surfaceOptions={surfaceOptions}
+          purityOptions={purityOptions}
+          selections={selections}
+          selectedPartitionTwotoneImg={selectedPartitionTwotoneImg}
+          selectedPartitionTriColoredImg={selectedPartitionTriColoredImg}
+        />
 
         {/* Surface Dropdown */}
         {isWeddingRing &&
