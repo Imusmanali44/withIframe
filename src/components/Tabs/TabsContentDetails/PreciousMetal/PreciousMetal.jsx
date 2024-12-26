@@ -323,6 +323,7 @@ export const PreciousMetal = ({
                   <div key={index} className="w-1/3">
                     <button
                       onClick={
+                        
                         index !== 0
                           ? () => togglePartitionDropdown(item)
                           : () => {
@@ -330,6 +331,11 @@ export const PreciousMetal = ({
                               setIsPartitionDropdownOpen(false);
                               setSelectedPartitionTwotoneImg(null);
                               setSelectedPartitionTriColoredImg(null);
+                              console.log(index, DistributionOptions)
+                              window.parent.postMessage(
+                                { action: "PreciousMetal", value: index },
+                                "*"
+                              );
                             }
                       }
                       className={`bg-white w-full border ${
@@ -428,11 +434,11 @@ export const PreciousMetal = ({
           )}
         {isWeddingRing && selectedPartitionTwotoneImg && (
           <RangeSlider
-            title={"Selected Value"}
-            min={10}
-            max={200}
-            step={5}
-            defaultValue={75}
+            // title={"Selected Value"}
+            // min={-1}
+            // max={1}
+            // step={0.001}
+            // defaultValue={0}
           />
         )}
       </div>

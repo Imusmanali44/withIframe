@@ -23,7 +23,7 @@ export class Environment {
     loader.load(`./bg/silver4.hdr`, (texture) => {
       texture.mapping = THREE.EquirectangularReflectionMapping;
       texture.needsUpdate = true;
-
+      
       this.scene.environment = texture;
       this.scene.backgroundBlurriness = 1;
     });

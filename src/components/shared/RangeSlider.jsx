@@ -1,18 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import IsPair from "./IsPair";
+import { TopBar } from "../Configurator/TopBar";
 
 export const RangeSlider = ({
-  title,
-  min = 0,
-  max = 100,
-  step = 1,
-  defaultValue = 50,
+  title= "Ring 1",
+  min = -0.85,
+  max = -0.55,
+  step = 0.001,
+  defaultValue =-0.7 
 }) => {
+  // if(min==-1){
+  //   console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+  // }
+  if(window.selectedRing==2){
+    title= "Ring 2",
+    max = 0.85,
+    min = 0.55,
+    step = 0.001,
+    defaultValue =0.7
+  }
   const [value, setValue] = useState(defaultValue);
 
   const handleChange = (event) => {
     const newValue = event.target.value;
     setValue(newValue);
-    console.log(newValue);
+    console.log(newValue,"pair", window.pair1, "ringselect", window.selectedRing,min,max);
+    window.parent.postMessage(
+      { action: "changeSlider", value: newValue },
+      "*"
+    );
   };
 
   return (

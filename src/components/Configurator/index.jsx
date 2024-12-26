@@ -4,8 +4,13 @@ import TabContent from "../Tabs/TabsContent";
 import { TopBar } from "./TopBar";
 import TabContentFooter from "../Tabs/TabContentFooter";
 import ConfiguratorFooter from "./Footer";
+import { AppContext } from "./config";
 
+window.pair1 = 0
+window.selectedRing = 1;
+window.ringsLength = 0
 const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
+  
   const [isPair, setIsPair] = useState({
     pair1: false,
     pair2: false,
@@ -45,6 +50,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
   // Add useEffect to watch for changes in isPair
   useEffect(() => {
     console.log("Pair status updated:", isPair);
+    window.pair1 = isPair.pair1
     if (iframeRef.current) {
       iframeRef.current.contentWindow.postMessage({ action: 'updatePairStatus',value: isPair }, "*");
     }

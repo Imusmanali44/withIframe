@@ -12,6 +12,9 @@ export class PreciousMetal {
     this.clippingPlanes = []; // Array to hold clipping planes
     this.isEnable = false
     this.currentVal = 0;
+    this.biColorSingleBool = false
+    this.triColorSingleBool = false
+
     // this.orignalColor = this.getCurrentColor(this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1])
   }
 
@@ -38,13 +41,13 @@ biColorOneRing(val) {
       this.applyColorToModel(this.helperModel, "#A09F9D");
 
       // Create clipping planes
-      const clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
-      const clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
+      this.clippingPlaneRingSingleBi = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
+      this.clippingPlaneRingHelperBi = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
 
       // Apply clipping planes to the materials
       selectedModel.traverse((child) => {
           if (child.isMesh) {
-              child.material.clippingPlanes = [clippingPlaneRing1];
+              child.material.clippingPlanes = [this.clippingPlaneRingSingleBi ];
               child.material.clipShadows = true;
               child.material.needsUpdate = true;
           }
@@ -52,7 +55,7 @@ biColorOneRing(val) {
 
       this.helperModel.traverse((child) => {
           if (child.isMesh) {
-              child.material.clippingPlanes = [clippingPlaneRing2];
+              child.material.clippingPlanes = [this.clippingPlaneRingHelperBi];
               child.material.clipShadows = true;
               child.material.needsUpdate = true;
           }
@@ -62,7 +65,8 @@ biColorOneRing(val) {
     //  this.helperModel.position.set(-0.7, 0, 0); // First model on the left
     //  clippingPlaneRing1.constant = -0.7
     //  clippingPlaneRing2.constant = -0.7
-      this.getClippingPlanePosition(clippingPlaneRing1)
+      // this.getClippingPlanePosition(clippingPlaneRing1)
+      this.biColorSingleBool = true
       console.log("Clipping plane applied to the selected model and helper model.");
   }
 }    
@@ -97,6 +101,11 @@ let offsetRing2 = -0.7
     offsetRing2 += 0.07
     }
   
+    if(triBool==true){
+      offsetRing1 = 0.7
+      offsetRing2 = -0.7
+
+    }
 selectedModel = ring1
 
 // this.removeHelperModelAndClipping(1); 
@@ -113,13 +122,13 @@ let helperModelPosY = 0
   this.applyColorToModel(this.helperModel, "#A09F9D");
 
   // Create clipping planes
-  let clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetRing1);
-  let clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offsetRing1);
+   this.clippingPlaneRing1  = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetRing1);
+   this.clippingPlaneRing1helper = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offsetRing1);
 
   // Apply clipping planes to the materials
   selectedModel.traverse((child) => {
       if (child.isMesh) {
-          child.material.clippingPlanes = [clippingPlaneRing1];
+          child.material.clippingPlanes = [this.clippingPlaneRing1 ];
           child.material.clipShadows = true;
           child.material.needsUpdate = true;
       }
@@ -127,12 +136,35 @@ let helperModelPosY = 0
 
   this.helperModel.traverse((child) => {
       if (child.isMesh) {
-          child.material.clippingPlanes = [clippingPlaneRing2];
+          child.material.clippingPlanes = [this.clippingPlaneRing1helper];
           child.material.clipShadows = true;
           child.material.needsUpdate = true;
       }
   });
   if(triBool==true){
+    
+
+    let offsetTri = -0.65
+    let offsetTri2 = 0.75
+  
+      if (val == "1:1:1") {
+        
+        offsetTri = -0.65
+        offsetTri2 = 0.75
+    }
+    else  if (val === "1:2:1") {
+        // offset = 0.1;
+        offsetTri = -0.63
+        offsetTri2 = 0.78
+    }
+    else if(val === "1:3:1"){
+      offsetTri = -0.6
+      offsetTri2 = 0.8
+    }
+    else if(val === "1:4:1"){
+      offsetTri = -0.57
+      offsetTri2 = 0.83
+  }
   //  selectedModel = this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1];
   let modelColor = this.getCurrentColor(selectedModel)
   this.helperModeltriRing1 = this.cloneModelWithUniqueMaterial(selectedModel);
@@ -146,9 +178,9 @@ let helperModelPosY = 0
   this.applyColorToModel(this.helperModel, "#cd9d52")
 
   this.scene.add(this.helperModeltriRing1);
-  const clippingPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -0.6);
+  const clippingPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri);
 
-  const clippingPlane1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0.8);
+  const clippingPlane1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri2);
 
   this.helperModeltriRing1.traverse((child) => {
     if (child.isMesh) {
@@ -174,13 +206,13 @@ helperModelPosXring2 = 0.7
  this.applyColorToModel(this.helperModelring2, "#A09F9D");
 
  // Create clipping planes
-  clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetRing2);
-  clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offsetRing2);
+ this.clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetRing2);
+ this.clippingPlaneRing2helper = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offsetRing2);
 
  // Apply clipping planes to the materials
  selectedModel.traverse((child) => {
      if (child.isMesh) {
-         child.material.clippingPlanes = [clippingPlaneRing1];
+         child.material.clippingPlanes = [ this.clippingPlaneRing2];
          child.material.clipShadows = true;
          child.material.needsUpdate = true;
      }
@@ -188,12 +220,36 @@ helperModelPosXring2 = 0.7
 
  this.helperModelring2.traverse((child) => {
      if (child.isMesh) {
-         child.material.clippingPlanes = [clippingPlaneRing2];
+         child.material.clippingPlanes = [this.clippingPlaneRing2helper ];
          child.material.clipShadows = true;
          child.material.needsUpdate = true;
      }
  });
  if(triBool==true){
+  let offsetTri = -0.65
+  let offsetTri2 = 0.75
+
+    if (val == "1:1:1") {
+      
+      offsetTri = -0.65
+      offsetTri2 = 0.75
+  }
+  else  if (val === "1:2:1") {
+      // offset = 0.1;
+      offsetTri = -0.63
+      offsetTri2 = 0.78
+  }
+  else if(val === "1:3:1"){
+    offsetTri = -0.6
+    offsetTri2 = 0.8
+  }
+  else if(val === "1:4:1"){
+    offsetTri = -0.57
+    offsetTri2 = 0.83
+}
+console.log("val 0",val,offsetTri,offsetTri2)
+
+
  let modelColor = this.getCurrentColor(selectedModel)
  this.helperModeltriRing2 = this.cloneModelWithUniqueMaterial(selectedModel);
  // this.applyColorToModel(this.helperModel,"#"+modelColor)
@@ -206,9 +262,9 @@ helperModelPosXring2 = 0.7
   this.applyColorToModel(this.helperModeltriRing2,"#A09F9D")
   this.applyColorToModel(this.helperModelring2, "#cd9d52")
  this.scene.add(this.helperModeltriRing2);
- const clippingPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), -0.6);
+ const clippingPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri);
 
- const clippingPlane1 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0.8);
+ const clippingPlane1 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri2);
 
  this.helperModeltriRing2.traverse((child) => {
    if (child.isMesh) {
@@ -294,16 +350,18 @@ else{
       this.helperModel = this.cloneModelWithUniqueMaterial(selectedModel);
       this.helperModel.position.set(helperModelPosX,helperModelPosY,0)
       this.scene.add(this.helperModel);
+
+      
       this.applyColorToModel(this.helperModel, "#A09F9D");
 
       // Create clipping planes
-      const clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
-      const clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
+      this.clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
+      this.clippingPlaneRing1helper = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
 
       // Apply clipping planes to the materials
       selectedModel.traverse((child) => {
           if (child.isMesh) {
-              child.material.clippingPlanes = [clippingPlaneRing1];
+              child.material.clippingPlanes = [this.clippingPlaneRing1];
               child.material.clipShadows = true;
               child.material.needsUpdate = true;
           }
@@ -311,24 +369,49 @@ else{
 
       this.helperModel.traverse((child) => {
           if (child.isMesh) {
-              child.material.clippingPlanes = [clippingPlaneRing2];
+              child.material.clippingPlanes = [this.clippingPlaneRing1helper];
               child.material.clipShadows = true;
               child.material.needsUpdate = true;
           }
       });
       if(triBool==true){
+        let offsetTri = -0.65
+  let offsetTri2 = 0.75
+
+    if (val == "1:1:1") {
+      
+      offsetTri = -0.65
+      offsetTri2 = 0.75
+  }
+  else  if (val === "1:2:1") {
+      // offset = 0.1;
+      offsetTri = -0.63
+      offsetTri2 = 0.78
+  }
+  else if(val === "1:3:1"){
+    offsetTri = -0.6
+    offsetTri2 = 0.8
+  }
+  else if(val === "1:4:1"){
+    offsetTri = -0.57
+    offsetTri2 = 0.83
+}
       //  selectedModel = this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1];
       let modelColor = this.getCurrentColor(selectedModel)
       this.helperModeltriRing1 = this.cloneModelWithUniqueMaterial(selectedModel);
       // this.applyColorToModel(this.helperModel,"#"+modelColor)
       this.helperModeltriRing1.position.set(helperModelPosX,0,0)
 
-      this.applyColorToModel(this.helperModeltriRing1,"#B76E79")
+      this.applyColorToModel(selectedModel, "#cd9d52")
+      this.applyColorToModel(this.helperModeltriRing1,"#A09F9D")
+      this.applyColorToModel(this.helperModel, "#cd9d52")
+
+      // this.applyColorToModel(this.helperModeltriRing1,"#B76E79")
   
       this.scene.add(this.helperModeltriRing1);
-      const clippingPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -0.6);
+      const clippingPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri);
   
-      const clippingPlane1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0.8);
+      const clippingPlane1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri2);
   
       this.helperModeltriRing1.traverse((child) => {
         if (child.isMesh) {
@@ -346,7 +429,7 @@ else{
 }
 else if(selectedModel == ring2){
   this.removeHelperModelAndClipping(2); 
-
+ 
   console.log("aaaa 2")
 
   // offset = -0.7
@@ -360,13 +443,13 @@ let helperModelPosY = -0.15
     this.applyColorToModel(this.helperModelring2, "#A09F9D");
 
     // Create clipping planes
-    const clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
-    const clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
+    this.clippingPlaneRing2 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offset);
+    this.clippingPlaneRing2helper = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offset);
 
     // Apply clipping planes to the materials
     selectedModel.traverse((child) => {
         if (child.isMesh) {
-            child.material.clippingPlanes = [clippingPlaneRing1];
+            child.material.clippingPlanes = [this.clippingPlaneRing2 ];
             child.material.clipShadows = true;
             child.material.needsUpdate = true;
         }
@@ -374,23 +457,48 @@ let helperModelPosY = -0.15
 
     this.helperModelring2.traverse((child) => {
         if (child.isMesh) {
-            child.material.clippingPlanes = [clippingPlaneRing2];
+            child.material.clippingPlanes = [this.clippingPlaneRing2helper];
             child.material.clipShadows = true;
             child.material.needsUpdate = true;
         }
     });
     if(triBool==true){
+      let offsetTri = -0.65
+      let offsetTri2 = 0.75
+    
+        if (val == "1:1:1") {
+          
+          offsetTri = -0.65
+          offsetTri2 = 0.75
+      }
+      else  if (val === "1:2:1") {
+          // offset = 0.1;
+          offsetTri = -0.63
+          offsetTri2 = 0.78
+      }
+      else if(val === "1:3:1"){
+        offsetTri = -0.6
+        offsetTri2 = 0.8
+      }
+      else if(val === "1:4:1"){
+        offsetTri = -0.57
+        offsetTri2 = 0.83
+    }
+
     let modelColor = this.getCurrentColor(selectedModel)
     this.helperModeltriRing2 = this.cloneModelWithUniqueMaterial(selectedModel);
     // this.applyColorToModel(this.helperModel,"#"+modelColor)
     this.helperModeltriRing2.position.set(helperModelPosX,helperModelPosY,0)
 
-    this.applyColorToModel(this.helperModeltriRing2,"#B76E79")
+    // this.applyColorToModel(this.helperModeltriRing2,"#B76E79")
+    this.applyColorToModel(selectedModel, "#cd9d52")
+    this.applyColorToModel(this.helperModeltriRing2,"#A09F9D")
+    this.applyColorToModel(this.helperModelring2, "#cd9d52")
 
     this.scene.add(this.helperModeltriRing2);
-    const clippingPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), -0.6);
+    const clippingPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri);
 
-    const clippingPlane1 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0.8);
+    const clippingPlane1 = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri2);
 
     this.helperModeltriRing2.traverse((child) => {
       if (child.isMesh) {
@@ -435,21 +543,54 @@ let helperModelPosY = -0.15
   
     return position;
   }
-  
+  setoffsetValue(val){
+    if(this.modelManager.currentDisplayedModels.length == 1 && this.biColorSingleBool){
+    this.clippingPlaneRingSingleBi.constant = parseFloat(-val) 
+    this.clippingPlaneRingHelperBi.constant = parseFloat(val)
+    }
+    console.log("this.modelManager.currentDisplayedModels.length",this.modelManager.currentDisplayedModels.length, this.modelManager.selectedModel)
+    if(this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel==1){
+      this.clippingPlaneRing1.constant = parseFloat(-val) 
+      this.clippingPlaneRing1helper.constant = parseFloat(val)
+    }
+    else if(this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel==2 ){
+      this.clippingPlaneRing2.constant = parseFloat(-val) 
+      this.clippingPlaneRing2helper.constant = parseFloat(val) 
+    }
+    // else if(this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.pair1){
+    //   // this.clippingPlaneRing1.constant = parseFloat(-val) 
+    //   // this.clippingPlaneRing1helper.constant = parseFloat(val)
+    //   // this.clippingPlaneRing2.constant = parseFloat(-val) 
+    //   // this.clippingPlaneRing2helper.constant = parseFloat(val) 
+    // }
+
+  }
 
   triColorOneRing(val) {
     this.removeHelperModelAndClipping()
-    this.biColorOneRing(val);
-    let offset = 0.1
-    if (val === "1:1") {
-      offset = 0.05;
+    this.biColorOneRing("1:1");
+    let offset = 0.05
+    // console.log("val",val)
+    if (val == "1:1:1") {
+      
+      offset = 0.05
+      console.log("val 0",val,offset)
   }
-  else  if (val === "1:2") {
-      offset = 0.07;
+  else  if (val === "1:2:1") {
+      offset = 0.1;
   }
-  else if(val === "1:3"){
-      offset = 0.1
+  else if(val === "1:3:1"){
+      offset = 0.12
   }
+  else if(val === "1:4:1"){
+    offset = 0.14
+}
+  // else if (val == "1:1:1") {
+    
+  //   offset = 0.07;
+  //   console.log("val 0",val,offset)
+  // }
+  console.log("val",val,offset)
     const selectedModel = this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1];
     let modelColor = this.getCurrentColor(selectedModel)
     this.helperModeltri = this.cloneModelWithUniqueMaterial(selectedModel);
@@ -468,7 +609,7 @@ let helperModelPosY = -0.15
         child.material.needsUpdate = true;
       }
     });
-    console.log("hello tri",modelColor);
+    // console.log("hello tri",modelColor);
    
   }
   colorChangeBi(colorCode, modelSide){
@@ -507,7 +648,7 @@ else if(modelSide==3){
 
 colorChangeTri(colorCode, modelSide){
 
-console.log("tatti",colorCode)
+
 
 
 }
@@ -538,7 +679,7 @@ console.log("tatti",colorCode)
       // Remove the helper model from the scene
       this.scene.remove(myModel);
       myModel = null;
-      console.log("Helper model removed.");
+      // console.log("Helper model removed.");
     } else {
       console.warn("No helper model to remove.");
     }
@@ -565,7 +706,7 @@ console.log("tatti",colorCode)
       // Remove the helper model from the scene
       this.scene.remove(this.helperModeltri);
       this.helperModeltri = null;
-      console.log("Helper model removed tri.");
+      // console.log("Helper model removed tri.");
     } else {
       console.warn("No helper model to remove.");
     }
@@ -601,7 +742,7 @@ console.log("tatti",colorCode)
       this.helperModeltriRing2 = null;
     }
     if(this.modelManager.pair1){
-      console.log("aaaaaaaaaaaaaaaaaaaaaa")
+      // console.log("aaaaaaaaaaaaaaaaaaaaaa")
       if(this.helperModeltriRing1){
       this.helperModeltriRing1.traverse((child) => {
         if (child.isMesh) {
@@ -638,17 +779,16 @@ console.log("tatti",colorCode)
     const ring1 = this.modelManager.currentDisplayedModels[0];
     const ring2 = this.modelManager.currentDisplayedModels[1];
     let selectedModel = 0
-    console.log("ring1", ring1, ring2,this.modelManager.currentDisplayedModels,this.modelManager.selectedModel)
-    if(this.modelManager.selectedModel==1){
+    if(this.modelManager.selectedModel==1  && !this.modelManager.pair1){ 
+    // console.log("ring1", ring1, ring2,this.modelManager.currentDisplayedModels,this.modelManager.selectedModel)
       selectedModel = ring1
       
     }
-    else{
+    else if(this.modelManager.selectedModel==2 && !this.modelManager.pair1){
       selectedModel = ring2;
       // offset = -0.7
     
     }
-
 
     if (selectedModel) {
       selectedModel.traverse((child) => {
@@ -657,14 +797,42 @@ console.log("tatti",colorCode)
           child.material.needsUpdate = true;
         }
       });
-      console.log("Clipping planes removed from the selected model.");
+      // console.log("Clipping planes removed from the selected model.");
     } else {
       console.warn("No selected model found to remove clipping planes from.");
     }
   
     // Clear the clipping planes array
+    if(this.modelManager.pair1){
+      if (ring1) {
+        ring1.traverse((child) => {
+          if (child.isMesh) {
+            child.material.clippingPlanes = []; // Remove clipping planes
+            child.material.needsUpdate = true;
+          }
+        });
+        // console.log("Clipping planes removed from the selected model.");
+      } else {
+        console.warn("No selected model found to remove clipping planes from.");
+      }
+      if (ring2) {
+        ring2.traverse((child) => {
+          if (child.isMesh) {
+            child.material.clippingPlanes = []; // Remove clipping planes
+            child.material.needsUpdate = true;
+          }
+        });
+        // console.log("Clipping planes removed from the selected model.");
+      } else {
+        console.warn("No selected model found to remove clipping planes from.");
+      }
+
+    }
     this.clippingPlanes = [];
-    console.log("All clipping planes cleared.");
+
+
+   
+    // console.log("All clipping planes cleared.");
   }
   
   cloneModelWithUniqueMaterial(originalModel) {
@@ -701,7 +869,7 @@ console.log("tatti",colorCode)
       });
   
       if (foundColor) {
-        console.log("found color", foundColor)
+        // console.log("found color", foundColor)
         return foundColor; // Return the found color as a hex string
       } else {
         console.warn("No material with a color property found in the model.");

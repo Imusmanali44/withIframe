@@ -1,3 +1,5 @@
+var currentModel = 0
+var isPair1 = 0
 import { Fragment, useEffect } from "react";
 import Modal from "../shared/Modal";
 import useModal from "../../hooks/useModal";
@@ -7,6 +9,7 @@ import {
   SelectWeddingRingSvg,
   ConnectRingSvg,
 } from "../../static/SvgImages";
+
 
 const ringSvgMap = {
   Wedding: SelectWeddingRingSvg,
@@ -32,7 +35,9 @@ export const TopBar = ({
 
   const handleRingClick = (ring) => {
     setActiveRing(ring);
-    console.log(ring);
+    console.log(ring, rings.length,"aaaaaaa");
+    window.selectedRing = ring.id;
+    window.ringsLength = rings.length;
     window.parent.postMessage({ action: 'selectModel', modelId: ring.id }, "*");
 
   };

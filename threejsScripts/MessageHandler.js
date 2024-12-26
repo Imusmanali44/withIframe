@@ -127,10 +127,21 @@ export class MessageHandler {
           this.modelManager.engraveTextOnModel(isEngraving)
         // }
         break;
+      case "changeSlider":
+        console.log("calss", value)
+        this.pMetalManager.setoffsetValue(value)
+        break;
+
+      
       case "PreciousMetal":
         console.log("cal", value,isBiCol,isTriCol)
      let  lengthModels= this.modelManager.currentDisplayedModels.length
-        
+        if(value==0){
+          this.pMetalManager.removeHelperModelAndClipping(1)
+          this.pMetalManager.removeHelperModelAndClipping(2)
+          return;
+
+        }
           if(lengthModels==1 && isBiCol){
             this.pMetalManager.biColorOneRing(value);
         }
