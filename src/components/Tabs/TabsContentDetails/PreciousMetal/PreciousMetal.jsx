@@ -276,10 +276,10 @@ export const PreciousMetal = ({
   // Function to handle selection from the dropdown
   // Function to handle selection from the dropdown
   const handleOptionSelect = (option) => {
-    console.log(option)
     let isTwoTone = null;
     if (option.name === "Two tone") {
       setSelectedPartitionTwotoneImg(option);
+      setSelectedPartitionTriColoredImg(null);
       isTwoTone = true;
     } else {
       setSelectedPartitionTriColoredImg(option);
@@ -384,13 +384,13 @@ export const PreciousMetal = ({
           isExpert={isExpert}
           metalOptions={metalOptions}
           updateSelection={(partition, field, value) => {
-            console.log("Updated selection in ColorSurface:", {
-              partition,
-              field,
-              value,
-              selectedPartitionTwotoneImg,
-              selectedPartitionTriColoredImg,
-            });
+            // console.log("Updated selection in ColorSurface:", {
+            //   partition,
+            //   field,
+            //   value,
+            //   selectedPartitionTwotoneImg,
+            //   selectedPartitionTriColoredImg,
+            // });
             window.parent.postMessage(
               {
                 action: "changeColor",
