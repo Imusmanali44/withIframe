@@ -76,6 +76,8 @@ const AddRemoveRings = ({ rings, setRings }) => {
         ...rings,
         { type, id: rings.length + 1, name: `Ring ${rings.length + 1}` },
       ]);
+    window.ringsLength++
+
     }
   };
 
@@ -84,6 +86,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
 
     setRings(rings.filter((ring) => ring.id !== id));
     console.log("delete", id);
+    window.ringsLength--
   };
 
   const handleInputChange = (id, value) => {

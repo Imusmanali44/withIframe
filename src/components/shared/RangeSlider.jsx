@@ -5,15 +5,22 @@ import { TopBar } from "../Configurator/TopBar";
 
 export const RangeSlider = ({
   title= "Ring 1",
-  min = -0.85,
-  max = -0.55,
+  min = -1,
+  max = 1,
   step = 0.001,
-  defaultValue =-0.7 
+  defaultValue =0 
 }) => {
   // if(min==-1){
   //   console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
   // }
-  if(window.selectedRing==2){
+  if(window.selectedRing==1 && window.ringsLength==2){
+    title= "Ring 1",
+  min = -0.85,
+  max = -0.55,
+  step = 0.001,
+  defaultValue =-0.7 
+  }
+  if(window.selectedRing==2 && window.ringsLength==2){
     title= "Ring 2",
     max = 0.85,
     min = 0.55,

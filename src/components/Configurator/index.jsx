@@ -8,7 +8,7 @@ import { AppContext } from "./config";
 
 window.pair1 = 0
 window.selectedRing = 1;
-window.ringsLength = 0
+window.ringsLength = 2
 const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
   
   const [isPair, setIsPair] = useState({

@@ -131,7 +131,10 @@ export class MessageHandler {
         console.log("calss", value)
         this.pMetalManager.setoffsetValue(value)
         break;
-
+      case "changeMultiSlider":
+        console.log("calss tri", value)
+        this.pMetalManager.setoffsetValueTri(value.left,value.right)
+        break;
       
       case "PreciousMetal":
         console.log("cal", value,isBiCol,isTriCol)

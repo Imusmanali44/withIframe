@@ -337,7 +337,7 @@ export class ModelManager {
     this.currentColor = "#A09F9D";
     if(this.PreciousMetal.isEnable == true){
       this.PreciousMetal.removeHelperModelAndClipping(1);
-      this.PreciousMetal.removeHelperModelAndClipping(2);
+      // this.PreciousMetal.removeHelperModelAndClipping(2);
 
     }
     else{
