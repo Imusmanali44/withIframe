@@ -8,8 +8,8 @@ export class Renderer {
 
   initRenderer() {
      const params = {
-      exposure: 2,
-      toneMapping: 'AgX',
+      exposure: 2.4,
+      toneMapping: 'ACESFilmic',
       blurriness: 0.3,
       intensity: 1.0,
     };
@@ -32,18 +32,19 @@ export class Renderer {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.localClippingEnabled = true;
 
-    
+    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace; // Use LinearSRGBColorSpace if working with modern Three.js
 
-    THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
-      'vec3 CustomToneMapping( vec3 color ) { return color; }',
-      `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
-      float toneMappingWhitePoint = 1.0;
-      vec3 CustomToneMapping( vec3 color ) {
-        color *= toneMappingExposure;
-        return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
-      }`
-    );
-    this.renderer.shadowMap.enabled = true;
+
+    // THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
+    //   'vec3 CustomToneMapping( vec3 color ) { return color; }',
+    //   `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
+    //   float toneMappingWhitePoint = 1.0;
+    //   vec3 CustomToneMapping( vec3 color ) {
+    //     color *= toneMappingExposure;
+    //     return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
+    //   }`
+    // );
+    // this.renderer.shadowMap.enabled = true;
   }
 
   getRenderer() {

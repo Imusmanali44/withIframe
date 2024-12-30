@@ -18,7 +18,7 @@ class RotatingRingApp {
     // Set up the scene, camera, and renderer
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color('#FFFFFF'); // Light gray background
-
+    this.scene.env = null;
     // this.modelManager = new ModelManager(this.scene);
     this.cameraInstance = new Camera(this.scene);
     this.camera = this.cameraInstance.getCamera(); // Get the camera instance
@@ -40,7 +40,7 @@ class RotatingRingApp {
 
     this.lighting = new Lighting(this.scene);
     this.floor = new Floor(this.scene, this.camera, this.renderer);
-    this.environment = new Environment(this.scene);
+    this.environment = new Environment(this.scene, this.renderer);
     this.OrbitControlHandler = new OrbitControlHandler(this.camera, this.renderer.domElement);
     this.messageHandler = new MessageHandler(this.modelManager, this.PreciousMetalins);
     

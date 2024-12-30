@@ -7,6 +7,8 @@ import { Flow } from 'three/examples/jsm/modifiers/CurveModifier.js';
 import { PreciousMetal } from "./PreciousMetal";
 // import  CSG  from '/utils/CSGMesh.js'
 import Bender from '/utils/bender.js'
+import { TextureLoader } from 'three';
+
 
 
 export class ModelManager {
@@ -25,12 +27,61 @@ export class ModelManager {
     // this.PreciousMetalIns = new pre
     this.currentFont = "./src/assets/fonts/Roboto_Regular.json";
     this.currentColor = "";
+    this.shadowEnable = true;
     this.loadMatCapTextures();
   }
   getCurrentDisplayedModels(){
 
     return this.currentDisplayedModels;
 
+  }
+  addShadowPair(){
+    if(this.shadowEnable){
+    const textureLoader = new TextureLoader();
+    // Load the PNG texture for the shadow
+const shadowTexture = textureLoader.load('./models/shadow.png', (texture) => {
+  texture.flipY = true; // Correct orientation if needed
+});
+
+// Create a plane for the shadow
+const shadowPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
+  new THREE.MeshBasicMaterial({
+    map: shadowTexture,
+    transparent: true,
+    polygonOffset: true, // Enable polygon offset
+    polygonOffsetFactor: -1, // Push the shadow further back
+    polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
+  })
+);
+
+// Position the plane below the model
+shadowPlane.scale.set(0.7,1.3,1)
+shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
+shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
+
+let shadowClone = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
+  new THREE.MeshBasicMaterial({
+    map: shadowTexture,
+    transparent: true,
+    polygonOffset: true, // Enable polygon offset
+    polygonOffsetFactor: -1, // Push the shadow further back
+    polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
+  })
+);
+shadowClone.scale.set(0.7,1.3,1)
+
+shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+shadowClone.position.y = -1.22;
+shadowClone.position.x = 0.7
+// Add the shadow plane to the scene
+this.scene.add(shadowPlane);
+this.scene.add(shadowClone);
+this.shadowEnable = false;
+
+    }
   }
   loadMatCapTextures() {
     const textureLoader = new THREE.TextureLoader();
@@ -73,10 +124,15 @@ export class ModelManager {
           
                   // Ensure the material is a MeshStandardMaterial or similar
                   if (material && material.metalness !== undefined) {
-                    material.metalness = 1; // Full metal effect
-                    material.roughness = 0; // Smooth surface
+                    material.metalness = 0.8; // Full metal effect
+                    material.roughness = 0.1;
+                     // Smooth surface
+                    material.envMap = this.scene.env;
+                    material.envMapIntensity = 1;
+    // child.material.needsUpdate = true
                     material.needsUpdate = true;
                   }
+                  
                 }
               });
   
@@ -509,6 +565,10 @@ export class ModelManager {
       this.scene.add(model2);
       model2.visible = true;
       this.currentDisplayedModels[1] = model2;
+      this.applyColorToModel(model1, "#D8BC7E")
+      this.applyColorToModel(model2, "#D8BC7E")
+      this.addShadowPair()
+
     } else {
       // Only hide and switch the selected model, keep the other intact
       if (this.selectedModel === 1) {
@@ -823,8 +883,9 @@ console.log("current model name", model)
 //                         gl_FragColor = vec4(blendedColor.rgb * color * colorIntensity, blendedColor.a);
 //                       }
 //                     `,
+//                     clipping: true
 //                 });
-
+//                 child.material.clipping = true,
 //                 child.material.needsUpdate = true; // Ensure the material updates
 //             }
 //         });

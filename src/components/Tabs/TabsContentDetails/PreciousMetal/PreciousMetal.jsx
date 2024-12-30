@@ -11,7 +11,7 @@ import IsPair from "../../../shared/IsPair";
 const metalOptions = [
   {
     value: "Gold",
-    colorCode: "#E9D4A4",
+    colorCode: "#D8BC7E",
   },
   {
     value: "Silver",
