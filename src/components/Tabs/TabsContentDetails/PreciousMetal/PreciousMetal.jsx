@@ -98,38 +98,52 @@ const options = [
   {
     label: "1:3",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-3.svg",
+    // opacity: 0.3, // Added opacity
   },
   {
     label: "1:4",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-4.svg",
+    // opacity: 0.3, // Added opacity
   },
   {
     label: "Golf 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-1.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: "Diagonaal 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-1.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: "Segment 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/segment-1-1.svg",
+    opacity: 0.3, // Added opacity
   },
   {
     label: "Axiaal 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/horizontal-1-1.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: " Vrij ",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-free-2.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: " Golf vrij ",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-free-2.svg",
+    opacity: 0.3, // Added opacity
   },
   {
     label: " Diagonaal vrij ",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-free-2.svg",
+    opacity: 0.3, // Added opacity
+
   },
 ];
 
@@ -145,10 +159,12 @@ const options2 = [
   {
     label: "1:3:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-3-1.svg",
+    // opacity: 0.3, // Added opacity
   },
   {
     label: "1:4:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-1-4-1.svg",
+    // opacity: 0.3, // Added opacity
   },
   {
     label: "2:1:1",
@@ -157,11 +173,12 @@ const options2 = [
   {
     label: "3:1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-3-1-1.svg",
+    // opacity: 0.3, // Added opacity
   },
- 
   {
     label: "4:1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/horizontal-1-1.svg",
+    opacity: 0.3, // Added opacity
   },
   {
     label: "2:1:2",
@@ -170,38 +187,52 @@ const options2 = [
   {
     label: "Golf 1:1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-1-1.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: "Golf 1:2:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-2-1.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: "Golf 2:1:2",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-2-1-2.svg",
+    opacity: 0.3, // Added opacity
   },
   {
     label: "Diagonaal 1:1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-1-1.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: "Diagonaal 1:2:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-2-1.svg",
+    opacity: 0.3, // Added opacity
+
   },
   {
     label: "Diagonaal 2:1:2",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-2-1-2.svg",
+    opacity: 0.3, // Added opacity
   },
   {
     label: "Vrij",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-free-3.svg",
+    opacity: 0.3,
+
   },
   {
     label: "Golf Vrij",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-free-3.svg",
+    opacity: 0.3,
   },
   {
     label: "Diagonaal vrij",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-free-3.svg",
+    opacity: 0.3, // Added opacity
   },
 ];
 
@@ -212,6 +243,33 @@ export const PreciousMetal = ({
   isExpert,
   activeRing,
 }) => {
+  const getTwoToneOptions = () => {
+    return options.map(option => {
+      // Add opacity 0.3 for specific patterns
+      if ([ "Segment 1:1", "Golf vrij"].includes(option.label.trim())) {
+        return { ...option, opacity: 0.3 };
+      }
+      return option;
+    });
+  };
+
+  const getTriColorOptions = () => {
+    return options2.map(option => {
+      // Add opacity 0.3 for specific patterns
+      if ([
+        "4:1:1",
+        "Golf 2:1:2",
+        "Diagonaal 2:1:2",
+        "Golf Vrij",
+        "Diagonaal vrij"
+      ].includes(option.label.trim())) {
+        return { ...option, opacity: 0.3 };
+      }
+      return option;
+    });
+  };
+
+
   const isWeddingRing = Array.isArray(activeRing)
     ? activeRing[0]?.type === "Wedding"
     : activeRing?.type === "Wedding";
@@ -367,15 +425,15 @@ export const PreciousMetal = ({
                 ))}
               </div>
               {isPartitionDropdownOpen && (
-                <Dropdown
-                  title={partition.name}
-                  options={partition.name === "Two tone" ? options : options2}
-                  setIsOpen={setIsPartitionDropdownOpen}
-                  selectedOption={selectedOption}
-                  setSelectedOption={handleOptionSelect}
-                />
-              )}
-            </div>
+        <Dropdown
+          title={partition.name}
+          options={partition.name === "Two tone" ? getTwoToneOptions() : getTriColorOptions()}
+          setIsOpen={setIsPartitionDropdownOpen}
+          selectedOption={selectedOption}
+          setSelectedOption={handleOptionSelect}
+        />
+      )}
+    </div>
           </>
         )}
         {/* Dropdowns for Metal and Surface */}

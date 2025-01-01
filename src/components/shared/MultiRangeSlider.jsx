@@ -18,7 +18,7 @@ export const MultiRangeSlider = ({
     if (window.selectedRing === 1 && window.ringsLength === 2) {
       return {
         title: "Ring 1",
-        leftMin: 0.7,
+        leftMin: 0.6,
         leftMax: 0.85,
         rightMin: -0.800,
         rightMax: -0.553,
@@ -78,7 +78,17 @@ export const MultiRangeSlider = ({
         max: values.rightMax,
       },
     });
-  }, [window.selectedRing, window.ringsLength]); // Trigger reinitialization on changes
+  }, [window.selectedRing, window.ringsLength]);
+
+  const sendMessageToParent = (left, right) => {
+    window.parent.postMessage(
+      {
+        action: "changeMultiSlider",
+        value: { left, right },
+      },
+      "*"
+    );
+  };
 
   const handleLeftChange = (event) => {
     const newValue = Math.max(
@@ -86,6 +96,7 @@ export const MultiRangeSlider = ({
       Math.min(ranges.left.max, Number(event.target.value))
     );
     setLeftValue(newValue);
+    sendMessageToParent(newValue, rightValue);
   };
 
   const handleRightChange = (event) => {
@@ -94,17 +105,8 @@ export const MultiRangeSlider = ({
       Math.min(ranges.right.max, Number(event.target.value))
     );
     setRightValue(newValue);
+    sendMessageToParent(leftValue, newValue);
   };
-
-  useEffect(() => {
-    window.parent.postMessage(
-      {
-        action: "changeMultiSlider",
-        value: { left: leftValue, right: rightValue },
-      },
-      "*"
-    );
-  }, [leftValue, rightValue]);
 
   return (
     <div className="flex flex-col items-center justify-start mt-4">

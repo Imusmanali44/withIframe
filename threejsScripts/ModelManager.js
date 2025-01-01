@@ -424,7 +424,7 @@ this.shadowEnable = false;
       if(this.PreciousMetal.triBool){
         triBool = this.PreciousMetal.triBool  
       }
-      console.log("aa",prevVal,triBool,this.PreciousMetal.isEnable)
+      console.log("aa",prevVal,triBool)
       this.PreciousMetal.removeHelperModelAndClipping(1);
       this.PreciousMetal.removeHelperModelAndClipping(2);
       this.PreciousMetal.handlePair(ring1,ring2,prevVal,triBool,)

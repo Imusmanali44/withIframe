@@ -1,5 +1,5 @@
+import React from 'react';
 import { CloseSvg } from "../../../../static/SvgImages";
-// Dropdown Component
 
 export const Dropdown = ({
   title,
@@ -14,14 +14,14 @@ export const Dropdown = ({
   };
 
   return (
-    <div className="absolute bg-white shadow-lg border mt-1  w-full z-50 p-4 top-[80%]">
+    <div className="absolute bg-white shadow-lg border mt-1 w-full z-50 p-4 top-[80%]">
       <div className="head flex items-center justify-between mb-3">
         <h3 className="font-semibold text-sm text-black m-0">{title}</h3>
         <div onClick={() => setIsOpen(false)}>
           <CloseSvg width={15} height={15} onClick={() => setIsOpen(false)} />
         </div>
       </div>
-      <ul className=" flex flex-wrap justify-start">
+      <ul className="flex flex-wrap justify-start">
         {options.map((option, index) => (
           <li
             key={index}
@@ -30,7 +30,11 @@ export const Dropdown = ({
                 ? "border-[#205fa8]"
                 : "border-[#e1e1e1]"
             }`}
-            onClick={() => handleSelect(option)}
+            style={{ 
+              opacity: option.opacity || 1,
+              cursor: option.opacity ? 'not-allowed' : 'pointer'
+            }}
+            onClick={() => !option.opacity && handleSelect(option)}
           >
             <span>{option.label}</span>
 
@@ -39,6 +43,7 @@ export const Dropdown = ({
                 src={option.img}
                 className="mx-auto mt-5"
                 alt={option.name}
+                style={{ opacity: option.opacity || 1 }}
               />
             )}
           </li>
@@ -47,3 +52,5 @@ export const Dropdown = ({
     </div>
   );
 };
+
+export default Dropdown;

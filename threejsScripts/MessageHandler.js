@@ -132,7 +132,8 @@ export class MessageHandler {
         this.pMetalManager.setoffsetValue(value)
         break;
       case "changeMultiSlider":
-        console.log("calss tri", value)
+        console.log("calss tri", value, this.pMetalManager.isEnable)
+        
         this.pMetalManager.setoffsetValueTri(value.left,value.right)
         break;
       
@@ -155,8 +156,12 @@ export class MessageHandler {
         }
         else if(lengthModels==2 && isBiCol){
           this.pMetalManager.biTriPair(value);
+        console.log("cal 1", value,isBiCol,isTriCol)
+
         }
         else if(lengthModels==2 && (!isBiCol || isBiCol == null)){
+        console.log("cal 2", value,isBiCol,isTriCol)
+          
           this.pMetalManager.biTriPair(value,true);
         }
         break;
