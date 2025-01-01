@@ -142,6 +142,7 @@ export class MessageHandler {
         if(value==0){
           this.pMetalManager.removeHelperModelAndClipping(1)
           this.pMetalManager.removeHelperModelAndClipping(2)
+          this.pMetalManager.isEnable = false
           return;
 
         }
