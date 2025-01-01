@@ -14,27 +14,69 @@ export class Environment {
       './bg/cubemap/4.png', // Positive Z (Front)
       './bg/cubemap/4.png', // Negative Z (Back)
     ];
-    this.loadEnvironment();
+
+   this.init()
   }
+ async init(){
+ await this.loadEnvironment()
+    .then((envMap) => {
+      console.log('Environment map loaded:', envMap);
+      // Further processing after the environment map is loaded
+      this.scene.environment = envMap;
+    })
+    .catch((error) => {
+      console.error('Failed to load environment map:', error);
+    });
+ }
 
+// loadEnvironment() {
+//   const loader = new RGBELoader();
+//   loader.setDataType(THREE.FloatType);
+
+//   loader.load(`./bg/brown_photostudio_04_2k.hdr`, (texture) => {
+//     const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+//     pmremGenerator.compileEquirectangularShader();
+
+//     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+
+//     texture.dispose(); // Dispose of the original texture
+//     pmremGenerator.dispose(); // Dispose of the PMREMGenerator
+//     this.scene.env = envMap;
+//     // this.scene.environment = this.scene.env;
+//     // this.scene.background = envMap;
+
+//     // Uncomment if you want blurred background
+//     // this.scene.backgroundBlurriness = 1;
+//   });
+// }
 loadEnvironment() {
-  const loader = new RGBELoader();
-  loader.setDataType(THREE.FloatType);
+  return new Promise((resolve, reject) => {
+    const loader = new RGBELoader();
+    loader.setDataType(THREE.FloatType);
 
-  loader.load(`./bg/brown_photostudio_04_2k.hdr`, (texture) => {
-    const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
-    pmremGenerator.compileEquirectangularShader();
+    loader.load(
+      './bg/brown_photostudio_04_2k.hdr',
+      (texture) => {
+        const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+        pmremGenerator.compileEquirectangularShader();
 
-    const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+        const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
-    texture.dispose(); // Dispose of the original texture
-    pmremGenerator.dispose(); // Dispose of the PMREMGenerator
-    this.scene.env = envMap;
-    // this.scene.environment = this.scene.env;
-    // this.scene.background = envMap;
+        texture.dispose(); // Dispose of the original texture
+        pmremGenerator.dispose(); // Dispose of the PMREMGenerator
 
-    // Uncomment if you want blurred background
-    // this.scene.backgroundBlurriness = 1;
+        this.scene.env = envMap;
+        // this.scene.environment = this.scene.env;
+        // this.scene.background = envMap;
+
+        resolve(envMap); // Resolve the promise with the environment map
+      },
+      undefined, // onProgress (optional)
+      (error) => {
+        console.error('An error occurred while loading the environment texture', error);
+        reject(error); // Reject the promise if an error occurs
+      }
+    );
   });
 }
 

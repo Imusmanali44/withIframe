@@ -441,6 +441,10 @@ this.shadowEnable = false;
       if (selectedRingId === 1 || selectedRingId === 2) {
         this.currentModelIndex = index;
         this.showCurrentModels(index);
+        // this.applyColorToModel(this.currentDisplayedModels[0], "#D8BC7E")
+
+        // this.applyColorToModel(this.currentDisplayedModels[1], "#D8BC7E")
+
       } else if (selectedRingId === 3 && this.currentDisplayedModels[2]) {
         this.currentModelIndex = index;
 
@@ -575,10 +579,14 @@ this.shadowEnable = false;
         this.scene.remove(this.currentDisplayedModels[0]); // Remove old first model
         model1.position.set(-0.7, 0, 0); // Place new model in the left position
         this.scene.add(model1);
+      this.applyColorToModel(model1, "#D8BC7E")
+
         model1.visible = true;
         this.currentDisplayedModels[0] = model1; // Update the first model
       } else if (this.selectedModel === 2) {
-        this.scene.remove(this.currentDisplayedModels[1]); // Remove old second model
+        this.scene.remove(this.currentDisplayedModels[1]);
+      this.applyColorToModel(model2, "#D8BC7E")
+      // Remove old second model
 
         // Adjust positioning based on whether third and fourth models exist
         if (this.currentDisplayedModels.length > 3) {
