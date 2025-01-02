@@ -120,7 +120,7 @@ const options = [
   {
     label: "Segment 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/segment-1-1.svg",
-    opacity: 0.3, // Added opacity
+    // opacity: 0.3, // Added opacity
   },
   {
     label: "Axiaal 1:1",
@@ -246,7 +246,7 @@ export const PreciousMetal = ({
   const getTwoToneOptions = () => {
     return options.map(option => {
       // Add opacity 0.3 for specific patterns
-      if ([ "Segment 1:1", "Golf vrij"].includes(option.label.trim())) {
+      if ([ "Golf vrij"].includes(option.label.trim())) {
         return { ...option, opacity: 0.3 };
       }
       return option;

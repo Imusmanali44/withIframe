@@ -44,7 +44,7 @@ const shadowTexture = textureLoader.load('./models/shadow.png', (texture) => {
 });
 
 // Create a plane for the shadow
-const shadowPlane = new THREE.Mesh(
+this.shadowPlane = new THREE.Mesh(
   new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
   new THREE.MeshBasicMaterial({
     map: shadowTexture,
@@ -56,12 +56,12 @@ const shadowPlane = new THREE.Mesh(
 );
 
 // Position the plane below the model
-shadowPlane.scale.set(0.7,1.3,1)
-shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
-shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
+this.shadowPlane.scale.set(0.7,1.3,1)
+this.shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+this.shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
+this.shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
 
-let shadowClone = new THREE.Mesh(
+this.shadowClone = new THREE.Mesh(
   new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
   new THREE.MeshBasicMaterial({
     map: shadowTexture,
@@ -71,14 +71,14 @@ let shadowClone = new THREE.Mesh(
     polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
   })
 );
-shadowClone.scale.set(0.7,1.3,1)
+this.shadowClone.scale.set(0.7,1.3,1)
 
-shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-shadowClone.position.y = -1.22;
-shadowClone.position.x = 0.7
+this.shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+this.shadowClone.position.y = -1.22;
+this.shadowClone.position.x = 0.7
 // Add the shadow plane to the scene
-this.scene.add(shadowPlane);
-this.scene.add(shadowClone);
+this.scene.add(this.shadowPlane);
+this.scene.add(this.shadowClone);
 this.shadowEnable = false;
 
     }
@@ -425,10 +425,15 @@ this.shadowEnable = false;
         triBool = this.PreciousMetal.triBool  
       }
       console.log("aa",prevVal,triBool)
+      if(prevVal=="Segment 1:1"){
+        this.PreciousMetal.biTriPair(prevVal,false)
+      }
+      else{
       this.PreciousMetal.removeHelperModelAndClipping(1);
       this.PreciousMetal.removeHelperModelAndClipping(2);
-      this.PreciousMetal.handlePair(ring1,ring2,prevVal,triBool,)
 
+      this.PreciousMetal.handlePair(ring1,ring2,prevVal,triBool,)
+      }
       
       }
     } else if (pair2) {
@@ -684,7 +689,12 @@ this.shadowEnable = false;
 
     model2.position.set(0.7, -0.15, 0); // Second model on the right
     model2.scale.set(85, 85, 85); // Scale down the second model
-  
+    if(this.PreciousMetal.helperModel){
+      this.PreciousMetal.helperModel.position.x = -0.7
+    }
+    //set shadow
+    this.shadowPlane.position.x = -0.7;
+    this.shadowClone.visible = true;
     // Add the second model to the scene
     this.scene.add(model2);
     model2.visible = true;
@@ -805,6 +815,8 @@ console.log("current model name", model)
 
     // Re-position the first model to the center
     this.currentDisplayedModels[0].position.set(0, 0, 0);
+    this.shadowPlane.position.x = 0;
+    this.shadowClone.visible = false;
   }
   applyColorToModel(model, color) {
     model.traverse((child) => {

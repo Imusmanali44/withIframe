@@ -8,6 +8,7 @@ import { OrbitControlHandler } from './threejsScripts/OrbitControlManager.js'; /
 import { ModelManager } from './threejsScripts/ModelManager.js'; // Import the new ModelManager class
 import { MessageHandler } from './threejsScripts/MessageHandler.js'; // Import MessageHandler
 import {PreciousMetal} from "./threejsScripts/PreciousMetal.js";
+import { PreciousMetalHelper } from './threejsScripts/PreciousMetalHelper.js';
 
 
 
@@ -28,7 +29,7 @@ class RotatingRingApp {
     // this.PreciousMetalins = new PreciousMetal(this.scene,this.modelManager, this.renderer );
     
 
-    this.PreciousMetalins = new PreciousMetal(this.scene, null, this.renderer);
+    this.PreciousMetalins = new PreciousMetal(this.scene, null,null, this.renderer);
 
     // Create ModelManager and pass PreciousMetal instance
     this.modelManager = new ModelManager(this.scene, this.PreciousMetalins);
@@ -36,8 +37,8 @@ class RotatingRingApp {
     // Update PreciousMetal with ModelManager instance
     this.PreciousMetalins.modelManager = this.modelManager;
 
-
-
+    this.PreciousMetalHelper = new PreciousMetalHelper(this.scene,this.PreciousMetalins,this.modelManager  )
+    this.PreciousMetalins.pmHelper = this.PreciousMetalHelper
     this.lighting = new Lighting(this.scene);
     this.floor = new Floor(this.scene, this.camera, this.renderer);
     this.environment = new Environment(this.scene, this.renderer);

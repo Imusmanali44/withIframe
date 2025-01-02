@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export class PreciousMetal {
-  constructor(scene, modelManager, renderer) {
+  constructor(scene, modelManager,pMetalHelper, renderer) {
     this.scene = scene;
     // this.modelManager = modelManager;
     // this.volumeVisualization = new THREE.Group();
@@ -21,6 +21,10 @@ export class PreciousMetal {
 
 
   biColorOneRing(val) {
+    if(val=="Segment 1:1"){
+      this.pmHelper.biColorSegmentOnering();
+      return;
+    }
     this.removeHelperModelAndClipping(); // Ensure no duplicate models or clipping planes.
     this.isEnable = true
     let offset = 0; // 0 for 1:1, 0.1 for 1:3
@@ -317,6 +321,10 @@ export class PreciousMetal {
     let helperModelPosX = 0.7
     let helperModelPosY = 0
 
+    if(val=="Segment 1:1"){
+      this.pmHelper.biColorSegment();
+      return;
+    }
 
     const ring1 = this.modelManager.currentDisplayedModels[0];
     const ring2 = this.modelManager.currentDisplayedModels[1];
