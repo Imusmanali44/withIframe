@@ -91,6 +91,9 @@ export class PreciousMetal {
     else if (val === "1:3") {
       offsetRing1 += 0.07
     }
+    else if (val === "1:4") {
+      offsetRing1 += 0.09
+    }
 
 
     let offsetRing2 = -0.7
@@ -105,6 +108,10 @@ export class PreciousMetal {
     else if (val === "1:3") {
       offsetRing2 += 0.07
     }
+    else if (val === "1:4") {
+      offsetRing2 += 0.09
+    }
+
 
     if (triBool == true) {
       offsetRing1 = 0.7
@@ -343,6 +350,9 @@ export class PreciousMetal {
       else if (val === "1:3") {
         offset += 0.07
       }
+      else if (val === "1:4") {
+        offset += 0.09
+      }
 
     }
     else {
@@ -359,6 +369,10 @@ export class PreciousMetal {
       else if (val === "1:3") {
         offset += 0.07
       }
+      else if (val === "1:4") {
+        offset += 0.09
+      }
+
     }
     console.log("ring1", val, offset)
 

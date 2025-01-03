@@ -15,7 +15,7 @@ const metalOptions = [
   },
   {
     value: "Silver",
-    colorCode: "#A09F9D",
+    colorCode: "#E3E3E2",
   },
   {
     value: "Platinum",
@@ -342,6 +342,8 @@ export const PreciousMetal = ({
       isTwoTone = true;
     } else {
       setSelectedPartitionTriColoredImg(option);
+      setSelectedPartitionTwotoneImg(option);
+
       isTwoTone = false;
     }
     setSelectedOption(option);

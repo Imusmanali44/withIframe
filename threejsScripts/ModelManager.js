@@ -246,6 +246,8 @@ this.shadowEnable = false;
   }
   
   changeRingWidth(selectedRingId, width, isPair = true) {
+    this.PreciousMetal.removeHelperModelAndClipping(1);
+    this.PreciousMetal.removeHelperModelAndClipping(2);
     const widthValue = parseFloat(width.replace(',', '.')); // Parse width from string to number
     if (isNaN(widthValue)) {
       console.warn('Invalid width value:', width);
@@ -278,6 +280,9 @@ this.shadowEnable = false;
   // Existing methods (loadModels, switchModel, etc.) will remain unchanged...
   changeRingThickness(selectedRingId, thickness, isPair = false) {
     // Convert thickness value to a float
+    this.PreciousMetal.removeHelperModelAndClipping(1);
+    this.PreciousMetal.removeHelperModelAndClipping(2);
+
     const thicknessValue = parseFloat(thickness.replace(',', '.'));
     if (isNaN(thicknessValue)) {
       console.warn('Invalid thickness value:', thickness);
@@ -302,7 +307,7 @@ this.shadowEnable = false;
       console.warn('Model not found for selectedRingId:', selectedRingId);
       return;
     }
-    // console.log("model", normalizedThickness);
+    console.log("model", normalizedThickness);
     // Apply thickness scaling based on normalized thickness
     model.scale.setY(normalizedThickness * thicknessFactor); // Adjust for Y axis
     model.scale.setZ(normalizedThickness * thicknessFactor); // Adjust for Z axis
@@ -311,12 +316,14 @@ this.shadowEnable = false;
         // Sides mesh: Increase height vertically (Y-axis)
         mesh.scale.y = normalizedThickness;
       } else if ( mesh.name.includes('Outer')) {
-     
+        // Inner and outer meshes: Scale X and Z to expand radius proportionally
+        // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
         mesh.scale.y = normalizedThickness ;
         // mesh.scale.z = normalizedThickness;
       }
       else if ( mesh.name.includes('Inner')) {
-  
+        // Inner and outer meshes: Scale X and Z to expand radius proportionally
+        // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
         mesh.scale.y += 0.1 ;
         // mesh.scale.z = normalizedThickness;
       }
