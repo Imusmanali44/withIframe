@@ -36,52 +36,52 @@ export class ModelManager {
 
   }
   addShadowPair(){
-    if(this.shadowEnable){
-    const textureLoader = new TextureLoader();
-    // Load the PNG texture for the shadow
-const shadowTexture = textureLoader.load('./models/shadow.png', (texture) => {
-  texture.flipY = true; // Correct orientation if needed
-});
+//     if(this.shadowEnable){
+//     const textureLoader = new TextureLoader();
+//     // Load the PNG texture for the shadow
+// const shadowTexture = textureLoader.load('./models/shadow.png', (texture) => {
+//   texture.flipY = true; // Correct orientation if needed
+// });
 
-// Create a plane for the shadow
-this.shadowPlane = new THREE.Mesh(
-  new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
-  new THREE.MeshBasicMaterial({
-    map: shadowTexture,
-    transparent: true,
-    polygonOffset: true, // Enable polygon offset
-    polygonOffsetFactor: -1, // Push the shadow further back
-    polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
-  })
-);
+// // Create a plane for the shadow
+// this.shadowPlane = new THREE.Mesh(
+//   new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
+//   new THREE.MeshBasicMaterial({
+//     map: shadowTexture,
+//     transparent: true,
+//     polygonOffset: true, // Enable polygon offset
+//     polygonOffsetFactor: -1, // Push the shadow further back
+//     polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
+//   })
+// );
 
-// Position the plane below the model
-this.shadowPlane.scale.set(0.7,1.3,1)
-this.shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-this.shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
-this.shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
+// // Position the plane below the model
+// this.shadowPlane.scale.set(0.7,1.3,1)
+// this.shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+// this.shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
+// this.shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
 
-this.shadowClone = new THREE.Mesh(
-  new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
-  new THREE.MeshBasicMaterial({
-    map: shadowTexture,
-    transparent: true,
-    polygonOffset: true, // Enable polygon offset
-    polygonOffsetFactor: -1, // Push the shadow further back
-    polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
-  })
-);
-this.shadowClone.scale.set(0.7,1.3,1)
+// this.shadowClone = new THREE.Mesh(
+//   new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
+//   new THREE.MeshBasicMaterial({
+//     map: shadowTexture,
+//     transparent: true,
+//     polygonOffset: true, // Enable polygon offset
+//     polygonOffsetFactor: -1, // Push the shadow further back
+//     polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
+//   })
+// );
+// this.shadowClone.scale.set(0.7,1.3,1)
 
-this.shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-this.shadowClone.position.y = -1.22;
-this.shadowClone.position.x = 0.7
-// Add the shadow plane to the scene
-this.scene.add(this.shadowPlane);
-this.scene.add(this.shadowClone);
-this.shadowEnable = false;
+// this.shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+// this.shadowClone.position.y = -1.22;
+// this.shadowClone.position.x = 0.7
+// // Add the shadow plane to the scene
+// this.scene.add(this.shadowPlane);
+// this.scene.add(this.shadowClone);
+// this.shadowEnable = false;
 
-    }
+    // }
   }
   loadMatCapTextures() {
     const textureLoader = new THREE.TextureLoader();
@@ -679,7 +679,13 @@ this.shadowEnable = false;
   
   addSecondModel(type, selectedRing = null) {
     let model2;
-  
+    // console.log("loraaaaa",selectedRing)
+    if(selectedRing.name.toLowerCase().includes("engage")){
+      console.log("loraaaaa",this.EngagementRingsins)
+      this.EngagementRingsins.loadEngRingById(selectedRing.id);
+      this.currentDisplayedModels[0].position.x = -0.7;
+      return;
+    }
     // Load the second model based on the selectedRing or type
     if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
       model2 = this.cloneModelWithUniqueMaterial(this.models[selectedRing.id]);

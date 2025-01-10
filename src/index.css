@@ -464,4 +464,112 @@ h3 {
     border: none; /* Remove default border */
     cursor: pointer;
   }
-  
+  .multi-range-slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.multi-range-slider-label {
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.multi-dual-sliders-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.multi-single-slider-container {
+  flex: 1;
+  position: relative;
+}
+
+.multi-slider-track {
+  position: absolute;
+  border-radius: 3px;
+  height: 5px;
+  background-color: #e0e0e0; /* Light gray for the slider track */
+  width: 100%;
+  z-index: 1;
+}
+
+.multi-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  outline: none;
+  position: relative;
+  background: transparent;
+  cursor: pointer;
+}
+
+.multi-slider-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff; /* White for the thumb */
+  border: 2px solid var(--darkBlue);
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.multi-slider-thumb::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--darkBlue);
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.multi-slider-thumb::-webkit-slider-thumb:hover {
+  background-color: var(--darkBlue);
+}
+
+.multi-slider-thumb::-moz-range-thumb:hover {
+  background-color: var(--darkBlue);
+}
+
+.multi-slider-label {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  color: #505965;
+}
+.c-range-slider {
+  --cui-range-slider-track-bg: #e0e0e0; /* Light gray track */
+  --cui-range-slider-track-in-range-bg: #205fa8; /* Dark blue in-range track */
+  --cui-range-slider-track-height: 8px; /* Adjust track height */
+  --cui-range-slider-track-border-radius: 4px; /* Rounded edges */
+
+  --cui-range-slider-thumb-width: 18px;
+  --cui-range-slider-thumb-height: 18px;
+  --cui-range-slider-thumb-bg: #ffffff; /* White thumb */
+  --cui-range-slider-thumb-border: 2px solid #205fa8; /* Blue border for thumb */
+  --cui-range-slider-thumb-border-radius: 50%; /* Circular thumb */
+  --cui-range-slider-thumb-box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+  --cui-range-slider-thumb-focus-box-shadow: 0px 0px 5px rgba(32, 95, 168, 0.6); /* Focus shadow */
+  --cui-range-slider-thumb-active-bg: #205fa8; /* Active thumb color */
+
+  --cui-range-slider-tooltip-bg: #205fa8; /* Tooltip background */
+  --cui-range-slider-tooltip-color: #ffffff; /* Tooltip text color */
+  --cui-range-slider-tooltip-border-radius: 4px; /* Rounded tooltip */
+  --cui-range-slider-tooltip-padding-y: 4px;
+  --cui-range-slider-tooltip-padding-x: 8px;
+
+  --cui-range-slider-label-font-size: 14px; /* Label font size */
+  --cui-range-slider-label-color: #333333; /* Label text color */
+}

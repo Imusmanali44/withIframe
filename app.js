@@ -9,6 +9,7 @@ import { ModelManager } from './threejsScripts/ModelManager.js'; // Import the n
 import { MessageHandler } from './threejsScripts/MessageHandler.js'; // Import MessageHandler
 import {PreciousMetal} from "./threejsScripts/PreciousMetal.js";
 import { PreciousMetalHelper } from './threejsScripts/PreciousMetalHelper.js';
+import {EngagementRings} from "./threejsScripts/engagementRings/EngagementRings.js"
 
 
 
@@ -36,8 +37,10 @@ class RotatingRingApp {
 
     // Update PreciousMetal with ModelManager instance
     this.PreciousMetalins.modelManager = this.modelManager;
-
+    
     this.PreciousMetalHelper = new PreciousMetalHelper(this.scene,this.PreciousMetalins,this.modelManager  )
+    this.EngagementRings = new EngagementRings(this.scene,this.modelManager);
+    this.modelManager.EngagementRingsins  = this.EngagementRings 
     this.PreciousMetalins.pmHelper = this.PreciousMetalHelper
     this.lighting = new Lighting(this.scene);
     this.floor = new Floor(this.scene, this.camera, this.renderer);

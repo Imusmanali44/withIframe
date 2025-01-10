@@ -109,48 +109,46 @@ export const MultiRangeSlider = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-start mt-4">
-      <label className="font-medium text-start py-1">
-        {title}: [{leftValue.toFixed(3)}, {rightValue.toFixed(3)}]
-      </label>
-      <div className="bg-white w-full px-2.5 py-7">
-        <div className="dual-sliders-container">
-          {/* Left Slider */}
-          <div className="single-slider-container">
-            <div className="slider-label">
-              Left Value ({ranges.left.min} to {ranges.left.max})
-            </div>
-            <div className="slider-track"></div>
-            <input
-              type="range"
-              min={ranges.left.min}
-              max={ranges.left.max}
-              step={step}
-              value={leftValue}
-              onChange={handleLeftChange}
-              className="slider-thumb"
-            />
-          </div>
-
-          {/* Right Slider */}
-          <div className="single-slider-container">
-            <div className="slider-label">
-              Right Value ({ranges.right.min} to {ranges.right.max})
-            </div>
-            <div className="slider-track"></div>
-            <input
-              type="range"
-              min={ranges.right.min}
-              max={ranges.right.max}
-              step={step}
-              value={rightValue}
-              onChange={handleRightChange}
-              className="slider-thumb"
-            />
-          </div>
+    <div className="multi-range-slider-container">
+    <label className="multi-range-slider-label">
+      {title}: [{leftValue.toFixed(3)}, {rightValue.toFixed(3)}]
+    </label>
+    <div className="multi-dual-sliders-container">
+      {/* Left Slider */}
+      <div className="multi-single-slider-container">
+        <div className="multi-slider-label">
+          Left Value ({ranges.left.min} to {ranges.left.max})
         </div>
+        <div className="multi-slider-track"></div>
+        <input
+          type="range"
+          min={ranges.left.min}
+          max={ranges.left.max}
+          step={step}
+          value={leftValue}
+          onChange={handleLeftChange}
+          className="multi-slider-thumb"
+        />
+      </div>
+  
+      {/* Right Slider */}
+      <div className="multi-single-slider-container">
+        <div className="multi-slider-label">
+          Right Value ({ranges.right.min} to {ranges.right.max})
+        </div>
+        <div className="multi-slider-track"></div>
+        <input
+          type="range"
+          min={ranges.right.min}
+          max={ranges.right.max}
+          step={step}
+          value={rightValue}
+          onChange={handleRightChange}
+          className="multi-slider-thumb"
+        />
       </div>
     </div>
+  </div>
   );
 };
 

@@ -61,7 +61,8 @@ const AddRemoveRings = ({ rings, setRings }) => {
 
   // Effect to send a message when the selectedRing is updated
   useEffect(() => {
-    if (selectedRing) {
+    console.log("hkdsaldjksaldas", selectedRing)
+    if (selectedRing && selectedRing.name.toLowerCase().includes("engage")) {
       window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
     }
   }, [selectedRing]);

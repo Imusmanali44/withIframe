@@ -5,6 +5,7 @@ import DistributionImg3 from "../../../../../public/profile/three-color.svg";
 import { Dropdown } from "./Dropdown";
 import { RangeSlider } from "../../../shared/RangeSlider";
 import { MultiRangeSlider } from "../../../shared/MultiRangeSlider";
+import  MultiRangeMaskSlider  from "../../../shared/SimpleCRangeSlider"
 import { ColorSurface } from "./ColorSurface";
 import IsPair from "../../../shared/IsPair";
 
@@ -493,7 +494,7 @@ export const PreciousMetal = ({
               )}
             </div>
           )}
-        {isWeddingRing && selectedPartitionTwotoneImg && (
+        {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (
           <RangeSlider
             // title={"Selected Value"}
             // min={-1}
@@ -502,8 +503,16 @@ export const PreciousMetal = ({
             // defaultValue={0}
           />
         )}
-        {isWeddingRing && selectedPartitionTriColoredImg && (
+        {/* {isWeddingRing && selectedPartitionTriColoredImg && (
         <MultiRangeSlider />
+        )} */}
+        {isWeddingRing && selectedPartitionTriColoredImg && (
+       <MultiRangeMaskSlider 
+      //  min={-1} 
+      //  max={1} 
+      // //  step = {0.001}
+      //  onChange={(values) => console.log('Range values:', values)} 
+     />
         )}
       </div>
     </div>
