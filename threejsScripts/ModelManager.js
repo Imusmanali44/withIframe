@@ -36,52 +36,52 @@ export class ModelManager {
 
   }
   addShadowPair(){
-//     if(this.shadowEnable){
-//     const textureLoader = new TextureLoader();
-//     // Load the PNG texture for the shadow
-// const shadowTexture = textureLoader.load('./models/shadow.png', (texture) => {
-//   texture.flipY = true; // Correct orientation if needed
-// });
+    if(this.shadowEnable){
+    const textureLoader = new TextureLoader();
+    // Load the PNG texture for the shadow
+const shadowTexture = textureLoader.load('./models/shadow.png', (texture) => {
+  texture.flipY = true; // Correct orientation if needed
+});
 
-// // Create a plane for the shadow
-// this.shadowPlane = new THREE.Mesh(
-//   new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
-//   new THREE.MeshBasicMaterial({
-//     map: shadowTexture,
-//     transparent: true,
-//     polygonOffset: true, // Enable polygon offset
-//     polygonOffsetFactor: -1, // Push the shadow further back
-//     polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
-//   })
-// );
+// Create a plane for the shadow
+this.shadowPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
+  new THREE.MeshBasicMaterial({
+    map: shadowTexture,
+    transparent: true,
+    polygonOffset: true, // Enable polygon offset
+    polygonOffsetFactor: -1, // Push the shadow further back
+    polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
+  })
+);
 
-// // Position the plane below the model
-// this.shadowPlane.scale.set(0.7,1.3,1)
-// this.shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-// this.shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
-// this.shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
+// Position the plane below the model
+this.shadowPlane.scale.set(0.7,1.3,1)
+this.shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+this.shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
+this.shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
 
-// this.shadowClone = new THREE.Mesh(
-//   new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
-//   new THREE.MeshBasicMaterial({
-//     map: shadowTexture,
-//     transparent: true,
-//     polygonOffset: true, // Enable polygon offset
-//     polygonOffsetFactor: -1, // Push the shadow further back
-//     polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
-//   })
-// );
-// this.shadowClone.scale.set(0.7,1.3,1)
+this.shadowClone = new THREE.Mesh(
+  new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
+  new THREE.MeshBasicMaterial({
+    map: shadowTexture,
+    transparent: true,
+    polygonOffset: true, // Enable polygon offset
+    polygonOffsetFactor: -1, // Push the shadow further back
+    polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
+  })
+);
+this.shadowClone.scale.set(0.7,1.3,1)
 
-// this.shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-// this.shadowClone.position.y = -1.22;
-// this.shadowClone.position.x = 0.7
-// // Add the shadow plane to the scene
-// this.scene.add(this.shadowPlane);
-// this.scene.add(this.shadowClone);
-// this.shadowEnable = false;
+this.shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
+this.shadowClone.position.y = -1.22;
+this.shadowClone.position.x = 0.7
+// Add the shadow plane to the scene
+this.scene.add(this.shadowPlane);
+this.scene.add(this.shadowClone);
+this.shadowEnable = false;
 
-    // }
+    }
   }
   loadMatCapTextures() {
     const textureLoader = new THREE.TextureLoader();
@@ -583,7 +583,7 @@ export class ModelManager {
       this.currentDisplayedModels[1] = model2;
       this.applyColorToModel(model1, "#D8BC7E")
       this.applyColorToModel(model2, "#D8BC7E")
-      this.addShadowPair()
+      // this.addShadowPair()
 
     } else {
       // Only hide and switch the selected model, keep the other intact

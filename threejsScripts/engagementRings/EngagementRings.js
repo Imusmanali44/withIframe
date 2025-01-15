@@ -82,7 +82,8 @@ export class EngagementRings {
         model.scale.set(0.8,0.8,0.8)
         this.scene.add(model);
         this.modelManager.currentDisplayedModels.push(model);
-        this.modelManager.applyColorToModel(model,'#D8BC7E')
+        // this.modelManager.applyColorToModel(model,'#D8BC7E')
+        this.applyColorExcludingMeshes(model, '#D8BC7E');
         console.log(`Model loaded successfully: ${modelInfo.glbPath}`);
       },
       (xhr) => {
@@ -95,6 +96,27 @@ export class EngagementRings {
       }
     );
   }
-
+  applyColorExcludingMeshes(model, color) {
+    model.traverse((child) => {
+      // Check if the traversed object is a mesh
+      if (child.isMesh) {
+        // Skip meshes whose names contain "_1"
+        if (child.name.includes("_1")) {
+          console.warn("")
+        }
+        // Apply the color to the mesh material
+        // if (Array.isArray(child.material)) {
+        //   // If there are multiple materials, apply to each one
+        //   child.material.forEach((mat) => {
+        //     if (mat && mat.color) {
+        //       mat.color.set(color);
+        //     }
+        //   });
+         else if (child.material && child.material.color) {
+          child.material.color.set(color);
+        }
+      }
+    });
+  }
 
 }
