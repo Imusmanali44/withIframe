@@ -496,11 +496,20 @@ export const PreciousMetal = ({
           )}
         {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (
           <RangeSlider
-            // title={"Selected Value"}
-            // min={-1}
-            // max={1}
-            // step={0.001}
-            // defaultValue={0}
+            title={"Ring 1"}
+            min={-0.85}
+            max={-0.55}
+            step={0.001}
+            defaultValue={-0.7}
+          />
+        )}
+         {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (window.ringsLength==2) &&(
+          <RangeSlider
+            title={"Ring 2"}
+            min={0.55}
+            max={0.85}
+            step={0.001}
+            defaultValue={0.7}
           />
         )}
         {/* {isWeddingRing && selectedPartitionTriColoredImg && (

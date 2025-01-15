@@ -1,3 +1,4 @@
+window.newValue = 0;
 import React, { useState, useEffect, useCallback } from "react";
 
 const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
@@ -8,13 +9,30 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
       return {
         title: "Ring 1",
         leftMin: -0.15,
-        leftMax: 0,
-        rightMin: 0,
+        leftMax: -0.03,
+        rightMin: 0.03,
         rightMax: 0.15,
         leftValue: -0.065,
         rightValue: 0.065,
       };
     }
+    if (window.selectedRing === 2 && window.ringsLength === 2) {
+      return {
+        title: "Ring 2",
+        leftMin: -0.69,
+        leftMax: -0.55,
+        rightMin: 0.71,
+        rightMax: 0.85,
+        leftValue: -0.67,
+        rightValue: 0.71,
+
+        // leftMin: -0.75,
+        // leftMax: -0.55,
+        // rightMin: 0.73,
+        // rightMax: 0.84,
+        // leftValue: -0.642,
+        // rightValue: 0.780,
+      };}
     if (window.selectedRing === 1 && window.ringsLength === 2) {
       return {
         title: "Ring 1",
@@ -26,17 +44,8 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
         rightValue: 0.780,
       };
     }
-    if (window.selectedRing === 2 && window.ringsLength === 2) {
-      return {
-        title: "Ring 2",
-        leftMin: -0.75,
-        leftMax: -0.55,
-        rightMin: 0.73,
-        rightMax: 0.84,
-        leftValue: -0.642,
-        rightValue: 0.780,
-      };
-    }
+  
+    
     return {
       title: "Default Ring",
       leftMin: -0.85,
@@ -124,21 +133,37 @@ const mapToUIValue = (value) => {
       const newRawValue = mapFromUIValue(uiValue);
   
       if (isDragging.left) {
+        console.log("i is left")
         const maxAllowedValue = Math.min(
           ranges.left.max,
           rightValue - step // Enforce minimum distance
         );
-        const newValue = Math.max(ranges.left.min, Math.min(newRawValue, maxAllowedValue));
+        let newValue = null
+       
+         newValue = Math.max(ranges.left.min, Math.min(newRawValue, maxAllowedValue));
         setLeftValue(newValue);
+        if (window.selectedRing === 2 ){
+           newValue = -0.55 -(newValue - (-0.69) )
+           window.newValue = newValue }
         sendMessageToParent(newValue, rightValue);
+        // setLeftValue(newValue);
       } else {
+        console.log("i is right")
+
         const minAllowedValue = Math.max(
           ranges.right.min,
           leftValue + step // Enforce minimum distance
         );
         const newValue = Math.min(ranges.right.max, Math.max(newRawValue, minAllowedValue));
         setRightValue(newValue);
-        sendMessageToParent(leftValue, newValue);
+        if(window.ringsLength==1){
+          sendMessageToParent(leftValue, newValue);
+
+        }
+        else{
+          sendMessageToParent(window.newValue, newValue);
+
+        }
       }
     },
     [isDragging, ranges, leftValue, rightValue, step]
@@ -221,7 +246,7 @@ const mapToUIValue = (value) => {
       width: "fit-content",
     }}
   >
-    {leftUIValue.toFixed(2)} mm
+    {Math.abs(leftUIValue.toFixed(2))} mm
   </div>
 
   {/* Middle Value */}

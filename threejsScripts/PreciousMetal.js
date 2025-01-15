@@ -628,20 +628,22 @@ export class PreciousMetal {
 
     return position;
   }
-  setoffsetValue(val) {
+  setoffsetValue(val,ringNum) {
     if (this.modelManager.currentDisplayedModels.length == 1 && this.biColorSingleBool) {
       this.clippingPlaneRingSingleBi.constant = parseFloat(-val)
       this.clippingPlaneRingHelperBi.constant = parseFloat(val)
     }
     console.log("this.modelManager.currentDisplayedModels.length", this.modelManager.currentDisplayedModels.length, this.modelManager.selectedModel)
-    if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 1) {
+    if (this.modelManager.currentDisplayedModels.length == 2 ) {
+      if(ringNum=="Ring 1"){
       this.clippingPlaneRing1.constant = parseFloat(-val)
-      this.clippingPlaneRing1helper.constant = parseFloat(val)
-    }
-    else if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 2) {
+      this.clippingPlaneRing1helper.constant = parseFloat(val)}
+    
+    // else if (this.modelManager.currentDisplayedModels.length == 2) {
+      if(ringNum=="Ring 2"){
       this.clippingPlaneRing2.constant = parseFloat(-val)
       this.clippingPlaneRing2helper.constant = parseFloat(val)
-    }
+      }}
     // else if(this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.pair1){
     //   // this.clippingPlaneRing1.constant = parseFloat(-val) 
     //   // this.clippingPlaneRing1helper.constant = parseFloat(val)
@@ -659,13 +661,13 @@ export class PreciousMetal {
     }
     if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 1) {
       // val1 = Math.abs(val1)
-      // console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
+      console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
       this.clippingPlaneRing1Tri.constant = parseFloat(val1)  // right side
       this.clippingPlaneRing1TriHelper.constant = parseFloat(val2) // left side
     }
     if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 2) {
       // val1 = Math.abs(val1)
-      // console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
+      console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing2Tri.constant,this.clippingPlaneRing2TriHelper.constant)
       this.clippingPlaneRing2Tri.constant = parseFloat(val1)  // right side
       this.clippingPlaneRing2TriHelper.constant = parseFloat(val2) // left side
     }

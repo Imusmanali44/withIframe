@@ -128,13 +128,14 @@ export class MessageHandler {
         // }
         break;
       case "changeSlider":
-        console.log("calss", value)
-        this.pMetalManager.setoffsetValue(value)
+        console.log("calss", value, selectedRing)
+        this.pMetalManager.setoffsetValue(value, selectedRing)
         break;
       case "changeMultiSlider":
         console.log("calss tri", value, this.pMetalManager.isEnable)
         
         this.pMetalManager.setoffsetValueTri(value.left,value.right)
+        
         break;
       
       case "PreciousMetal":
