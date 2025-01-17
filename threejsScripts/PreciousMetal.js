@@ -156,41 +156,41 @@ export class PreciousMetal {
     if (triBool == true) {
 
 
-      let offsetTri = -0.65
-      let offsetTri2 = 0.75
+      let offsetTri2 = -0.65
+      let offsetTri = 0.75
 
       if (val == "1:1:1") {
 
-        offsetTri = -0.65
-        offsetTri2 = 0.75
+        offsetTri2 = -0.65
+        offsetTri = 0.75
       }
       else if (val === "1:2:1") {
         // offset = 0.1;
-        offsetTri = -0.63
-        offsetTri2 = 0.78
+        offsetTri2 = -0.63
+        offsetTri = 0.78
       }
       else if (val === "1:3:1") {
-        offsetTri = -0.6
-        offsetTri2 = 0.8
+        offsetTri2 = -0.6
+        offsetTri = 0.8
       }
       else if (val === "1:4:1") {
-        offsetTri = -0.57
-        offsetTri2 = 0.83
+        offsetTri2 = -0.57
+        offsetTri = 0.83
       }
       else if (val === "2:1:2") {
         // offset = 0.1;
-        offsetTri = -0.657
-        offsetTri2 = 0.737
+        offsetTri2 = -0.657
+        offsetTri = 0.737
       }
       else if (val === "3:1:1") {
         // offset = 0.1;
-        offsetTri = -0.575
-        offsetTri2 = 0.665
+        offsetTri2 = -0.575
+        offsetTri = 0.665
       }
       else if (val === "2:1:1") {
         // offset = 0.1;
-        offsetTri = -0.560
-        offsetTri2 = 0.665
+        offsetTri2 = -0.560
+        offsetTri = 0.665
       }
       //  selectedModel = this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1];
       let modelColor = this.getCurrentColor(selectedModel)
@@ -205,9 +205,9 @@ export class PreciousMetal {
       this.applyColorToModel(this.helperModel, "#D8BC7E")
 
       this.scene.add(this.helperModeltriRing1);
-      this.clippingPlaneRing1Tri = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri);
+      this.clippingPlaneRing1Tri = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri);
 
-      this.clippingPlaneRing1TriHelper = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri2);
+      this.clippingPlaneRing1TriHelper = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri2);
 
       this.helperModeltriRing1.traverse((child) => {
         if (child.isMesh) {
@@ -430,41 +430,41 @@ export class PreciousMetal {
       if (triBool == true) {
    
 
-        let offsetTri = -0.65
-        let offsetTri2 = 0.75
-
-        if (val === "1:1:1") {
-
-          offsetTri = -0.65
-          offsetTri2 = 0.75
-        }
-        else if (val === "2:1:2") {
-          // offset = 0.1;
-          offsetTri = -0.657
-          offsetTri2 = 0.737
-        }
-        else if (val === "3:1:1") {
-          // offset = 0.1;
-          offsetTri = -0.575
-          offsetTri2 = 0.665
-        }
-        else if (val === "2:1:1") {
-          // offset = 0.1;
-          offsetTri = -0.560
-          offsetTri2 = 0.665
+        let offsetTri2 = -0.65
+        let offsetTri = 0.75
+  
+        if (val == "1:1:1") {
+  
+          offsetTri2 = -0.65
+          offsetTri = 0.75
         }
         else if (val === "1:2:1") {
           // offset = 0.1;
-          offsetTri = -0.63
-          offsetTri2 = 0.78
+          offsetTri2 = -0.63
+          offsetTri = 0.78
         }
         else if (val === "1:3:1") {
-          offsetTri = -0.6
-          offsetTri2 = 0.8
+          offsetTri2 = -0.6
+          offsetTri = 0.8
         }
         else if (val === "1:4:1") {
-          offsetTri = -0.57
-          offsetTri2 = 0.83
+          offsetTri2 = -0.57
+          offsetTri = 0.83
+        }
+        else if (val === "2:1:2") {
+          // offset = 0.1;
+          offsetTri2 = -0.657
+          offsetTri = 0.737
+        }
+        else if (val === "3:1:1") {
+          // offset = 0.1;
+          offsetTri2 = -0.575
+          offsetTri = 0.665
+        }
+        else if (val === "2:1:1") {
+          // offset = 0.1;
+          offsetTri2 = -0.560
+          offsetTri = 0.665
         }
         //  selectedModel = this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1];
         let modelColor = this.getCurrentColor(selectedModel)
@@ -479,9 +479,9 @@ export class PreciousMetal {
         // this.applyColorToModel(this.helperModeltriRing1,"#B76E79")
 
         this.scene.add(this.helperModeltriRing1);
-        this.clippingPlaneRing1Tri = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri);
+        this.clippingPlaneRing1Tri = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri);
 
-        this.clippingPlaneRing1TriHelper = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetTri2);
+        this.clippingPlaneRing1TriHelper = new THREE.Plane(new THREE.Vector3(-1, 0, 0), offsetTri2);
       console.log("aaaa 1",offsetTri,offsetTri2,val)
 
         this.helperModeltriRing1.traverse((child) => {
@@ -662,12 +662,12 @@ export class PreciousMetal {
     if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 1) {
       // val1 = Math.abs(val1)
       console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
-      this.clippingPlaneRing1Tri.constant = parseFloat(val1)  // right side
-      this.clippingPlaneRing1TriHelper.constant = parseFloat(val2) // left side
+      this.clippingPlaneRing1Tri.constant = parseFloat(-val1)  // right side
+      this.clippingPlaneRing1TriHelper.constant = parseFloat(-val2) // left side
     }
     if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 2) {
       // val1 = Math.abs(val1)
-      console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing2Tri.constant,this.clippingPlaneRing2TriHelper.constant)
+      // console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing2Tri.constant,this.clippingPlaneRing2TriHelper.constant)
       this.clippingPlaneRing2Tri.constant = parseFloat(val1)  // right side
       this.clippingPlaneRing2TriHelper.constant = parseFloat(val2) // left side
     }

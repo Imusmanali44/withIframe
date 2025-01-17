@@ -4,7 +4,7 @@ import DistributionImg2 from "../../../../../public/profile/two-color.svg";
 import DistributionImg3 from "../../../../../public/profile/three-color.svg";
 import { Dropdown } from "./Dropdown";
 import { RangeSlider } from "../../../shared/RangeSlider";
-import { MultiRangeSlider } from "../../../shared/MultiRangeSlider";
+// import { MultiRangeSlider } from "../../../shared/MultiRangeSlider";
 import  MultiRangeMaskSlider  from "../../../shared/SimpleCRangeSlider"
 import { ColorSurface } from "./ColorSurface";
 import IsPair from "../../../shared/IsPair";
