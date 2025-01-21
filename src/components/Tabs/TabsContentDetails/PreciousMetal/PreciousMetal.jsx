@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import DistributionImg1 from "../../../../../public/profile/none.svg";
 import DistributionImg2 from "../../../../../public/profile/two-color.svg";
 import DistributionImg3 from "../../../../../public/profile/three-color.svg";
 import { Dropdown } from "./Dropdown";
 import { RangeSlider } from "../../../shared/RangeSlider";
 // import { MultiRangeSlider } from "../../../shared/MultiRangeSlider";
+import MultiRangeMaskSlider0 from "../../../shared/SimpleCRangeSlider0";
 import  MultiRangeMaskSlider  from "../../../shared/SimpleCRangeSlider"
+import MultiRangeMaskSlider2 from "../../../shared/SimpleCRangeSlider2";
 import { ColorSurface } from "./ColorSurface";
 import IsPair from "../../../shared/IsPair";
 
@@ -244,6 +246,21 @@ export const PreciousMetal = ({
   isExpert,
   activeRing,
 }) => {
+  useEffect(() => {
+    // Reset partition to Single whenever rings array changes
+    setPartition({
+      name: "Single",
+      img: DistributionImg1
+    });
+    // Reset selected partition images
+    setSelectedPartitionTwotoneImg(null);
+    setSelectedPartitionTriColoredImg(null);
+    // Notify parent about the reset
+    // window.parent.postMessage(
+    //   { action: "PreciousMetal", value: 0 },
+    //   "*"
+    // );
+  }, [rings.length]);
   const getTwoToneOptions = () => {
     return options.map(option => {
       // Add opacity 0.3 for specific patterns
@@ -277,17 +294,17 @@ export const PreciousMetal = ({
 
   const [selections, setSelections] = useState({
     single: {
-      metal: { value: "Silver", colorCode: "#A09F9D" },
+      metal: { value: "Silver", colorCode: "#E3E3E2" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },
     twoTone: {
-      metal: { value: "Silver", colorCode: "#FFD700" },
+      metal: { value: "Gold", colorCode: "#D8BC7E" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },
     triColored: {
-      metal: { value: "Silver", colorCode: "#FFD700" },
+      metal: { value: "Silver", colorCode: "#E3E3E2" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
     },
@@ -324,6 +341,19 @@ export const PreciousMetal = ({
   };
 
   const updateSelection = (partition, field, value) => {
+    // Always send the message, regardless of whether the state changes
+    window.parent.postMessage(
+      {
+        action: "changeColor",
+        value,
+        isBiCol: selectedPartitionTwotoneImg,
+        isTriCol: selectedPartitionTriColoredImg,
+        field: partition,
+      },
+      "*"
+    );
+  
+    // Update state after sending the message
     setSelections((prevSelections) => ({
       ...prevSelections,
       [partition]: {
@@ -453,16 +483,16 @@ export const PreciousMetal = ({
             //   selectedPartitionTwotoneImg,
             //   selectedPartitionTriColoredImg,
             // });
-            window.parent.postMessage(
-              {
-                action: "changeColor",
-                value,
-                isBiCol: selectedPartitionTwotoneImg,
-                isTriCol: selectedPartitionTriColoredImg,
-                field: partition,
-              },
-              "*"
-            ); // Send message to Configurator
+            // window.parent.postMessage(
+            //   {
+            //     action: "changeColor",
+            //     value,
+            //     isBiCol: selectedPartitionTwotoneImg,
+            //     isTriCol: selectedPartitionTriColoredImg,
+            //     field: partition,
+            //   },
+            //   "*"
+            // ); // Send message to Configurator
 
             updateSelection(partition, field, value);
           }}
@@ -494,7 +524,16 @@ export const PreciousMetal = ({
               )}
             </div>
           )}
-        {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (
+           {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg &&  (window.ringsLength==1) &&(
+          <RangeSlider
+            title={"Ring"}
+            min={-0.159}
+            max={0.159}
+            step={0.001}
+            defaultValue={0}
+          />
+        )}
+        {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (window.ringsLength==2)  && (
           <RangeSlider
             title={"Ring 1"}
             min={-0.85}
@@ -503,7 +542,7 @@ export const PreciousMetal = ({
             defaultValue={-0.7}
           />
         )}
-         {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (window.ringsLength==2) &&(
+         {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (window.ringsLength==2)  &&(
           <RangeSlider
             title={"Ring 2"}
             min={0.55}
@@ -515,12 +554,19 @@ export const PreciousMetal = ({
         {/* {isWeddingRing && selectedPartitionTriColoredImg && (
         <MultiRangeSlider />
         )} */}
-        {isWeddingRing && selectedPartitionTriColoredImg && (
+          {isWeddingRing && selectedPartitionTriColoredImg && (window.ringsLength==1)  &&(
+       <MultiRangeMaskSlider0 
+    
+     />
+        )}
+        {isWeddingRing && selectedPartitionTriColoredImg &&  (window.ringsLength==2)  &&(
        <MultiRangeMaskSlider 
-      //  min={-1} 
-      //  max={1} 
-      // //  step = {0.001}
-      //  onChange={(values) => console.log('Range values:', values)} 
+    
+     />
+        )}
+            {isWeddingRing && selectedPartitionTriColoredImg && (window.ringsLength==2)  &&(
+       <MultiRangeMaskSlider2 
+    
      />
         )}
       </div>

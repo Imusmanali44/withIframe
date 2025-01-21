@@ -81,25 +81,28 @@ const AddRemoveRings = ({ rings, setRings }) => {
   const [selectedRing, setSelectedRing] = useState(null);
 
   // Effect to send a message when the selectedRing is updated
-  useEffect(() => {
-    console.log("hkdsaldjksaldas", selectedRing)
-    if (selectedRing && selectedRing.name.toLowerCase().includes("engage")) {
-      window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
-    }
-  }, [selectedRing]);
+  // useEffect(() => {
+  //   console.log("test", selectedRing)
+  //   if (selectedRing && selectedRing.name.toLowerCase().includes("engage")) {
+  //     window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
+  //   }
+  // }, [selectedRing]);
 
   const addRing = (type) => {
-    console.log("add ring", type);
-
     if (rings.length < 4) {
-      // Send the message to the parent window (index.jsx)
+      // Find the lowest available ID that's not in use
+      const usedIds = rings.map(ring => ring.id);
+      let newId = 1;
+      while (usedIds.includes(newId)) {
+        newId++;
+      }
+
       window.parent.postMessage({ action: 'addRing', type }, "*");
       setRings([
         ...rings,
-        { type, id: rings.length + 1, name: `Ring ${rings.length + 1}` },
+        { type, id: newId, name: `Ring ${newId}` },
       ]);
-    window.ringsLength++
-
+      window.ringsLength++;
     }
   };
 
@@ -116,14 +119,21 @@ const AddRemoveRings = ({ rings, setRings }) => {
   };
 
   const selectRing = (ring) => {
-    setSelectedRing(ring); // Set the ring as selected
+    setSelectedRing(ring);
     if (rings.length < 4) {
+      // Find the lowest available ID that's not in use
+      const usedIds = rings.map(ring => ring.id);
+      let newId = 1;
+      while (usedIds.includes(newId)) {
+        newId++;
+      }
+
       setRings([
         ...rings,
-        { type: selectedType, id: rings.length + 1, name: ring.name },
+        { type: selectedType, id: newId, name: ring.name },
       ]);
     }
-    setSelectedType(null); // Close the selection after choosing a ring
+    setSelectedType(null);
   };
 
   return (

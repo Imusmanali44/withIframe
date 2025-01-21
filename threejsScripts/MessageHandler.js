@@ -132,9 +132,9 @@ export class MessageHandler {
         this.pMetalManager.setoffsetValue(value, selectedRing)
         break;
       case "changeMultiSlider":
-        console.log("calss tri", value, this.pMetalManager.isEnable)
+        console.log("calss tri", value, this.pMetalManager.isEnable,selectedRing)
         
-        this.pMetalManager.setoffsetValueTri(value.left,value.right)
+        this.pMetalManager.setoffsetValueTri(value.left,value.right,selectedRing)
         
         break;
       
@@ -221,10 +221,11 @@ break;
   addRing(type, selectedRing) {
     console.log("type", type,selectedRing)
     // Check if only one model is displayed and add the second model
+    if(type==undefined && selectedRing.name.toLowerCase().includes("engage")){
+      this.modelManager.addSecondModel("engagement", selectedRing);
+      
+    }
     if (this.modelManager.currentDisplayedModels.length === 1 && type) {
-      if(selectedRing.name.toLowerCase().includes("engage")){
-        this.modelManager.addSecondModel("engagement", selectedRing);
-      }
       this.modelManager.addSecondModel(type, selectedRing); // Function to add the second ring
     } else if (this.modelManager.currentDisplayedModels.length === 1 && selectedRing) {
       this.modelManager.addSecondModel(null, selectedRing); // Use selectedRing if no type provided

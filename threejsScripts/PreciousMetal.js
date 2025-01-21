@@ -12,6 +12,7 @@ export class PreciousMetal {
     this.clippingPlanes = []; // Array to hold clipping planes
     this.isEnable = false
     this.triEnable = false;
+    this.triBool = false
     this.currentVal = 0;
     this.biColorSingleBool = false
     this.triColorSingleBool = false
@@ -32,11 +33,12 @@ export class PreciousMetal {
     else if (val === "1:2") offset = 0.05;
     else if (val === "1:3") offset = 0.1;
 
-    const selectedModel = this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1];
+    let selectedModel = this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1];
 
     if (!selectedModel) {
-      console.error("No selected model found.");
-      return;
+      selectedModel = this.modelManager.currentDisplayedModels[0];
+      // console.error("No selected model found.");
+      // return;
     }
 
     if (this.modelManager.currentDisplayedModels.length === 1) {
@@ -322,6 +324,7 @@ export class PreciousMetal {
   biTriPair(val, triBool = false) {
     this.isEnable = true
     this.currentVal = val;
+    this.triBool = triBool
     // this.removeHelperModelAndClipping(); // Ensure no duplicate models or clipping planes.
     let selectedModel;
     let offset = 0; // 0 for 1:1, 0.1 for 1:3|
@@ -652,25 +655,37 @@ export class PreciousMetal {
     // }
 
   }
-  setoffsetValueTri(val1, val2) {
+  setoffsetValueTri(val1, val2,ringNum) {
 
     if (this.modelManager.currentDisplayedModels.length == 1) {
 
       this.clippingPlaneSingleRingTri.constant = parseFloat(val2)
       this.clippingPlaneSingleRingTriHelper.constant = parseFloat(-val1)
     }
-    if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 1) {
+    // if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 1) {
       // val1 = Math.abs(val1)
-      console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
-      this.clippingPlaneRing1Tri.constant = parseFloat(-val1)  // right side
-      this.clippingPlaneRing1TriHelper.constant = parseFloat(-val2) // left side
+      // console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
+      // this.clippingPlaneRing1Tri.constant = parseFloat(-val1)  // right side
+      // this.clippingPlaneRing1TriHelper.constant = parseFloat(-val2) // left side
+    // }
+    // if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 2) {
+    //   // val1 = Math.abs(val1)
+    //   // console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing2Tri.constant,this.clippingPlaneRing2TriHelper.constant)
+    //   this.clippingPlaneRing2Tri.constant = parseFloat(val1)  // right side
+    //   this.clippingPlaneRing2TriHelper.constant = parseFloat(val2) // left side
+    // }
+    if(this.modelManager.currentDisplayedModels.length == 2){
+      if(ringNum=="Ring 1"){
+        console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
+        this.clippingPlaneRing1Tri.constant = parseFloat(-val1)  // right side
+        this.clippingPlaneRing1TriHelper.constant = parseFloat(-val2) 
     }
-    if (this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.selectedModel == 2) {
-      // val1 = Math.abs(val1)
-      // console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing2Tri.constant,this.clippingPlaneRing2TriHelper.constant)
+    if(ringNum=="Ring 2"){
+       console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing2Tri.constant,this.clippingPlaneRing2TriHelper.constant)
       this.clippingPlaneRing2Tri.constant = parseFloat(val1)  // right side
       this.clippingPlaneRing2TriHelper.constant = parseFloat(val2) // left side
-    }
+  }
+  }
   }
 
   triColorOneRing(val) {

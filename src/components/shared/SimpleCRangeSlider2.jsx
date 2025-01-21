@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-window.newValue = 0;
-window.newValue2 = 0.65
+// window.newValue = 0;
+// window.newValue2 = 0.65
 
-const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
+const MultiRangeMaskSlider2 = ({ step = 0.0001 }) => {
 
   
   const MIN_UI_DISTANCE = 0.80; // Minimum 0.80mm distance in UI values
@@ -22,46 +22,44 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
         uiMax: 3.7
       };
     }
-    if (window.selectedRing === 2 && window.ringsLength === 2) {
+    if (window.ringsLength === 2) {
       return {
-        title: "Ring 1",
-        leftMin: -0.9,
-        leftMax: -0.71,
-        rightMin: 0.56,
-        rightMax: 0.71,
+        title: "Ring 2",
+        leftMin: -0.69,
+        leftMax: -0.55,
+        rightMin: 0.74,
+        rightMax: 0.85,
         leftValue: -0.67,
         rightValue: 0.71,
-        leftValueTemp: 0,
-        uiMin: 1.1,
+        uiMin: 1.67,
         uiMax: 2.86
       };
     }
     if (window.selectedRing === 1 && window.ringsLength === 2) {
-      return {
-        title: "Ring 1",
-        leftMin: -0.9,
-        leftMax: -0.71,
-        rightMin: 0.56,
-        rightMax: 0.71,
-        leftValue: -0.67,
-        rightValue: 0.71,
-        leftValueTemp: 0,
-        uiMin: 1.1,
-        uiMax: 2.86
-      };
+        return {
+            title: "Ring 2",
+            leftMin: -0.69,
+            leftMax: -0.55,
+            rightMin: 0.74,
+            rightMax: 0.85,
+            leftValue: -0.67,
+            rightValue: 0.71,
+            uiMin: 1.67,
+            uiMax: 2.86
+          };
     }
     
     return {
-      title: "Default Ring",
-      leftMin: -0.85,
-      leftMax: -0.55,
-      rightMin: 0.55,
-      rightMax: 0.85,
-      leftValue: -0.7,
-      rightValue: 0.7,
-      uiMin: 0.8,
-      uiMax: 3.7
-    };
+        title: "Ring 2",
+        leftMin: -0.69,
+        leftMax: -0.55,
+        rightMin: 0.74,
+        rightMax: 0.85,
+        leftValue: -0.67,
+        rightValue: 0.71,
+        uiMin: 1.67,
+        uiMax: 2.86
+      };
   };
 
   const initialValues = initializeValues();
@@ -146,36 +144,33 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
         max: values.uiMax
       }
     });
-    if (leftValue === null && rightValue === null) { // Only set values on the first render
-      setLeftValue(values.leftValue);
-      setRightValue(values.rightValue);
-    }
   }, [window.selectedRing, window.ringsLength]);
 
-  const sendMessageToParent = (left, right, ringnum) => {
+  const sendMessageToParent = (left, right,ringnum) => {
     window.parent.postMessage(
       {
         action: "changeMultiSlider",
         value: { left, right },
-        selectedRing : ringnum
+        selectedRing: ringnum
       },
       "*"
     );
   };
 
- const handleMouseDown = useCallback(
-   (side) => (e) => {
-     e.preventDefault();
-     setIsDragging({ left: side === "left", right: side === "right" });
-     document.body.style.cursor = "ew-resize"; // Change cursor for better UX
-   },
-   []
- );
+const handleMouseDown = useCallback(
+  (side) => (e) => {
+    e.preventDefault();
+    setIsDragging({ left: side === "left", right: side === "right" });
+    document.body.style.cursor = "ew-resize"; // Change cursor for better UX
+  },
+  []
+);
 
   const handleTouchStart = useCallback(
     (side) => (e) => {
       e.preventDefault();
       setIsDragging({ left: side === "left", right: side === "right" });
+      document.body.style.cursor = "ew-resize"; // Change cursor for better UX
     },
     []
   );
@@ -198,16 +193,15 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
         setLeftValue(newValue);
 
         if (window.selectedRing === 2) {
-          // newValue = -0.55 - (newValue - (-0.69));
-          // window.newValue = newValue;
-          // sendMessageToParent(newValue, rightValue);
-
-          sendMessageToParent(newValue, window.newValue2,title);
-
+          newValue = -0.55 - (newValue - (-0.69));
+          window.newValue = newValue;
+          sendMessageToParent(newValue, rightValue,title);
         } else if (window.selectedRing === 1 && window.ringsLength === 2) {
-          sendMessageToParent(newValue, window.newValue2,title);
+            newValue = -0.55 - (newValue - (-0.69));
+            window.newValue = newValue;
+            sendMessageToParent(newValue, rightValue,title);
         } else if (window.ringsLength === 1) {
-          // sendMessageToParent(newValue, rightValue,title);
+        //   sendMessageToParent(newValue, rightValue);
         }
       } else {
         const minAllowedValue = Math.max(
@@ -218,16 +212,14 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
         setRightValue(newValue);
 
         if (window.ringsLength === 1) {
-          // sendMessageToParent(leftValue, newValue);
+        //   sendMessageToParent(leftValue, newValue);
         } else if (window.selectedRing === 1 && window.ringsLength === 2) {
-          newValue = 0.58 - (newValue - 0.68);
-          window.newValue2 = newValue;
-          sendMessageToParent(leftValue, newValue,title);
+        //   newValue = 0.58 - (newValue - 0.68);
+        //   window.newValue2 = newValue;
+        //   sendMessageToParent(leftValue, newValue);
+        sendMessageToParent(window.newValue, newValue,title);
         } else if (window.selectedRing === 2 && window.ringsLength === 2) {
-          // sendMessageToParent(window.newValue, newValue);
-          newValue = 0.58 - (newValue - 0.68);
-          window.newValue2 = newValue;
-          sendMessageToParent(leftValue, newValue,title);
+          sendMessageToParent(window.newValue, newValue,title);
         }
       }
     },
@@ -254,7 +246,7 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
     [isDragging, ranges, leftValue, rightValue, step, mapFromUIValue]
   );
 
-const handleMouseUp = useCallback(() => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging({ left: false, right: false });
     document.body.style.cursor = ""; // Reset cursor
   }, []);
@@ -384,10 +376,10 @@ const handleMouseUp = useCallback(() => {
             width: "20px",
             height: "20px",
             marginLeft: "1px",
-          }
-        }
-        onMouseDown={handleMouseDown("left")}
-  onTouchStart={handleTouchStart("left")}
+          }}
+          onMouseDown={handleMouseDown("left")}
+          onTouchStart={handleTouchStart("left")}
+      
         />
         <img
           src="./src/assets/drop.png"
@@ -430,4 +422,4 @@ const handleMouseUp = useCallback(() => {
   );
 };
 
-export default MultiRangeMaskSlider;
+export default MultiRangeMaskSlider2;

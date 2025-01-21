@@ -191,7 +191,7 @@ this.shadowEnable = false;
               //   }
               // });
   
-              model.scale.set(100, 100, 100);
+              // model.scale.set(100, 100, 100);
               model.visible = false;
               this.scene.add(model);
               resolve(model); // Resolve the promise when the model is loaded
@@ -246,8 +246,16 @@ this.shadowEnable = false;
   }
   
   changeRingWidth(selectedRingId, width, isPair = true) {
-    this.PreciousMetal.removeHelperModelAndClipping(1);
-    this.PreciousMetal.removeHelperModelAndClipping(2);
+    if(selectedRingId ==1){
+
+      this.PreciousMetal.removeHelperModelAndClipping(1);
+
+    }
+    if(selectedRingId==2){
+
+      this.PreciousMetal.removeHelperModelAndClipping(2);
+
+    }
     const widthValue = parseFloat(width.replace(',', '.')); // Parse width from string to number
     if (isNaN(widthValue)) {
       console.warn('Invalid width value:', width);
@@ -261,7 +269,7 @@ this.shadowEnable = false;
     }
   
     // Set the width of the selected ring
-    model.scale.setX(widthValue * 15); // Multiply by a factor to convert to model scale
+    model.scale.setX(widthValue * 0.15); // Multiply by a factor to convert to model scale
     console.log(`Ring ${selectedRingId} width changed to: ${widthValue}mm`);
   
     // If this.optimalThickness is true, set optimal thickness based on the width
@@ -280,8 +288,16 @@ this.shadowEnable = false;
   // Existing methods (loadModels, switchModel, etc.) will remain unchanged...
   changeRingThickness(selectedRingId, thickness, isPair = false) {
     // Convert thickness value to a float
-    this.PreciousMetal.removeHelperModelAndClipping(1);
-    this.PreciousMetal.removeHelperModelAndClipping(2);
+    if(selectedRingId ==1){
+
+      this.PreciousMetal.removeHelperModelAndClipping(1);
+
+    }
+    if(selectedRingId==2){
+
+      this.PreciousMetal.removeHelperModelAndClipping(2);
+
+    }
 
     const thicknessValue = parseFloat(thickness.replace(',', '.'));
     if (isNaN(thicknessValue)) {
@@ -294,9 +310,9 @@ this.shadowEnable = false;
 
     // Normalize thickness scaling based on a factor (adjust the factor as necessary for your model)
     let thicknessFactor;
-    if (selectedRingId == 2) { thicknessFactor = 80; }
+    if (selectedRingId == 2) { thicknessFactor = 0.8; }
     else {
-      thicknessFactor = 100;
+      thicknessFactor = 1;
     }
     // const thicknessFactor = 100; // Adjust this based on the visual difference you want
     const normalizedThickness = (thicknessValue - minThickness) / (maxThickness - minThickness) + 1;
@@ -311,30 +327,30 @@ this.shadowEnable = false;
     // Apply thickness scaling based on normalized thickness
     model.scale.setY(normalizedThickness * thicknessFactor); // Adjust for Y axis
     model.scale.setZ(normalizedThickness * thicknessFactor); // Adjust for Z axis
-    const applyThicknessScaling = (mesh) => {
-      if (mesh.name.includes('Sides')) {
-        // Sides mesh: Increase height vertically (Y-axis)
-        mesh.scale.y = normalizedThickness;
-      } else if ( mesh.name.includes('Outer')) {
-        // Inner and outer meshes: Scale X and Z to expand radius proportionally
-        // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
-        mesh.scale.y = normalizedThickness ;
-        // mesh.scale.z = normalizedThickness;
-      }
-      else if ( mesh.name.includes('Inner')) {
-        // Inner and outer meshes: Scale X and Z to expand radius proportionally
-        // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
-        mesh.scale.y += 0.1 ;
-        // mesh.scale.z = normalizedThickness;
-      }
-    };
+    // const applyThicknessScaling = (mesh) => {
+    //   if (mesh.name.includes('Sides')) {
+    //     // Sides mesh: Increase height vertically (Y-axis)
+    //     mesh.scale.y = normalizedThickness;
+    //   } else if ( mesh.name.includes('Outer')) {
+    //     // Inner and outer meshes: Scale X and Z to expand radius proportionally
+    //     // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
+    //     mesh.scale.y = normalizedThickness ;
+    //     // mesh.scale.z = normalizedThickness;
+    //   }
+    //   else if ( mesh.name.includes('Inner')) {
+    //     // Inner and outer meshes: Scale X and Z to expand radius proportionally
+    //     // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
+    //     mesh.scale.y += 0.1 ;
+    //     // mesh.scale.z = normalizedThickness;
+    //   }
+    // };
   
-    // Traverse the model and apply scaling
-    model.traverse((child) => {
-      if (child.isMesh) {
-        applyThicknessScaling(child);
-      }
-    });
+    // // Traverse the model and apply scaling
+    // model.traverse((child) => {
+    //   if (child.isMesh) {
+    //     applyThicknessScaling(child);
+    //   }
+    // });
     // If pairing is enabled, apply the same scaling to the second ring in the pair
     // if (isPair && this.currentDisplayedModels.length > selectedRingId) {
     //   const secondRing = this.currentDisplayedModels[selectedRingId]; // Assuming the next ring in the pair
@@ -396,15 +412,15 @@ this.shadowEnable = false;
 
 
 
-  switchModel(index, selectedRingId = 1, pair1 = false, pair2 = false) {
+  switchModel(index, selectedRingId = 1, pair1 = true, pair2 = false) {
     this.currentColor = "#A09F9D";
     if(this.PreciousMetal.isEnable == true){
-      this.PreciousMetal.removeHelperModelAndClipping(1);
+      // this.PreciousMetal.removeHelperModelAndClipping(1);
       // this.PreciousMetal.removeHelperModelAndClipping(2);
 
     }
     else{
-      this.PreciousMetal.isEnable == false
+      // this.PreciousMetal.isEnable == false
     }
     if (index < 0 || index >= this.models.length) {
       console.warn('Invalid model index:', index);
@@ -412,13 +428,17 @@ this.shadowEnable = false;
     }
     // this.engraveTextOnModel("GG")
     // Handle pairing logic
-    if (pair1 && !pair2 && selectedRingId == 1 || selectedRingId == 2) {
+    console.log("chk 0", pair1, selectedRingId, this.pair1)
+
+    if (selectedRingId == 1 || selectedRingId == 2) {
 
       // Change both 1st and 2nd rings
       this.showCurrentModels(index, pair1); // For 1st and 2nd rings
-      console.log("chk")
+      console.log("chk 1")
       let prevVal = 0
       if(this.PreciousMetal.isEnable == true){ 
+      console.log("chk 2")
+
         let ring1 = this.currentDisplayedModels[0]
         let ring2 = this.currentDisplayedModels[1]
         let triBool
@@ -431,15 +451,24 @@ this.shadowEnable = false;
       if(this.PreciousMetal.triBool){
         triBool = this.PreciousMetal.triBool  
       }
-      console.log("aa",prevVal,triBool)
+      console.log("chk aa",prevVal,triBool)
       if(prevVal=="Segment 1:1"){
         this.PreciousMetal.biTriPair(prevVal,false)
       }
       else{
-      this.PreciousMetal.removeHelperModelAndClipping(1);
-      this.PreciousMetal.removeHelperModelAndClipping(2);
+      console.log("chk 3", selectedRingId, ring1, ring2)
+      if(selectedRingId ==1){
 
-      this.PreciousMetal.handlePair(ring1,ring2,prevVal,triBool,)
+        this.PreciousMetal.removeHelperModelAndClipping(1);
+
+      }
+      else{
+
+        this.PreciousMetal.removeHelperModelAndClipping(2);
+
+      }
+      
+      this.PreciousMetal.biTriPair(prevVal,triBool)
       }
       
       }
@@ -483,7 +512,7 @@ this.shadowEnable = false;
 
       model3.position.set(1.0, 0, 0); // Position the third model
       model4.position.set(1.5, 0, 0); // Position the fourth model
-      model4.scale.set(85, 85, 85); // Scale down the fourth model
+      model4.scale.set(0.85, 0.85, 0.85); // Scale down the fourth model
 
       this.scene.add(model3);
       this.scene.add(model4);
@@ -533,7 +562,7 @@ this.shadowEnable = false;
       // Set positions for third and fourth models
       model3.position.set(0.5, 0, 0);  // Position third model
       model4.position.set(1.5, 0, 0);  // Position fourth model
-      model4.scale.set(85, 85, 85);    // Scale down the fourth model
+      model4.scale.set(0.85, 0.85, 0.85);    // Scale down the fourth model
 
       // Add both models back to the scene
       this.scene.add(model3);
@@ -550,7 +579,7 @@ this.shadowEnable = false;
 
       this.scene.remove(this.currentDisplayedModels[3]);  // Remove the current fourth model
       model4.position.set(1.5, 0, 0);  // Set position for new fourth model
-      model4.scale.set(100, 100, 100); // Reset scale
+      model4.scale.set(1, 1, 1); // Reset scale
       this.scene.add(model4);
       model4.visible = true;
 
@@ -571,7 +600,7 @@ this.shadowEnable = false;
       // Set positions for both models
       model1.position.set(-0.7, 0, 0); // First model (left)
       model2.position.set(0.7, -0.15, 0); // Second model (right)
-      model2.scale.set(85, 85, 85); // Scale down the second model
+      model2.scale.set(0.85, 0.85, 0.85); // Scale down the second model
 
       // Add both models back to the scene
       this.scene.add(model1);
@@ -583,7 +612,7 @@ this.shadowEnable = false;
       this.currentDisplayedModels[1] = model2;
       this.applyColorToModel(model1, "#D8BC7E")
       this.applyColorToModel(model2, "#D8BC7E")
-      // this.addShadowPair()
+      this.addShadowPair()
 
     } else {
       // Only hide and switch the selected model, keep the other intact
@@ -608,7 +637,7 @@ this.shadowEnable = false;
           model2.position.set(0.7, -0.15, 0); // Keep second model on the right if no third or fourth models
         }
 
-        model2.scale.set(85, 85, 85); // Scale down the second model
+        model2.scale.set(0.85, 0.85, 0.85); // Scale down the second model
         this.scene.add(model2);
         model2.visible = true;
         this.currentDisplayedModels[1] = model2; // Update the second model
@@ -678,16 +707,19 @@ this.shadowEnable = false;
   }
   
   addSecondModel(type, selectedRing = null) {
+    this.PreciousMetal.removeHelperModelAndClipping(1);
+    this.PreciousMetal.removeHelperModelAndClipping(2);
     let model2;
     // console.log("loraaaaa",selectedRing)
-    if(selectedRing.name.toLowerCase().includes("engage")){
+    if(type == "engagement"){
       console.log("loraaaaa",this.EngagementRingsins)
       this.EngagementRingsins.loadEngRingById(selectedRing.id);
       this.currentDisplayedModels[0].position.x = -0.7;
       return;
     }
     // Load the second model based on the selectedRing or type
-    if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
+    if (type == "Wedding" && selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
+      console.log("aaaaa")
       model2 = this.cloneModelWithUniqueMaterial(this.models[selectedRing.id]);
       model2.userData.modelId = selectedRing.id; // Store model ID for tracking
     } else if (type === "Wedding") {
@@ -701,7 +733,7 @@ this.shadowEnable = false;
     this.currentDisplayedModels[0].position.set(-0.7, 0, 0); // First model on the left
 
     model2.position.set(0.7, -0.15, 0); // Second model on the right
-    model2.scale.set(85, 85, 85); // Scale down the second model
+    model2.scale.set(0.85, 0.85, 0.85); // Scale down the second model
     if(this.PreciousMetal.helperModel){
       this.PreciousMetal.helperModel.position.x = -0.7
     }
@@ -735,7 +767,7 @@ this.shadowEnable = false;
     this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
     this.currentDisplayedModels[1].position.set(0, 0, 0);    // Second model in center
     model3.position.set(1.0, 0, 0);                          // Third model on the right
-    model3.scale.set(100, 100, 100);
+    model3.scale.set(1, 1, 1);
 
     // Add the third model to the scene
     this.scene.add(model3);
@@ -764,7 +796,7 @@ this.shadowEnable = false;
     this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
     this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
     model4.position.set(1.5, 0, 0);                           // Fourth model far right
-    model4.scale.set(100, 100, 100);
+    model4.scale.set(1, 1, 1);
 
     // Add the fourth model to the scene
     this.scene.add(model4);
@@ -814,6 +846,8 @@ console.log("current model name", model)
     console.log("removeFourth", this.currentDisplayedModels, this.models)
   }
   removeSecondModel() {
+    this.PreciousMetal.removeHelperModelAndClipping(1);
+    this.PreciousMetal.removeHelperModelAndClipping(2);
     if (this.currentDisplayedModels.length < 2) {
       console.warn('No second model to remove');
       return;
