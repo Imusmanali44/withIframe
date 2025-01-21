@@ -12,7 +12,7 @@ window.ringsLength = 2
 const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
   
   const [isPair, setIsPair] = useState({
-    pair1: false,
+    pair1: true,
     pair2: false,
   });
   const [rings, setRings] = useState([
@@ -36,11 +36,22 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
 
   useEffect(() => {
     const handleMessage = (event) => {
+      // Ensure the message comes from a trusted source (e.g., your iframe)
+      if (event.origin !== window.location.origin) return;
+  
+      const { action, payload } = event.data;
+  
+      if (action === "removeSecondModel") {
+        // Update the state or handle the message as needed
+        console.log("Received message from iframe:", payload);
+        setIsPair((prev) => ({ ...prev, pair1: payload.pair1 }));
+      }
+  
       if (iframeRef.current) {
         iframeRef.current.contentWindow.postMessage(event.data, "*");
       }
     };
-
+  
     window.addEventListener("message", handleMessage);
     return () => {
       window.removeEventListener("message", handleMessage);

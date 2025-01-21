@@ -19,7 +19,39 @@ export class PreciousMetal {
 
     // this.orignalColor = this.getCurrentColor(this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1])
   }
+  removeClippingTriOneRing(){
+    console.log("hell")
+     if (this.modelManager.currentDisplayedModels.length ==1){
+      console.log("hell 2")
+      this.helperModeltriRing1.traverse((child) => {
+        if (child.isMesh) {
+          if (child.material) {
+            child.material.dispose();
+          }
+          if (child.geometry) {
+            child.geometry.dispose();
+          }
+        }
+      });
+      this.scene.remove(this.helperModeltriRing1);
+      this.helperModeltriRing1 = null;
+      
 
+      this.helperModeltriRing2.traverse((child) => {
+        if (child.isMesh) {
+          if (child.material) {
+            child.material.dispose();
+          }
+          if (child.geometry) {
+            child.geometry.dispose();
+          }
+        }
+      });
+      this.scene.remove(this.helperModeltriRing2);
+      this.helperModeltriRing2 = null;
+
+    }
+  }
 
   biColorOneRing(val) {
     if(val=="Segment 1:1"){
@@ -43,6 +75,7 @@ export class PreciousMetal {
 
     if (this.modelManager.currentDisplayedModels.length === 1) {
       // Clone and add the helper model
+      selectedModel.position.set(0,0,0);
       this.helperModel = this.cloneModelWithUniqueMaterial(selectedModel);
       this.scene.add(this.helperModel);
       this.applyColorToModel(this.helperModel, "#E3E3E2");
@@ -833,6 +866,7 @@ export class PreciousMetal {
     } else {
       console.warn("No helper model to remove.");
     }
+
 
     if (this.helperModeltriRing1 && this.modelManager.selectedModel == 1) {
       // Traverse the helper model and dispose of materials and geometry

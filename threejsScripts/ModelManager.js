@@ -19,7 +19,7 @@ export class ModelManager {
     this.currentDisplayedModels = [];
     this.currentModelIndex = 0;
     this.selectedModel = 1
-    this.pair1 = false
+    this.pair1 = true
     this.pair2 = false
     this.loader = new GLTFLoader();
     this.tatt = new TextGeometry();
@@ -433,7 +433,7 @@ this.shadowEnable = false;
     if (selectedRingId == 1 || selectedRingId == 2) {
 
       // Change both 1st and 2nd rings
-      this.showCurrentModels(index, pair1); // For 1st and 2nd rings
+      this.showCurrentModels(index, this.pair1); // For 1st and 2nd rings
       console.log("chk 1")
       let prevVal = 0
       if(this.PreciousMetal.isEnable == true){ 
@@ -593,8 +593,9 @@ this.shadowEnable = false;
     const model1 = this.cloneModelWithUniqueMaterial(model);
     const model2 = this.cloneModelWithUniqueMaterial(model);
 
-    if (pair1) {
+    if (this.pair1) {
       // Hide both models before showing new ones
+      console.log("razi 1", this.pair1)
       this.hideFirstTwoModels();
 
       // Set positions for both models
@@ -615,6 +616,26 @@ this.shadowEnable = false;
       this.addShadowPair()
 
     } else {
+      console.log("razi 2", this.pair1, this.currentDisplayedModels.length, this.PreciousMetal.isEnable)
+      // if(this.currentDisplayedModels.length==1){
+  //       this.hideFirstTwoModels();
+  //       this.currentDisplayedModels[0] = model1;
+        
+  //       model1.position.set(0, 0, 0);
+  //       this.scene.add(model1);
+  //       model1.visible = true;
+  //     this.PreciousMetal.removeHelperModelAndClipping(1);
+  //   this.PreciousMetal.removeHelperModelAndClipping(2);
+  //   this.scene.remove(this.currentDisplayedModels[0]); 
+  //   if(this.PreciousMetal.isEnable){
+
+  //   this.PreciousMetal.biColorOneRing("1:1")
+
+    
+  // }  
+  // return;
+    
+  //   }
       // Only hide and switch the selected model, keep the other intact
       if (this.selectedModel === 1) {
         this.scene.remove(this.currentDisplayedModels[0]); // Remove old first model
@@ -712,7 +733,7 @@ this.shadowEnable = false;
     let model2;
     // console.log("loraaaaa",selectedRing)
     if(type == "engagement"){
-      console.log("loraaaaa",this.EngagementRingsins)
+      // console.log("loraaaaa",this.EngagementRingsins)
       this.EngagementRingsins.loadEngRingById(selectedRing.id);
       this.currentDisplayedModels[0].position.x = -0.7;
       return;
@@ -846,8 +867,20 @@ console.log("current model name", model)
     console.log("removeFourth", this.currentDisplayedModels, this.models)
   }
   removeSecondModel() {
+    this.pair1 = false;
     this.PreciousMetal.removeHelperModelAndClipping(1);
     this.PreciousMetal.removeHelperModelAndClipping(2);
+    this.PreciousMetal.removeClippingTriOneRing();
+    this.PreciousMetal.isEnable = false
+    window.parent.postMessage(
+      {
+        action: "removeSecondModel",
+        payload: {
+          pair1: this.pair1,
+        },
+      },
+      "*"
+    );
     if (this.currentDisplayedModels.length < 2) {
       console.warn('No second model to remove');
       return;
