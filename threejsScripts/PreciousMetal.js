@@ -17,12 +17,17 @@ export class PreciousMetal {
     this.biColorSingleBool = false
     this.triColorSingleBool = false
 
+    this.helperModeltriRing1 = null
+    this.helperModeltriRing2 = null
+
+
     // this.orignalColor = this.getCurrentColor(this.modelManager.currentDisplayedModels[this.modelManager.selectedModel - 1])
   }
   removeClippingTriOneRing(){
     console.log("hell")
-     if (this.modelManager.currentDisplayedModels.length ==1){
+    //  if (this.modelManager.currentDisplayedModels.length ==1){
       console.log("hell 2")
+      if(this.helperModeltriRing1!=null){
       this.helperModeltriRing1.traverse((child) => {
         if (child.isMesh) {
           if (child.material) {
@@ -35,8 +40,8 @@ export class PreciousMetal {
       });
       this.scene.remove(this.helperModeltriRing1);
       this.helperModeltriRing1 = null;
-      
-
+    }
+    if(this.helperModeltriRing2!=null){
       this.helperModeltriRing2.traverse((child) => {
         if (child.isMesh) {
           if (child.material) {
@@ -49,8 +54,8 @@ export class PreciousMetal {
       });
       this.scene.remove(this.helperModeltriRing2);
       this.helperModeltriRing2 = null;
-
     }
+    // }
   }
 
   biColorOneRing(val) {
