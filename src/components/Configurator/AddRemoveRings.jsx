@@ -90,6 +90,10 @@ const AddRemoveRings = ({ rings, setRings }) => {
 
   const addRing = (type) => {
     if (rings.length < 4) {
+      if(window.ringsLength ==2){
+        alert("only two rings for now")
+        return;
+      }
       // Find the lowest available ID that's not in use
       const usedIds = rings.map(ring => ring.id);
       let newId = 1;
