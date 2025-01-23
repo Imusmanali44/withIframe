@@ -84,26 +84,26 @@ this.shadowEnable = false;
     }
   }
   loadMatCapTextures() {
-    const textureLoader = new THREE.TextureLoader();
+    // const textureLoader = new THREE.TextureLoader();
   
-    // Create promises for matcap and highlight textures
-    this.matcapPromise = new Promise((resolve, reject) => {
-      textureLoader.load('./models/mat/MatCap.jpg', (texture) => {
-        this.matcapTexture = texture;
-        this.matcapTexture.needsUpdate = true;
-        resolve();
-      }, undefined, (err) => reject(err));
-    });
+    // // Create promises for matcap and highlight textures
+    // this.matcapPromise = new Promise((resolve, reject) => {
+    //   textureLoader.load('./models/mat/MatCap.jpg', (texture) => {
+    //     this.matcapTexture = texture;
+    //     this.matcapTexture.needsUpdate = true;
+    //     resolve();
+    //   }, undefined, (err) => reject(err));
+    // });
   
-    this.highlightPromise = new Promise((resolve, reject) => {
-      textureLoader.load('./models/mat/MatCap2.jpg', (texture) => {
-        this.highlightTexture = texture;
-        this.highlightTexture.needsUpdate = true;
-        resolve();
-      }, undefined, (err) => reject(err));
-    });
+    // this.highlightPromise = new Promise((resolve, reject) => {
+    //   textureLoader.load('./models/mat/MatCap2.jpg', (texture) => {
+    //     this.highlightTexture = texture;
+    //     this.highlightTexture.needsUpdate = true;
+    //     resolve();
+    //   }, undefined, (err) => reject(err));
+    // });
   
-    console.log("Loading matcaps...");
+    // console.log("Loading matcaps...");
   }
   
   // Load models only after textures are loaded
@@ -136,62 +136,7 @@ this.shadowEnable = false;
                 }
               });
   
-              // model.traverse((child) => {
-              //   if (child.isMesh) {
-              //     // Apply custom shader material combining both MatCaps
-              //     child.material = new THREE.ShaderMaterial({
-              //       uniforms: {
-              //         matcapTexture: { value: this.matcapTexture },
-              //         highlightTexture: { value: this.highlightTexture },
-              //         blendFactor: { value: 0.1 }, // Adjust to control blend between textures
-              //         color: { value: new THREE.Color('#A09F9D') },
-              //       },
-              //       vertexShader: `
-              //         varying vec3 vNormal;
-              //         varying vec3 vViewPosition;
-              //         varying vec2 vUv;
-  
-              //         void main() {
-              //           vUv = uv;
-              //           vNormal = normalize(normalMatrix * normal);
-              //           vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-              //           vViewPosition = -modelViewPosition.xyz;
-              //           gl_Position = projectionMatrix * modelViewPosition;
-              //         }
-              //       `,
-              //       fragmentShader: `
-              //         uniform sampler2D matcapTexture;
-              //         uniform sampler2D highlightTexture;
-              //         uniform float blendFactor;
-              //         uniform vec3 color; // Color uniform
-  
-              //         varying vec3 vNormal;
-              //         varying vec3 vViewPosition;
-              //         varying vec2 vUv;
-  
-              //         void main() {
-              //           vec3 viewDir = normalize(vViewPosition);
-              //           vec3 reflectedDir = reflect(viewDir, normalize(vNormal));
-              //           float m = 2.82842712474619 * sqrt(reflectedDir.z + 1.5);
-              //           vec2 uv = reflectedDir.xy / m + 0.7;
-  
-              //           // Sample both MatCap textures and increase their brightness
-              //           vec4 matcapColor = texture2D(matcapTexture, uv) * 1.3;
-              //           vec4 highlightColor = texture2D(highlightTexture, uv) * 1.3;
-  
-              //           // Blend the textures with an adjusted factor
-              //           vec4 blendedColor = mix(matcapColor, highlightColor, blendFactor);
-  
-              //           // Apply the color tint with increased intensity
-              //           gl_FragColor = vec4(blendedColor.rgb * color * 2.0, blendedColor.a);
-              //         }
-              //       `,
-              //       // transparent: true,
-              //     });
-              //   }
-              // });
-  
-              // model.scale.set(100, 100, 100);
+             
               model.visible = false;
               this.scene.add(model);
               resolve(model); // Resolve the promise when the model is loaded
@@ -733,9 +678,16 @@ this.shadowEnable = false;
     let model2;
     // console.log("loraaaaa",selectedRing)
     if(type == "engagement"){
-      // console.log("loraaaaa",this.EngagementRingsins)
+      console.log("loraaaaa",this.EngagementRingsins)
       this.EngagementRingsins.loadEngRingById(selectedRing.id);
       this.currentDisplayedModels[0].position.x = -0.7;
+      if(this.shadowPlane!=undefined){
+        this.shadowPlane.position.x = -0.7
+      }
+      if(this.shadowClone!=undefined){
+        this.shadowClone.visible = true;
+        this.shadowClone.position.x = 0.7
+      }
       return;
     }
     // Load the second model based on the selectedRing or type

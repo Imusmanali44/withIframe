@@ -81,12 +81,15 @@ const AddRemoveRings = ({ rings, setRings }) => {
   const [selectedRing, setSelectedRing] = useState(null);
 
   // Effect to send a message when the selectedRing is updated
-  // useEffect(() => {
-  //   console.log("test", selectedRing)
-  //   if (selectedRing && selectedRing.name.toLowerCase().includes("engage")) {
-  //     window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
-  //   }
-  // }, [selectedRing]);
+  useEffect(() => {
+    console.log("test", selectedRing)
+    if (selectedRing && selectedRing.name.toLowerCase().includes("engage")) {
+      window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
+    window.ringsLength++;
+
+    }
+
+  }, [selectedRing]);
 
   const addRing = (type) => {
     if (rings.length < 4) {
@@ -100,7 +103,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
       while (usedIds.includes(newId)) {
         newId++;
       }
-
+      console.log("type 1", type)
       window.parent.postMessage({ action: 'addRing', type }, "*");
       setRings([
         ...rings,
