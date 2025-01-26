@@ -127,8 +127,19 @@ export class MessageHandler {
           this.modelManager.engraveTextOnModel(isEngraving)
         // }
         break;
+      case "addGroove":
+        console.log("calss groove", type)
+        if(type=="Without"){
+          this.modelManager.GrooveManagerIns.removeMidMeshes();
+        }
+        else{
+
+          this.modelManager.loadMidMesh();
+
+        }
+        break;  
       case "changeSlider":
-        console.log("calss", value, selectedRing)
+        // console.log("calss", value, selectedRing)
         this.pMetalManager.setoffsetValue(value, selectedRing)
         break;
       case "changeMultiSlider":

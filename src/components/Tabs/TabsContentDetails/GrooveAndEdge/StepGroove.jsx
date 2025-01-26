@@ -41,22 +41,32 @@ const StepGroove = ({
     { id: 1, name: "Free Groove" },
   ]);
 
+  const handleGrooveSelection = (item) => {
+    setGroove(item.name);
+    console.log(`Selected Groove: ${item.name}`);
+    window.parent.postMessage({ action: 'addGroove', type: item.name }, "*")
+  };
+
   const addGrooveRing1 = () => {
     const newId = ring1Grooves.length + 1;
     setRing1Grooves([...ring1Grooves, { id: newId, name: "Free Groove" }]);
+    console.log("Added a new groove to Ring 1:", newId);
   };
 
   const addGrooveRing2 = () => {
     const newId = ring2Grooves.length + 1;
     setRing2Grooves([...ring2Grooves, { id: newId, name: "Free Groove" }]);
+    console.log("Added a new groove to Ring 2:", newId);
   };
 
   const removeGrooveRing1 = (id) => {
     setRing1Grooves(ring1Grooves.filter((groove) => groove.id !== id));
+    console.log(`Removed groove with ID ${id} from Ring 1`);
   };
 
   const removeGrooveRing2 = (id) => {
     setRing2Grooves(ring2Grooves.filter((groove) => groove.id !== id));
+    console.log(`Removed groove with ID ${id} from Ring 2`);
   };
 
   return (
@@ -95,7 +105,7 @@ const StepGroove = ({
             {DistributionOptions.map((item, index) => (
               <button
                 key={index}
-                onClick={() => setGroove(item.name)}
+                onClick={() => handleGrooveSelection(item)}
                 className={`bg-white w-full border ${
                   groove === item.name ? "border-[#205fa8]" : "border-[#e1e1e1]"
                 }`}

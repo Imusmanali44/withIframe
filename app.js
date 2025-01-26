@@ -10,6 +10,7 @@ import { MessageHandler } from './threejsScripts/MessageHandler.js'; // Import M
 import {PreciousMetal} from "./threejsScripts/PreciousMetal.js";
 import { PreciousMetalHelper } from './threejsScripts/PreciousMetalHelper.js';
 import {EngagementRings} from "./threejsScripts/engagementRings/EngagementRings.js"
+import { GrooveManager } from './threejsScripts/grooveManager/GrooveManager.js';
 
 
 
@@ -40,7 +41,10 @@ class RotatingRingApp {
     
     this.PreciousMetalHelper = new PreciousMetalHelper(this.scene,this.PreciousMetalins,this.modelManager  )
     this.EngagementRings = new EngagementRings(this.scene,this.modelManager);
+    this.GrooveManager = new GrooveManager(this.scene,this.modelManager)
     this.modelManager.EngagementRingsins  = this.EngagementRings 
+    this.modelManager.GrooveManagerIns  = this.GrooveManager 
+
     this.PreciousMetalins.pmHelper = this.PreciousMetalHelper
     this.lighting = new Lighting(this.scene);
     this.floor = new Floor(this.scene, this.camera, this.renderer);
@@ -77,7 +81,7 @@ class RotatingRingApp {
     window.addEventListener('resize', this.onWindowResize.bind(this));
 
     // Listen for key presses to switch models
-    window.addEventListener('keydown', this.switchModelLocal.bind(this));
+    // window.addEventListener('keydown', this.switchModelLocal.bind(this));
 
     // Start the render loop
     this.animate();

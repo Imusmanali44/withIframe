@@ -6,7 +6,7 @@ export class Floor {
   constructor(scene, camera, renderer) {
     this.scene = scene;
     this.camera = camera;
-    this.renderer = renderer;
+    // this.renderer = renderer;
     // this.initFloor();
   }
 

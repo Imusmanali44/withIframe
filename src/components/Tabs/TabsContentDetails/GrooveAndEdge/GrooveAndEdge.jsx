@@ -6,6 +6,14 @@ import IsPair from "../../../shared/IsPair";
 export const GrooveAndEdge = ({rings, isPair, setIsPair, activeRing }) => {
   const [activeTab, setActiveTab] = useState("grooves");
 
+  const handleOptionClick = (optionType, optionValue) => {
+    setSelectedGrooveOptions((prev) => ({
+      ...prev,
+      [optionType]: optionValue,
+    }));
+    console.log(`Groove ${optionType} changed to:`, optionValue);
+  };
+
   const [selectedGrooveOptions, setSelectedGrooveOptions] = useState({
     width: {
       name: "0.20 mm",

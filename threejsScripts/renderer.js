@@ -25,7 +25,7 @@ export class Renderer {
       Custom: THREE.CustomToneMapping,
     };
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true,stencil:true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.toneMapping = toneMappingOptions[params.toneMapping];
     this.renderer.toneMappingExposure = params.exposure;
