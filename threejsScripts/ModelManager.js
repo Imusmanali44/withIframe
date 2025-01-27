@@ -30,9 +30,11 @@ export class ModelManager {
     this.shadowEnable = true;
     this.modelGroupRing1 = new THREE.Group();
     this.modelGroupRing2 = new THREE.Group();
+    this.GrooveBool = false
+    this.modelId = "P1";
 
-    this.scene.add(this.modelGroupRing1);
-    this.scene.add(this.modelGroupRing2);
+    // this.scene.add(this.modelGroupRing1);
+    // this.scene.add(this.modelGroupRing2);
 
     this.loadMatCapTextures();
   }
@@ -111,20 +113,22 @@ export class ModelManager {
 
     // console.log("Loading matcaps...");
   }
-
-  // Load models only after textures are loaded
-  loadModels(modelData) {
-    // Wait for both matcap and highlight textures to load
-    Promise.all([this.matcapPromise, this.highlightPromise])
+  async loadModels(modelData) {
+    this.modelLoadQueue = [...modelData]; // Keep track of original order
+    this.models = new Array(modelData.length).fill(null); // Pre-allocate array with nulls
+  
+    return Promise.all([this.matcapPromise, this.highlightPromise])
       .then(() => {
         console.log("Matcaps loaded. Loading models...");
-  
+        
         const modelLoadPromises = modelData.map((data, index) => {
           return new Promise((resolve, reject) => {
             this.loader.load(data.glbPath, (gltf) => {
               const model = gltf.scene;
-              this.models.push(model);
-  
+              
+              // Store model in the correct index position
+              this.models[index] = model;
+              
               model.traverse((child) => {
                 if (child.isMesh && child.material) {
                   const originalMaterial = child.material;
@@ -132,8 +136,8 @@ export class ModelManager {
                   // Apply the same material logic as provided for the midMesh
                   child.material = new THREE.MeshStandardMaterial({
                     color: originalMaterial.color || "#D8BC7E",
-                    metalness: 0.7, // Metalness for a metallic effect
-                    roughness: 0.2, // Smooth surface
+                    metalness: 0.8, // Metalness for a metallic effect
+                    roughness: 0.1, // Smooth surface
                     map: originalMaterial.map, // Retain the original map
                     normalMap: originalMaterial.normalMap, // Retain the normal map
                     metalnessMap: originalMaterial.metalnessMap, // Retain the metalness map
@@ -143,96 +147,169 @@ export class ModelManager {
                     stencilWrite: true, // Enable stencil writing
                     stencilRef: 1, // Stencil reference value
                     stencilFunc: THREE.AlwaysStencilFunc, // Always pass stencil function
-                    stencilZPass: THREE.ReplaceStencilOp, // Replace stencil operation on z-pass
+                    stencilZPass: THREE.ReplaceStencilOp, //
                   });
-  
-                  child.material.needsUpdate = true; // Ensure material updates
+                  child.material.needsUpdate = true;
                 }
               });
   
-              model.visible = false; // Hide the model initially
+              model.visible = false;
+              model.userData.modelIndex = index; // Store index for verification
               this.scene.add(model);
-              resolve(model); // Resolve the promise when the model is loaded
+              resolve(model);
             }, undefined, (err) => reject(err));
           });
         });
   
-        // Wait for all models to load
-        Promise.all(modelLoadPromises)
-          .then((models) => {
-            console.log("All models loaded.");
-            this.currentColor = "#A09F9D";
-            this.switchModel(0, 1, true, false); // Show the first model
-            // this.loadMidMesh();
-          })
-          .catch((err) => {
-            console.error("Error loading models:", err);
-          });
+        return Promise.all(modelLoadPromises);
+      })
+      .then((models) => {
+        console.log("All models loaded.");
+        // Verify models array is complete and in order
+        const missingModels = this.models.findIndex(model => model === null);
+        if (missingModels !== -1) {
+          throw new Error(`Model loading incomplete or out of order at index ${missingModels}`);
+        }
+        
+        this.currentColor = "#A09F9D";
+        this.switchModel(0, 1, true, false);
       })
       .catch((err) => {
-        console.error("Error loading matcaps:", err);
+        console.error("Error in model loading:", err);
       });
   }
+  // Load models only after textures are loaded
+  // loadModels(modelData) {
+  //   // Wait for both matcap and highlight textures to load
+  //   Promise.all([this.matcapPromise, this.highlightPromise])
+  //     .then(() => {
+  //       console.log("Matcaps loaded. Loading models...");
   
-  loadMidMesh() {
-    return new Promise((resolve, reject) => {
-      this.loader.load(
-        'models/midMesh/Mid.glb',
-        (gltf) => {
-          this.midMesh = gltf.scene;
-          this.midMesh.scale.set(40, 115, 115);
+  //       const modelLoadPromises = modelData.map((data, index) => {
+  //         return new Promise((resolve, reject) => {
+  //           this.loader.load(data.glbPath, (gltf) => {
+  //             const model = gltf.scene;
+  //             this.models.push(model);
   
-          this.midMesh.traverse((child) => {
-            if (child.isMesh && child.material) {
-              const originalMaterial = child.material;
-              child.material = new THREE.MeshStandardMaterial({
-                color: '#D8BC7E',
-                metalness: 0.7,
-                roughness: 0.1,
-                map: originalMaterial.map,
-                normalMap: originalMaterial.normalMap,
-                metalnessMap: originalMaterial.metalnessMap,
-                roughnessMap: originalMaterial.roughnessMap,
-                emissiveMap: originalMaterial.emissiveMap,
-                emissive: originalMaterial.emissive,
-                stencilWrite: true,
-                stencilRef: 0,
-                stencilFunc: THREE.NotEqualStencilFunc,
-                // stencilFail: THREE.KeepStencilOp,
-                // stencilZFail: THREE.KeepStencilOp,
-                stencilZPass: THREE.KeepStencilOp,
-                depthWrite: true,
-                polygonOffset: false,
-                polygonOffsetFactor: -10,
-                polygonOffsetUnits: -10,
-              });
-            }
-          });
+  //             model.traverse((child) => {
+  //               if (child.isMesh && child.material) {
+  //                 const originalMaterial = child.material;
   
-          // Add the first mesh
-          this.scene.add(this.midMesh);
-          this.midMesh.position.x = -0.7;
+  //                 // Apply the same material logic as provided for the midMesh
+  //                 child.material = new THREE.MeshStandardMaterial({
+  //                   color: originalMaterial.color || "#D8BC7E",
+  //                   metalness: 0.7, // Metalness for a metallic effect
+  //                   roughness: 0.2, // Smooth surface
+  //                   map: originalMaterial.map, // Retain the original map
+  //                   normalMap: originalMaterial.normalMap, // Retain the normal map
+  //                   metalnessMap: originalMaterial.metalnessMap, // Retain the metalness map
+  //                   roughnessMap: originalMaterial.roughnessMap, // Retain the roughness map
+  //                   emissiveMap: originalMaterial.emissiveMap, // Retain the emissive map
+  //                   emissive: originalMaterial.emissive, // Retain the emissive color
+  //                   stencilWrite: true, // Enable stencil writing
+  //                   stencilRef: 1, // Stencil reference value
+  //                   stencilFunc: THREE.AlwaysStencilFunc, // Always pass stencil function
+  //                   stencilZPass: THREE.ReplaceStencilOp, // Replace stencil operation on z-pass
+  //                 });
   
-          // Clone the model with unique material
-          this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
-          this.midMesh2.scale.set(40 * 0.85, 115 * 0.85, 115 * 0.85);
-          this.midMesh2.position.x = 0.7;
-          this.midMesh2.position.y = -0.15;
+  //                 child.material.needsUpdate = true; // Ensure material updates
+  //               }
+  //             });
   
-          // Add the second mesh
-          this.scene.add(this.midMesh2);
+  //             model.visible = false; // Hide the model initially
+  //             this.scene.add(model);
+  //             resolve(model); // Resolve the promise when the model is loaded
+  //           }, undefined, (err) => reject(err));
+  //         });
+  //       });
   
-          // Resolve the promise after the models are added to the scene
-          resolve({ midMesh: this.midMesh, midMesh2: this.midMesh2 });
-        },
-        undefined,
-        (error) => {
-          console.error('Error loading midMesh:', error);
-          reject(error);
-        }
-      );
-    });
-  }
+  //       // Wait for all models to load
+  //       Promise.all(modelLoadPromises)
+  //         .then((models) => {
+  //           console.log("All models loaded.");
+  //           this.currentColor = "#A09F9D";
+  //           this.switchModel(0, 1, true, false); // Show the first model
+  //           // this.loadMidMesh();
+  //         })
+  //         .catch((err) => {
+  //           console.error("Error loading models:", err);
+  //         });
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error loading matcaps:", err);
+  //     });
+  // }
+  
+ // Function to handle model-specific scaling
+
+
+// Updated loadMidMesh function
+loadMidMesh() {
+  this.GrooveBool = true
+  return new Promise((resolve, reject) => {
+    this.loader.load(
+      "models/midMesh/Mid.glb",
+      (gltf) => {
+        this.midMesh = gltf.scene;
+
+        // Default scale
+        const defaultScale = { x: 40, y: 115, z: 115 };
+
+        // Traverse and update material
+        this.midMesh.traverse((child) => {
+          if (child.isMesh && child.material) {
+            const originalMaterial = child.material;
+            child.material = new THREE.MeshStandardMaterial({
+              color: "#D8BC7E",
+              metalness: 0.7,
+              roughness: 0.1,
+              map: originalMaterial.map,
+              normalMap: originalMaterial.normalMap,
+              metalnessMap: originalMaterial.metalnessMap,
+              roughnessMap: originalMaterial.roughnessMap,
+              emissiveMap: originalMaterial.emissiveMap,
+              emissive: originalMaterial.emissive,
+              stencilWrite: true,
+              stencilRef: 0,
+              stencilFunc: THREE.NotEqualStencilFunc,
+              stencilZPass: THREE.KeepStencilOp,
+              depthWrite: true,
+              polygonOffset: false,
+              polygonOffsetFactor: -10,
+              polygonOffsetUnits: -10,
+            });
+          }
+        });
+
+        // Get scaling values for the current model
+        const { x, y, z } = this.GrooveManagerIns.getScaleForModel(this.modelId);
+        this.midMesh.scale.set(x, y, z);
+
+        // Add the first mesh to the scene
+        this.scene.add(this.midMesh);
+        this.midMesh.position.x = -0.7;
+
+        // Clone the model with unique material
+        this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
+        this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+        this.midMesh2.position.x = 0.7;
+        this.midMesh2.position.y = -0.15;
+
+        // Add the second mesh to the scene
+        this.scene.add(this.midMesh2);
+
+        // Resolve the promise
+        resolve({ midMesh: this.midMesh, midMesh2: this.midMesh2 });
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading midMesh:", error);
+        reject(error);
+      }
+    );
+  });
+}
+
   
   optimalThicknessBool(value) {
     if (value) {

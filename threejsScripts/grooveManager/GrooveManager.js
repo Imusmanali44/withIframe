@@ -76,12 +76,46 @@ export class GrooveManager {
     console.log("Mid meshes removed from scene and set to null.");
   }
 
+getScaleForModel(modelId) {
+  let scale = { x: 40, y: 115, z: 115 }; // Default scale values
 
+  switch (modelId) {
+    case "P1":
+    case "P4":
+    case "P6":
+    case "P9":
+    case "P11":
+      scale = { x: 40, y: 111, z: 111 };
+      break;
+    case "P7":
+    case "P15":
+      scale = { x: 40, y: 109, z: 109 };
+      break;
+    case "P8":
+      scale = { x: 40, y: 106, z: 106 };
+      break;
+    case "P12":
+    case "P13":
+    case "P14":
+      scale = { x: 40, y: 112, z: 112 };
+      break;
+    default:
+      console.log("Using default scale for modelId:", modelId);
+      break;
+  }
+
+  return scale;
+}
 loadMidMesh(){
+
+  let x = 40
+  let y= 111
+  let z= 111
+  let polygonOffsetFac , polygonOffsetUni = -1
 
     this.loader.load('models/midMesh/Mid.glb', (gltf) => {
         this.midMesh = gltf.scene;
-        this.midMesh.scale.set(40, 115, 115);
+        this.midMesh.scale.set(x, y, z);
         
         this.midMesh.traverse((child) => {
           if (child.isMesh && child.material) {
@@ -104,8 +138,8 @@ loadMidMesh(){
               stencilZPass: THREE.KeepStencilOp,
               depthWrite: true,  // Enable depth writing
               polygonOffset: true,  // Enable polygon offset
-              polygonOffsetFactor: -1,  // Initial offset factor
-              polygonOffsetUnits: -1    // Initial offset units
+              polygonOffsetFactor: polygonOffsetFac,  // Initial offset factor
+              polygonOffsetUnits: polygonOffsetUni    // Initial offset units
             });
           }
         })

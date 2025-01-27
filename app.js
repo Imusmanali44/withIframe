@@ -56,9 +56,9 @@ class RotatingRingApp {
 
     // Load GLB models
     const modelData = [
-      { glbPath: 'models/p2.glb', texturePath: 'path/to/texture2.jpg' },
-      { glbPath: 'models/p3.glb', texturePath: 'path/to/texture3.jpg' },
-      { glbPath: 'models/p1.glb', texturePath: 'path/to/texture1.jpg' },
+      { glbPath: 'models/p1.glb', texturePath: 'path/to/texture2.jpg' },
+      { glbPath: 'models/p2.glb', texturePath: 'path/to/texture3.jpg' },
+      { glbPath: 'models/p3.glb', texturePath: 'path/to/texture1.jpg' },
       { glbPath: 'models/p4.glb' },
       { glbPath: 'models/p5.glb' },
       { glbPath: 'models/p6.glb' },

@@ -131,6 +131,7 @@ export class MessageHandler {
         console.log("calss groove", type)
         if(type=="Without"){
           this.modelManager.GrooveManagerIns.removeMidMeshes();
+          this.modelManager.GrooveBool = false; 
         }
         else{
 
@@ -281,6 +282,8 @@ break;
   }
 
   iframeMsgToSwitchModel(modelId, selectedRingId, pair1 = false, pair2 = false) {
+    this.modelManager.modelId = modelId
+
     switch (modelId) {
       case "P1":
         this.modelManager.switchModel(0, selectedRingId, pair1, pair2);
@@ -332,7 +335,9 @@ break;
         break;
     }
     this.modelManager.setCurrentModelName(modelId)
-
+    if(this.modelManager.GrooveBool==true ){
+      this.modelManager.loadMidMesh();
+    }
   }
 
 }
