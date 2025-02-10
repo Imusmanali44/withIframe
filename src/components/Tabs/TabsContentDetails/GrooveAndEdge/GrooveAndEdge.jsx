@@ -42,7 +42,9 @@ export const GrooveAndEdge = ({rings, isPair, setIsPair, activeRing }) => {
       name: "Polished",
       value: "polished",
     },
-  });
+   
+  }
+);
 
   const [selectedRightStepOptions, setSelectedRightStepOptions] = useState({
     width: {

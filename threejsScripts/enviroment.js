@@ -55,7 +55,7 @@ loadEnvironment() {
     loader.setDataType(THREE.FloatType);
 
     loader.load(
-      './bg/brown_photostudio_04_2k.hdr',
+      './bg/Jewelry-HDRI-Studio-Light-Beel-v5-gray.hdr',
       (texture) => {
         const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
         pmremGenerator.compileEquirectangularShader();

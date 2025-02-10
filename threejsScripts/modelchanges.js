@@ -325,3 +325,64 @@ let helperModelPosY = -0.15
     
       console.log("Clipping plane applied to the selected model and helper model.");
   }
+
+   // loadModels(modelData) {
+    //   // Wait for both matcap and highlight textures to load
+    //   Promise.all([this.matcapPromise, this.highlightPromise])
+    //     .then(() => {
+    //       console.log("Matcaps loaded. Loading models...");
+    
+    //       const modelLoadPromises = modelData.map((data, index) => {
+    //         return new Promise((resolve, reject) => {
+    //           this.loader.load(data.glbPath, (gltf) => {
+    //             const model = gltf.scene;
+    //             this.models.push(model);
+    
+    //             model.traverse((child) => {
+    //               if (child.isMesh && child.material) {
+    //                 const originalMaterial = child.material;
+    
+    //                 // Apply the same material logic as provided for the midMesh
+    //                 child.material = new THREE.MeshStandardMaterial({
+    //                   color: originalMaterial.color || "#D8BC7E",
+    //                   metalness: 0.7, // Metalness for a metallic effect
+    //                   roughness: 0.2, // Smooth surface
+    //                   map: originalMaterial.map, // Retain the original map
+    //                   normalMap: originalMaterial.normalMap, // Retain the normal map
+    //                   metalnessMap: originalMaterial.metalnessMap, // Retain the metalness map
+    //                   roughnessMap: originalMaterial.roughnessMap, // Retain the roughness map
+    //                   emissiveMap: originalMaterial.emissiveMap, // Retain the emissive map
+    //                   emissive: originalMaterial.emissive, // Retain the emissive color
+    //                   stencilWrite: true, // Enable stencil writing
+    //                   stencilRef: 1, // Stencil reference value
+    //                   stencilFunc: THREE.AlwaysStencilFunc, // Always pass stencil function
+    //                   stencilZPass: THREE.ReplaceStencilOp, // Replace stencil operation on z-pass
+    //                 });
+    
+    //                 child.material.needsUpdate = true; // Ensure material updates
+    //               }
+    //             });
+    
+    //             model.visible = false; // Hide the model initially
+    //             this.scene.add(model);
+    //             resolve(model); // Resolve the promise when the model is loaded
+    //           }, undefined, (err) => reject(err));
+    //         });
+    //       });
+    
+    //       // Wait for all models to load
+    //       Promise.all(modelLoadPromises)
+    //         .then((models) => {
+    //           console.log("All models loaded.");
+    //           this.currentColor = "#A09F9D";
+    //           this.switchModel(0, 1, true, false); // Show the first model
+    //           // this.loadMidMesh();
+    //         })
+    //         .catch((err) => {
+    //           console.error("Error loading models:", err);
+    //         });
+    //     })
+    //     .catch((err) => {
+    //       console.error("Error loading matcaps:", err);
+    //     });
+    // }

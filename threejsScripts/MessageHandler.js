@@ -135,10 +135,23 @@ export class MessageHandler {
         }
         else{
 
-          this.modelManager.loadMidMesh();
+          this.modelManager.loadMidMesh(type,false);
 
         }
         break;  
+        case "addStep":
+          console.log("calss groove step", value)
+          // if(value=="left"){
+
+          //   this.modelManager.StepsManagerIns.addLeftStep()
+
+          // }
+          // if(value=="right"){
+
+          //   this.modelManager.StepsManagerIns.addRightStep()
+
+          // }
+          break;  
       case "changeSlider":
         // console.log("calss", value, selectedRing)
         this.pMetalManager.setoffsetValue(value, selectedRing)
@@ -336,7 +349,7 @@ break;
     }
     this.modelManager.setCurrentModelName(modelId)
     if(this.modelManager.GrooveBool==true ){
-      this.modelManager.loadMidMesh();
+      // this.modelManager.loadMidMesh();
     }
   }
 

@@ -30,8 +30,13 @@ export class ModelManager {
     this.shadowEnable = true;
     this.modelGroupRing1 = new THREE.Group();
     this.modelGroupRing2 = new THREE.Group();
-    this.GrooveBool = false
+    this.GrooveBool = true
     this.modelId = "P1";
+    this.midMesh = null
+    this.midMeshTri = null
+
+    this.midMesh2 = null
+    this.midMesh2Tri = null
 
     // this.scene.add(this.modelGroupRing1);
     // this.scene.add(this.modelGroupRing2);
@@ -125,6 +130,7 @@ export class ModelManager {
           return new Promise((resolve, reject) => {
             this.loader.load(data.glbPath, (gltf) => {
               const model = gltf.scene;
+    // this.loadMidMesh();
               
               // Store model in the correct index position
               this.models[index] = model;
@@ -136,7 +142,7 @@ export class ModelManager {
                   // Apply the same material logic as provided for the midMesh
                   child.material = new THREE.MeshStandardMaterial({
                     color: originalMaterial.color || "#D8BC7E",
-                    metalness: 0.8, // Metalness for a metallic effect
+                    metalness: 0.7, // Metalness for a metallic effect
                     roughness: 0.1, // Smooth surface
                     map: originalMaterial.map, // Retain the original map
                     normalMap: originalMaterial.normalMap, // Retain the normal map
@@ -179,136 +185,121 @@ export class ModelManager {
       });
   }
   // Load models only after textures are loaded
-  // loadModels(modelData) {
-  //   // Wait for both matcap and highlight textures to load
-  //   Promise.all([this.matcapPromise, this.highlightPromise])
-  //     .then(() => {
-  //       console.log("Matcaps loaded. Loading models...");
-  
-  //       const modelLoadPromises = modelData.map((data, index) => {
-  //         return new Promise((resolve, reject) => {
-  //           this.loader.load(data.glbPath, (gltf) => {
-  //             const model = gltf.scene;
-  //             this.models.push(model);
-  
-  //             model.traverse((child) => {
-  //               if (child.isMesh && child.material) {
-  //                 const originalMaterial = child.material;
-  
-  //                 // Apply the same material logic as provided for the midMesh
-  //                 child.material = new THREE.MeshStandardMaterial({
-  //                   color: originalMaterial.color || "#D8BC7E",
-  //                   metalness: 0.7, // Metalness for a metallic effect
-  //                   roughness: 0.2, // Smooth surface
-  //                   map: originalMaterial.map, // Retain the original map
-  //                   normalMap: originalMaterial.normalMap, // Retain the normal map
-  //                   metalnessMap: originalMaterial.metalnessMap, // Retain the metalness map
-  //                   roughnessMap: originalMaterial.roughnessMap, // Retain the roughness map
-  //                   emissiveMap: originalMaterial.emissiveMap, // Retain the emissive map
-  //                   emissive: originalMaterial.emissive, // Retain the emissive color
-  //                   stencilWrite: true, // Enable stencil writing
-  //                   stencilRef: 1, // Stencil reference value
-  //                   stencilFunc: THREE.AlwaysStencilFunc, // Always pass stencil function
-  //                   stencilZPass: THREE.ReplaceStencilOp, // Replace stencil operation on z-pass
-  //                 });
-  
-  //                 child.material.needsUpdate = true; // Ensure material updates
-  //               }
-  //             });
-  
-  //             model.visible = false; // Hide the model initially
-  //             this.scene.add(model);
-  //             resolve(model); // Resolve the promise when the model is loaded
-  //           }, undefined, (err) => reject(err));
-  //         });
-  //       });
-  
-  //       // Wait for all models to load
-  //       Promise.all(modelLoadPromises)
-  //         .then((models) => {
-  //           console.log("All models loaded.");
-  //           this.currentColor = "#A09F9D";
-  //           this.switchModel(0, 1, true, false); // Show the first model
-  //           // this.loadMidMesh();
-  //         })
-  //         .catch((err) => {
-  //           console.error("Error loading models:", err);
-  //         });
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error loading matcaps:", err);
-  //     });
-  // }
+ 
   
  // Function to handle model-specific scaling
 
 
 // Updated loadMidMesh function
-loadMidMesh() {
-  this.GrooveBool = true
-  return new Promise((resolve, reject) => {
-    this.loader.load(
-      "models/midMesh/Mid.glb",
-      (gltf) => {
-        this.midMesh = gltf.scene;
+async loadMidMesh(type, isTri) {
+  if (type==undefined){
+    type = "V-groove"
+  }
+  this.GrooveType = type;
+  this.GrooveBoolTri = isTri;
+  console.log("type", type);
 
-        // Default scale
-        const defaultScale = { x: 40, y: 115, z: 115 };
+  // Check if the midMesh is already loaded, reuse it instead of loading again
+  if (this.midMesh) {
+    console.log("Using cached midMesh");
+    
+    // Reset transformations before adding to the scene
+    this.midMesh.scale.set(1, 1, 1);
+    this.midMesh.position.set(0, 0, 0);
 
-        // Traverse and update material
-        this.midMesh.traverse((child) => {
-          if (child.isMesh && child.material) {
-            const originalMaterial = child.material;
-            child.material = new THREE.MeshStandardMaterial({
-              color: "#D8BC7E",
-              metalness: 0.7,
-              roughness: 0.1,
-              map: originalMaterial.map,
-              normalMap: originalMaterial.normalMap,
-              metalnessMap: originalMaterial.metalnessMap,
-              roughnessMap: originalMaterial.roughnessMap,
-              emissiveMap: originalMaterial.emissiveMap,
-              emissive: originalMaterial.emissive,
-              stencilWrite: true,
-              stencilRef: 0,
-              stencilFunc: THREE.NotEqualStencilFunc,
-              stencilZPass: THREE.KeepStencilOp,
-              depthWrite: true,
-              polygonOffset: false,
-              polygonOffsetFactor: -10,
-              polygonOffsetUnits: -10,
-            });
-          }
+    // Get scaling values for the current model
+    const { x, y, z } = this.GrooveManagerIns.getScaleForModel(this.modelId, type);
+    this.midMesh.scale.set(x, y, z);
+    this.midMesh.position.x = -0.7;
+    
+    this.scene.add(this.midMesh);
+
+    // Clone midMesh for the second ring
+    if (!this.midMesh2) {
+      this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
+    }
+
+    this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+    this.midMesh2.position.set(0.7, -0.15, 0);
+    this.scene.add(this.midMesh2);
+
+    if (isTri) {
+      this.GrooveManagerIns.triGroovePair();
+    }
+
+    return { midMesh: this.midMesh, midMesh2: this.midMesh2 };
+  }
+
+  // If midMesh is not loaded, load it from file
+  try {
+    const gltf = await new Promise((resolve, reject) => {
+      this.loader.load(
+        "models/midMesh/Mid.glb",
+        (gltf) => resolve(gltf),
+        undefined,
+        (error) => reject(error)
+      );
+    });
+
+    this.midMesh = gltf.scene;
+
+    // Traverse and update material
+    this.midMesh.traverse((child) => {
+      if (child.isMesh && child.material) {
+        const originalMaterial = child.material;
+        child.material = new THREE.MeshStandardMaterial({
+          color: "#D8BC7E",
+          metalness: 0.7,
+          roughness: 0.1,
+          map: originalMaterial.map,
+          normalMap: originalMaterial.normalMap,
+          metalnessMap: originalMaterial.metalnessMap,
+          roughnessMap: originalMaterial.roughnessMap,
+          emissiveMap: originalMaterial.emissiveMap,
+          emissive: originalMaterial.emissive,
+          stencilWrite: true,
+          stencilRef: 0,
+          stencilFunc: THREE.NotEqualStencilFunc,
+          stencilZPass: THREE.KeepStencilOp,
+          depthWrite: true,
+          polygonOffset: true,
+          polygonOffsetFactor: -14,
+          polygonOffsetUnits: -14,
         });
-
-        // Get scaling values for the current model
-        const { x, y, z } = this.GrooveManagerIns.getScaleForModel(this.modelId);
-        this.midMesh.scale.set(x, y, z);
-
-        // Add the first mesh to the scene
-        this.scene.add(this.midMesh);
-        this.midMesh.position.x = -0.7;
-
-        // Clone the model with unique material
-        this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
-        this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
-        this.midMesh2.position.x = 0.7;
-        this.midMesh2.position.y = -0.15;
-
-        // Add the second mesh to the scene
-        this.scene.add(this.midMesh2);
-
-        // Resolve the promise
-        resolve({ midMesh: this.midMesh, midMesh2: this.midMesh2 });
-      },
-      undefined,
-      (error) => {
-        console.error("Error loading midMesh:", error);
-        reject(error);
       }
-    );
-  });
+    });
+
+    // Get scaling values for the current model
+    const { x, y, z } = this.GrooveManagerIns.getScaleForModel(this.modelId, type);
+    this.midMesh.scale.set(x, y, z);
+    this.midMesh.position.x = -0.7;
+
+    // Add the first mesh to the scene
+    this.scene.add(this.midMesh);
+    this.midMesh.userData = "midMeshRing1";
+
+    // Clone the model with unique material
+    this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
+    this.midMesh2.userData = "midMeshRing2";
+    this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+    this.midMesh2.position.set(0.7, -0.15, 0);
+
+    // Add the second mesh to the scene
+    this.scene.add(this.midMesh2);
+
+    if (isTri) {
+      this.GrooveManagerIns.triGroovePair();
+    }
+    
+    console.log("Loaded and stored midMesh");
+
+    return { midMesh: this.midMesh, midMesh2: this.midMesh2 };
+  } catch (error) {
+    console.error("Error loading midMesh:", error);
+    throw error;
+  }
 }
+
 
   
   optimalThicknessBool(value) {
@@ -510,7 +501,7 @@ loadMidMesh() {
 
   switchModel(index, selectedRingId = 1, pair1 = true, pair2 = false) {
     this.currentColor = "#A09F9D";
-    this.GrooveManagerIns.removeMidMeshes();
+    // this.GrooveManagerIns.removeMidMeshes();
 
     if (this.PreciousMetal.isEnable == true) {
       // this.PreciousMetal.removeHelperModelAndClipping(1);
@@ -693,7 +684,7 @@ loadMidMesh() {
 
     if (this.pair1) {
       // Hide both models before showing new ones
-      console.log("razi 1", this.pair1)
+      // console.log("razi 1", this.pair1)
       this.hideFirstTwoModels();
 
       // Set positions for both models

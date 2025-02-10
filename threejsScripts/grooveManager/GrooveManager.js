@@ -9,75 +9,108 @@ export class GrooveManager {
     this.loader = new GLTFLoader();
     // this.loadMidMesh();
     this.modelManager = modelManager
-    console.log( )
+    // console.log( )
   }
+  triGroovePair(){
+  this.modelManager.midMeshTri =   this.modelManager.midMesh.clone()
+  this.modelManager.midMeshTri.position.x = -0.7;
 
+  this.modelManager.midMeshTri2 =   this.modelManager.midMesh2.clone()
+  this.modelManager.midMeshTri2.position.x = 0.7;
+
+  this.modelManager.midMesh.position.x = -0.65
+  this.modelManager.midMeshTri.position.x = -0.75
+
+  this.modelManager.midMesh2.position.x = 0.65
+  this.modelManager.midMeshTri2.position.x = 0.75
+
+  this.scene.add(this.modelManager.midMeshTri)
+  this.scene.add(this.modelManager.midMeshTri2)
+
+
+
+
+  }
   removeMidMeshes() {
-    if (this.modelManager.midMesh) {
-      this.scene.remove(this.modelManager.midMesh); // Remove midMesh from the scene
-      this.modelManager.midMesh.traverse((child) => {
-        if (child.isMesh) {
-          child.geometry.dispose(); // Dispose of geometry
-          if (child.material) {
-            // Dispose of all material maps
-            if (Array.isArray(child.material)) {
-              child.material.forEach((material) => {
-                for (const key in material) {
-                  if (material[key] && material[key].isTexture) {
-                    material[key].dispose();
-                  }
-                }
-                material.dispose();
-              });
-            } else {
-              for (const key in child.material) {
-                if (child.material[key] && child.material[key].isTexture) {
-                  child.material[key].dispose();
-                }
-              }
-              child.material.dispose();
-            }
-          }
-        }
-      });
-      this.modelManager.midMesh = null; // Set midMesh to null
-    }
-  
-    if (this.modelManager.midMesh2) {
-      this.scene.remove(this.modelManager.midMesh2); // Remove midMesh2 from the scene
-      this.modelManager.midMesh2.traverse((child) => {
-        if (child.isMesh) {
-          child.geometry.dispose(); // Dispose of geometry
-          if (child.material) {
-            // Dispose of all material maps
-            if (Array.isArray(child.material)) {
-              child.material.forEach((material) => {
-                for (const key in material) {
-                  if (material[key] && material[key].isTexture) {
-                    material[key].dispose();
-                  }
-                }
-                material.dispose();
-              });
-            } else {
-              for (const key in child.material) {
-                if (child.material[key] && child.material[key].isTexture) {
-                  child.material[key].dispose();
-                }
-              }
-              child.material.dispose();
-            }
-          }
-        }
-      });
-      this.modelManager.midMesh2 = null; // Set midMesh2 to null
-    }
-  
-    console.log("Mid meshes removed from scene and set to null.");
-  }
+    // Helper function to dispose and remove objects
+    const disposeAndRemove = (mesh) => {
+        if (!mesh) return;
 
-getScaleForModel(modelId) {
-  let scale = { x: 40, y: 115, z: 115 }; // Default scale values
+        console.log("Removing mesh:", mesh);
+
+        // Remove from scene
+        this.scene.remove(mesh);
+
+        // Dispose of geometry and materials
+        mesh.traverse((child) => {
+            if (child.isMesh) {
+                if(child.name=""){
+                    console.log("name AAAAAAA", child)
+                }
+                child.geometry.dispose();
+                if (child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => {
+                            for (const key in material) {
+                                if (material[key] && material[key].isTexture) {
+                                    material[key].dispose();
+                                }
+                            }
+                            material.dispose();
+                        });
+                    } else {
+                        for (const key in child.material) {
+                            if (child.material[key] && child.material[key].isTexture) {
+                                child.material[key].dispose();
+                            }
+                        }
+                        child.material.dispose();
+                    }
+                }
+            }
+        });
+
+        // Hide and clear reference
+        mesh.visible = false;
+        return null;
+    };
+
+    // Remove midMesh objects
+    this.modelManager.midMesh = disposeAndRemove(this.modelManager.midMesh);
+    this.modelManager.midMesh2 = disposeAndRemove(this.modelManager.midMesh2);
+    this.modelManager.midMeshTri = disposeAndRemove(this.modelManager.midMeshTri);
+    this.modelManager.midMeshTri2 = disposeAndRemove(this.modelManager.midMeshTri2);
+
+    // Remove any remaining midMeshes by traversing the scene
+    let objectsToRemove = [];
+    this.scene.traverse((child) => {
+        // console.log("razi 333", child.userData);
+        if (child.userData === "midMeshRing1" || child.userData === "midMeshRing2") {
+            console.log("Removing from traverse:", child);
+            objectsToRemove.push(child);
+            if(child.name==''){
+                console.log("name", child)
+                objectsToRemove.push(child);
+            }
+        }
+    });
+
+    // Remove collected objects from the scene
+    objectsToRemove.forEach((obj) => {
+        if (obj.parent) {
+            obj.parent.remove(obj);
+        } else {
+            this.scene.remove(obj);
+        }
+    });
+
+    console.log("Mid meshes removed from scene and set to null.", this.scene);
+}
+
+
+
+getScaleForModel(modelId,type) {
+  let scale = { x: 37, y: 115, z: 115 }; // Default scale values
 
   switch (modelId) {
     case "P1":
@@ -85,68 +118,34 @@ getScaleForModel(modelId) {
     case "P6":
     case "P9":
     case "P11":
-      scale = { x: 40, y: 111, z: 111 };
+      scale = { x: 37, y: 111, z: 111 };
       break;
     case "P7":
     case "P15":
-      scale = { x: 40, y: 109, z: 109 };
+      scale = { x: 37, y: 109, z: 109 };
       break;
     case "P8":
-      scale = { x: 40, y: 106, z: 106 };
+      scale = { x: 37, y: 106, z: 106 };
       break;
     case "P12":
     case "P13":
     case "P14":
-      scale = { x: 40, y: 112, z: 112 };
+      scale = { x: 37, y: 112, z: 112 };
       break;
     default:
       console.log("Using default scale for modelId:", modelId);
       break;
   }
-
+  if (type=="U-groove"){
+   scale.x =  scale.x * 1.6
+  }
+  if (type=="Corner joint"){
+    scale.x =  scale.x * 2.1
+   }
+  console.log("scale chk", scale)
   return scale;
 }
-loadMidMesh(){
 
-  let x = 40
-  let y= 111
-  let z= 111
-  let polygonOffsetFac , polygonOffsetUni = -1
 
-    this.loader.load('models/midMesh/Mid.glb', (gltf) => {
-        this.midMesh = gltf.scene;
-        this.midMesh.scale.set(x, y, z);
-        
-        this.midMesh.traverse((child) => {
-          if (child.isMesh && child.material) {
-            const originalMaterial = child.material;
-            child.material = new THREE.MeshStandardMaterial({
-              color: '#D8BC7E',
-              metalness: 0.7,
-              roughness:  0.1,
-              map: originalMaterial.map,
-              normalMap: originalMaterial.normalMap,
-              metalnessMap: originalMaterial.metalnessMap,
-              roughnessMap: originalMaterial.roughnessMap,
-              emissiveMap: originalMaterial.emissiveMap,
-              emissive: originalMaterial.emissive,
-              stencilWrite: true,
-              stencilRef: 0,
-              stencilFunc: THREE.NotEqualStencilFunc,
-              stencilFail: THREE.KeepStencilOp,
-              stencilZFail: THREE.KeepStencilOp,
-              stencilZPass: THREE.KeepStencilOp,
-              depthWrite: true,  // Enable depth writing
-              polygonOffset: true,  // Enable polygon offset
-              polygonOffsetFactor: polygonOffsetFac,  // Initial offset factor
-              polygonOffsetUnits: polygonOffsetUni    // Initial offset units
-            });
-          }
-        })
-    this.scene.add(this.midMesh)
-    // this.midMesh.position.x = -0.7
-    });
-
-}
 
 }

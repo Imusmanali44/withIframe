@@ -49,7 +49,20 @@ const StepTab = ({
         {stepLeftOptions.map((item, index) => (
           <button
             key={index}
-            onClick={() => setOptionStepLeft(item.name)}
+            onClick={() => {
+              setOptionStepLeft(item.name);
+              console.log('Left step changed to:', item.name);
+              window.parent.postMessage(
+                {
+                  action: "addStep",
+                  value: "left",
+                  // isBiCol: selectedPartitionTwotoneImg,
+                  // isTriCol: selectedPartitionTriColoredImg,
+                  // field: partition,
+                },
+                "*"
+              );
+            }}
             className={`bg-white w-full border ${
               optionStepLeft === item.name
                 ? "border-[#205fa8]"
@@ -78,7 +91,20 @@ const StepTab = ({
         {stepRightOptions.map((item, index) => (
           <button
             key={index}
-            onClick={() => setOptionStepRight(item.name)}
+            onClick={() => {
+              setOptionStepRight(item.name);
+              console.log('Right step changed to:', item.name);
+              window.parent.postMessage(
+                {
+                  action: "addStep",
+                  value: "right",
+                  // isBiCol: selectedPartitionTwotoneImg,
+                  // isTriCol: selectedPartitionTriColoredImg,
+                  // field: partition,
+                },
+                "*"
+              );
+            }}
             className={`bg-white w-full border ${
               optionStepRight === item.name
                 ? "border-[#205fa8]"

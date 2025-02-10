@@ -127,9 +127,12 @@ export class PreciousMetal {
     }
     else if (val === "1:2") {
       offsetRing1 += 0.05;
+      // this.modelManager.midMesh.position.x += 0.05;
+
     }
     else if (val === "1:3") {
       offsetRing1 += 0.07
+      
     }
     else if (val === "1:4") {
       offsetRing1 += 0.09
@@ -359,7 +362,7 @@ export class PreciousMetal {
 
   }
 
-  biTriPair(val, triBool = false) {
+ async biTriPair(val, triBool = false) {
     this.isEnable = true
     this.currentVal = val;
     this.triBool = triBool
@@ -426,9 +429,18 @@ export class PreciousMetal {
     if (this.modelManager.pair1 == true) {
       this.removeHelperModelAndClipping(1);
       this.removeHelperModelAndClipping(2);
-
-
+      
+      console.log("groove type", this.modelManager.GrooveType, triBool, this.scene)
+      this.modelManager.GrooveManagerIns.removeMidMeshes();
+      // setTimeout(()=>{console.log("wait")
+        
+        
       this.handlePair(ring1, ring2, val, triBool)
+      await   this.modelManager.loadMidMesh(this.modelManager.GrooveType, triBool);
+        
+      // },5000)
+      console.log("groove type 2", this.modelManager.GrooveType, triBool, this.scene)
+
       return;
     }
 
@@ -674,16 +686,20 @@ export class PreciousMetal {
       this.clippingPlaneRingSingleBi.constant = parseFloat(-val)
       this.clippingPlaneRingHelperBi.constant = parseFloat(val)
     }
-    console.log("this.modelManager.currentDisplayedModels.length", this.modelManager.currentDisplayedModels.length, this.modelManager.selectedModel)
     if (this.modelManager.currentDisplayedModels.length == 2 ) {
       if(ringNum=="Ring 1"){
-      this.clippingPlaneRing1.constant = parseFloat(-val)
-      this.clippingPlaneRing1helper.constant = parseFloat(val)}
-    
+        this.clippingPlaneRing1.constant = parseFloat(-val)
+        this.clippingPlaneRing1helper.constant = parseFloat(val)
+        this.modelManager.midMesh.position.x = parseFloat(val)
+        console.log("ring 1",this.clippingPlaneRing1.constant, this.clippingPlaneRing1helper.constant, this.modelManager.midMesh.position.x)
+      }
+      
     // else if (this.modelManager.currentDisplayedModels.length == 2) {
       if(ringNum=="Ring 2"){
       this.clippingPlaneRing2.constant = parseFloat(-val)
       this.clippingPlaneRing2helper.constant = parseFloat(val)
+      this.modelManager.midMesh2.position.x = parseFloat(val)
+        console.log("ring 2",this.clippingPlaneRing2.constant,this.clippingPlaneRing2helper.constant,this.modelManager.midMesh2.position.x )
       }}
     // else if(this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.pair1){
     //   // this.clippingPlaneRing1.constant = parseFloat(-val) 
@@ -714,14 +730,26 @@ export class PreciousMetal {
     // }
     if(this.modelManager.currentDisplayedModels.length == 2){
       if(ringNum=="Ring 1"){
-        console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
+        // console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing1Tri.constant,this.clippingPlaneRing1TriHelper.constant)
         this.clippingPlaneRing1Tri.constant = parseFloat(-val1)  // right side
         this.clippingPlaneRing1TriHelper.constant = parseFloat(-val2) 
+        this.modelManager.midMesh.position.x = parseFloat(val1)
+        this.modelManager.midMeshTri.position.x = parseFloat(-val2)
+        console.log("grooove move",this.modelManager.midMesh.position.x, this.modelManager.midMeshTri.position.x)
+
     }
     if(ringNum=="Ring 2"){
        console.log("this.clippingPlaneRing1Tri.constant",this.clippingPlaneRing2Tri.constant,this.clippingPlaneRing2TriHelper.constant)
       this.clippingPlaneRing2Tri.constant = parseFloat(val1)  // right side
-      this.clippingPlaneRing2TriHelper.constant = parseFloat(val2) // left side
+      this.clippingPlaneRing2TriHelper.constant = parseFloat(val2)
+      if(val1==0){
+        console.warn("u i i a grooove")
+        return;
+      } // left side
+      this.modelManager.midMesh2.position.x = parseFloat(-val1)
+        this.modelManager.midMeshTri2.position.x = parseFloat(val2)
+        console.log("grooove move",this.modelManager.midMesh2.position.x, this.modelManager.midMeshTri2.position.x)
+
   }
   }
   }

@@ -40,8 +40,8 @@ const MultiRangeMaskSlider = ({ step = 0.0001 }) => {
       return {
         title: "Ring 1",
         leftMin: -0.9,
-        leftMax: -0.71,
-        rightMin: 0.56,
+        leftMax: -0.73,
+        rightMin: 0.60,
         rightMax: 0.71,
         leftValue: -0.67,
         rightValue: 0.71,
