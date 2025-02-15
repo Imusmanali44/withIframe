@@ -145,7 +145,230 @@ getScaleForModel(modelId,type) {
   console.log("scale chk", scale)
   return scale;
 }
+  removeMidMeshes() {
+    // Helper function to dispose and remove objects
+    const disposeAndRemove = (mesh) => {
+        if (!mesh) return;
+
+        console.log("Removing mesh:", mesh);
+
+        // Remove from scene
+        this.scene.remove(mesh);
+
+        // Dispose of geometry and materials
+        mesh.traverse((child) => {
+            if (child.isMesh) {
+                if(child.name=""){
+                    console.log("name AAAAAAA", child)
+                }
+                child.geometry.dispose();
+                if (child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => {
+                            for (const key in material) {
+                                if (material[key] && material[key].isTexture) {
+                                    material[key].dispose();
+                                }
+                            }
+                            material.dispose();
+                        });
+                    } else {
+                        for (const key in child.material) {
+                            if (child.material[key] && child.material[key].isTexture) {
+                                child.material[key].dispose();
+                            }
+                        }
+                        child.material.dispose();
+                    }
+                }
+            }
+        });
+
+        // Hide and clear reference
+        mesh.visible = false;
+        return null;
+    };
+
+    // Remove midMesh objects
+    this.modelManager.midMesh = disposeAndRemove(this.modelManager.midMesh);
+    this.modelManager.midMesh2 = disposeAndRemove(this.modelManager.midMesh2);
+    this.modelManager.midMeshTri = disposeAndRemove(this.modelManager.midMeshTri);
+    this.modelManager.midMeshTri2 = disposeAndRemove(this.modelManager.midMeshTri2);
+
+    // Remove any remaining midMeshes by traversing the scene
+    let objectsToRemove = [];
+    this.scene.traverse((child) => {
+        // console.log("razi 333", child.userData);
+        if (child.userData === "midMeshRing1" || child.userData === "midMeshRing2") {
+            console.log("Removing from traverse:", child);
+            objectsToRemove.push(child);
+            if(child.name==''){
+                console.log("name", child)
+                objectsToRemove.push(child);
+            }
+        }
+    });
+
+    // Remove collected objects from the scene
+    objectsToRemove.forEach((obj) => {
+        if (obj.parent) {
+            obj.parent.remove(obj);
+        } else {
+            this.scene.remove(obj);
+        }
+    });
+
+    console.log("Mid meshes removed from scene and set to null.", this.scene);
+}
+addGroove(ring){
+    if(ring=="Ring 1"){
+        this.modelManager.midMeshTri =   this.modelManager.midMesh.clone()
+        this.modelManager.midMeshTri.userData = "GrooveRing1"
+
+        this.modelManager.midMeshTri.position.x = -0.7;
+      
+        // this.modelManager.midMeshTri2 =   this.modelManager.midMesh2.clone()
+        // this.modelManager.midMeshTri2.position.x = 0.7;
+      
+        this.modelManager.midMesh.position.x = -0.65
+        this.modelManager.midMeshTri.position.x = -0.75
+      
+        // this.modelManager.midMesh2.position.x = 0.65
+        // this.modelManager.midMeshTri2.position.x = 0.75
+      
+        this.scene.add(this.modelManager.midMeshTri)
+        console.log("midMeshTri",this.modelManager.midMesh.position.x,this.modelManager.midMeshTri.position.x)
+        // this.scene.add(this.modelManager.midMeshTri2)
+    }
+    if(ring=="Ring 2"){
+        // this.modelManager.midMeshTri =   this.modelManager.midMesh.clone()
+        // this.modelManager.midMeshTri.position.x = -0.7;
+      
+        this.modelManager.midMeshTri2 =   this.modelManager.midMesh2.clone()
+        this.modelManager.midMeshTri2.userData = "GrooveRing2"
+
+        this.modelManager.midMeshTri2.position.x = 0.7;
+      
+        // this.modelManager.midMesh.position.x = -0.65
+        // this.modelManager.midMeshTri.position.x = -0.75
+      
+        this.modelManager.midMesh2.position.x = 0.65
+        this.modelManager.midMeshTri2.position.x = 0.75
+      
+        // this.scene.add(this.modelManager.midMeshTri)
+        this.scene.add(this.modelManager.midMeshTri2)
+    }
+  
 
 
+}
 
+
+removeGroove(ring){ 
+    if(ring=="Ring 1"){
+        this.modelManager.midMeshTri =   this.modelManager.midMesh.clone()
+
+      
+        this.modelManager.midMesh.position.x = -0.7
+  
+        this.modelManager.midMeshTri = this.disposeAndRemove(this.modelManager.midMeshTri);
+        let objectsToRemove = [];
+        this.scene.traverse((child) => {
+            // console.log("razi 333", child.userData);
+            if (child.userData === "GrooveRing1") {
+                console.log("Removing from traverse:", child);
+                objectsToRemove.push(child);
+                if(child.name==''){
+                    console.log("name", child)
+                    objectsToRemove.push(child);
+                }
+            }
+        });
+    
+        // Remove collected objects from the scene
+        objectsToRemove.forEach((obj) => {
+            if (obj.parent) {
+                obj.parent.remove(obj);
+            } else {
+                this.scene.remove(obj);
+            }
+        });
+        console.log("midMeshTri",this.modelManager.midMesh.position.x,this.modelManager.midMeshTri.position.x)
+        // this.scene.add(this.modelManager.midMeshTri2)
+    }
+    if(ring=="Ring 2"){
+        
+      
+        this.modelManager.midMesh2.position.x = 0.7
+        this.modelManager.midMeshTri2 = this.disposeAndRemove(this.modelManager.midMeshTri2);
+
+        let objectsToRemove = [];
+        this.scene.traverse((child) => {
+            // console.log("razi 333", child.userData);
+            if (child.userData === "GrooveRing2") {
+                console.log("Removing from traverse:", child);
+                objectsToRemove.push(child);
+                if(child.name==''){
+                    console.log("name", child)
+                    objectsToRemove.push(child);
+                }
+            }
+        });
+    
+        // Remove collected objects from the scene
+        objectsToRemove.forEach((obj) => {
+            if (obj.parent) {
+                obj.parent.remove(obj);
+            } else {
+                this.scene.remove(obj);
+            }
+        });
+        // this.modelManager.midMeshTri2.visible = false;
+       
+        console.log("midMeshTri",this.modelManager.midMesh.position.x,this.modelManager.midMeshTri.position.x)
+        
+    }
+    
+}
+disposeAndRemove(mesh) {
+    if (!mesh) return;
+
+    console.log("Removing mesh:", mesh);
+
+    // Remove from scene
+    this.scene.remove(mesh);
+
+    // Dispose of geometry and materials
+    mesh.traverse((child) => {
+        if (child.isMesh) {
+            if(child.name=""){
+                console.log("name AAAAAAA", child)
+            }
+            child.geometry.dispose();
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((material) => {
+                        for (const key in material) {
+                            if (material[key] && material[key].isTexture) {
+                                material[key].dispose();
+                            }
+                        }
+                        material.dispose();
+                    });
+                } else {
+                    for (const key in child.material) {
+                        if (child.material[key] && child.material[key].isTexture) {
+                            child.material[key].dispose();
+                        }
+                    }
+                    child.material.dispose();
+                }
+            }
+        }
+    });
+
+    // Hide and clear reference
+    mesh.visible = false;
+    return null;
+};
 }

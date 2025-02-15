@@ -249,8 +249,8 @@ async loadMidMesh(type, isTri) {
         const originalMaterial = child.material;
         child.material = new THREE.MeshStandardMaterial({
           color: "#D8BC7E",
-          metalness: 0.7,
-          roughness: 0.1,
+          metalness: 0.6,
+          roughness: 0.2,
           map: originalMaterial.map,
           normalMap: originalMaterial.normalMap,
           metalnessMap: originalMaterial.metalnessMap,

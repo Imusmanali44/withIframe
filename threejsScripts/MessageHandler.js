@@ -128,7 +128,17 @@ export class MessageHandler {
         // }
         break;
       case "addGroove":
-        console.log("calss groove", type)
+        console.log("calss groove", type, value)
+        if(type=="defaultAdd"){
+          
+          this.modelManager.GrooveManagerIns.addGroove(selectedRing);
+          break;
+        }
+        if(type=="defaultDelete"){
+          
+          this.modelManager.GrooveManagerIns.removeGroove(selectedRing);
+          break;
+        }
         if(type=="Without"){
           this.modelManager.GrooveManagerIns.removeMidMeshes();
           this.modelManager.GrooveBool = false; 
@@ -140,17 +150,29 @@ export class MessageHandler {
         }
         break;  
         case "addStep":
-          console.log("calss groove step", value)
-          // if(value=="left"){
+          console.log("calss groove step", value,type)
+          
+          if(value=="left"){
+            if(type=="Without"){
+              this.modelManager.StepsManagerIns.removeLeftSteps();
+              break;
+            }
+            else{
+            this.modelManager.StepsManagerIns.addLeftStep()
+            }
+          }
+          if(value=="right"){
+            if(type=="Without"){
+              this.modelManager.StepsManagerIns.removeRightSteps();
+              break;
+            }
+            else{
 
-          //   this.modelManager.StepsManagerIns.addLeftStep()
+              this.modelManager.StepsManagerIns.addRightStep()
 
-          // }
-          // if(value=="right"){
+            }
 
-          //   this.modelManager.StepsManagerIns.addRightStep()
-
-          // }
+          }
           break;  
       case "changeSlider":
         // console.log("calss", value, selectedRing)
@@ -170,7 +192,8 @@ export class MessageHandler {
           this.pMetalManager.removeHelperModelAndClipping(1)
           this.pMetalManager.removeHelperModelAndClipping(2)
           this.pMetalManager.removeClippingTriOneRing()
-        
+          this.modelManager.GrooveManagerIns.removeMidMeshes();
+          
           this.pMetalManager.isEnable = false
           return;
 

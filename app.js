@@ -145,3 +145,14 @@ class RotatingRingApp {
 
 // Instantiate the app
 new RotatingRingApp();
+
+
+
+// Simulate loading process
+// setTimeout(() => {
+//     // Hide the loader after loading is complete
+//     document.getElementById('loader').style.display = 'none';
+    
+//     // Your existing code to initialize Three.js or other operations
+//     // ...existing code...
+// }, 9000); 

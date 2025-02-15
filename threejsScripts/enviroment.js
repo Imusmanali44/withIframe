@@ -23,6 +23,11 @@ export class Environment {
       console.log('Environment map loaded:', envMap);
       // Further processing after the environment map is loaded
       this.scene.environment = envMap;
+      const loaderOverlay = document.querySelector('.loader-overlay');
+      if (loaderOverlay) {
+        loaderOverlay.style.display = 'none';
+      }
+
     })
     .catch((error) => {
       console.error('Failed to load environment map:', error);

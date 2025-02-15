@@ -386,3 +386,272 @@ let helperModelPosY = -0.15
     //       console.error("Error loading matcaps:", err);
     //     });
     // }
+
+    async addLeftStep(){
+      if(this.modelManager.modelId == "P7" || this.modelManager.modelId == "P8" || this.modelManager.modelId == "P15"){
+          alert("This ring does not support Steps")
+          return;
+      } 
+     if(!this.modelManager.pair1 && this.modelManager.selectedModel == 1){
+        await this.modelManager.loadMidMesh("Corner Joint",false)
+  
+        this.leftStep  = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+        this.leftStep.userData = "leftStepRing1"
+        // this.rightStep = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+        // this.rightStep.userData = "leftStepRing1"
+    
+        this.grooveManager.removeMidMeshes();
+        this.leftStep.position.x = -0.865
+        this.leftStep.scale.y += -4
+        this.leftStep.scale.z += -4
+    
+    
+        // this.rightStep.position.x = -0.55
+    
+        // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+        this.scene.add(this.leftStep)
+        // this.scene.add(this.rightStep)
+  
+  
+  
+      }
+      if(!this.modelManager.pair1 && this.modelManager.selectedModel == 2){
+        await this.modelManager.loadMidMesh("Corner Joint",false)
+  
+        this.leftStep2  = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh2)
+        this.leftStep2.userData = "leftStepRing2"
+        // this.rightStep = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+        // this.rightStep.userData = "leftStepRing1"
+    
+        this.grooveManager.removeMidMeshes();
+        this.leftStep2.position.x = 0.565
+        this.leftStep2.scale.y += -4
+        this.leftStep2.scale.z += -4
+    
+    
+        // this.rightStep.position.x = -0.55
+    
+        // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+        this.scene.add(this.leftStep2)
+        // this.scene.add(this.rightStep)
+  
+  
+  
+      }
+    if(this.modelManager.pair1){
+      await this.modelManager.loadMidMesh("Corner Joint",false)
+    
+      this.leftStep  = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+      this.leftStep.userData = "leftStepRing1"
+      // this.rightStep = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+      // this.rightStep.userData = "leftStepRing1"
+  
+     
+      this.leftStep.position.x = -0.865
+      console.log("scale check r1 0",this.modelManager.modelId )
+  
+      if(this.modelManager.modelId == "P1" || this.modelManager.modelId == "P4" || this.modelManager.modelId == "P6" || this.modelManager.modelId == "P9" || this.modelManager.modelId == "P12" || this.modelManager.modelId == "P13" || this.modelManager.modelId == "P14"){
+          console.log("scale check r1")
+          this.leftStep.scale.y += -4
+          this.leftStep.scale.z += -4
+  
+      }
+     else if(this.modelManager.modelId== "P2" || this.modelManager.modelId == "P5"){
+      console.log("scale check r1  2")
+  
+      this.leftStep.scale.y += -4.5
+      this.leftStep.scale.z += -4.5
+      }
+      else if(this.modelManager.modelId== "P3" || this.modelManager.modelId == "P10"){
+          console.log("scale check r1 default")
+          this.leftStep.scale.y += -4.7
+          this.leftStep.scale.z += -4.7
+          this.leftStep.position.x = -0.867
+  
+      }
+      else{
+          console.log("scale check r1 default")
+          this.leftStep.scale.y += -4
+          this.leftStep.scale.z += -4
+          // this.leftStep.position.x = -0.867
+  
+      }
+  
+      // this.rightStep.position.x = -0.55
+  
+      // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+      this.scene.add(this.leftStep)
+    
+      this.leftStep2  = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh2)
+        this.leftStep2.userData = "leftStepRing2"
+        // this.rightStep = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+        // this.rightStep.userData = "leftStepRing1"
+    
+        // this.grooveManager.removeMidMeshes();
+        this.leftStep2.position.x = 0.565
+  
+        if(this.modelManager.modelId == "P1" || this.modelManager.modelId == "P4" || this.modelManager.modelId == "P6" || this.modelManager.modelId == "P9" || this.modelManager.modelId == "P12" || this.modelManager.modelId == "P13" || this.modelManager.modelId == "P14"){
+  
+  
+          this.leftStep2.scale.y += -4
+        this.leftStep2.scale.z += -4
+  
+      }
+        
+       else if(this.modelManager.modelId== "P2" || this.modelManager.modelId == "P5"){
+          this.leftStep2.scale.y += -4.5
+          this.leftStep2.scale.z += -4.5
+          }
+          else if(this.modelManager.modelId== "P3" || this.modelManager.modelId == "P10"){
+              console.log("scale check r1 left default")
+              this.leftStep2.scale.y += -4.7
+              this.leftStep2.scale.z += -4.7
+              this.leftStep2.position.x =  0.567
+      
+          }
+          else{
+              console.log("scale check r1 left default")
+              this.leftStep2.scale.y += -4
+              this.leftStep2.scale.z += -4
+              // this.leftStep2.position.x =  0.567
+      
+          }
+    
+        // this.rightStep.position.x = -0.55
+        this.grooveManager.removeMidMeshes();
+        // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+        this.scene.add(this.leftStep2)
+        // this.scene.add(this.rightStep)
+  
+  
+  
+    
+    }
+  
+  
+    }
+  // steps manager junk
+    async addRightStep(){
+      if(this.modelManager.modelId == "P7" || this.modelManager.modelId == "P8" || this.modelManager.modelId == "P15"){
+          alert("This ring does not support Steps")
+          return;
+      } 
+      await this.modelManager.loadMidMesh("U-groove",false)
+      if(!this.modelManager.pair1 && this.modelManager.selectedModel == 1){
+  
+      // this.leftStep  = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+      // this.leftStep.userData = "leftStepRing1"
+      this.rightStep = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+      this.rightStep.userData = "rightStepRing1"
+  
+      this.grooveManager.removeMidMeshes();
+      // this.leftStep.position.x = -0.86
+      this.rightStep.position.x = -0.52
+      this.rightStep.scale.y += -4
+      this.rightStep.scale.z += -4
+      // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+      // this.scene.add(this.leftStep)
+      this.scene.add(this.rightStep)
+  
+  
+    }
+    if(!this.modelManager.pair1 && this.modelManager.selectedModel == 2){
+  
+  // this.leftStep  = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+      // this.leftStep.userData = "leftStepRing1"
+      this.rightStep2 = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh2)
+      this.rightStep2.userData = "rightStepRing2"
+  
+      this.grooveManager.removeMidMeshes();
+      // this.leftStep.position.x = -0.86
+      this.rightStep2.position.x = 0.85
+      this.rightStep2.scale.y += -4
+      this.rightStep2.scale.z += -4
+      // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+      // this.scene.add(this.leftStep)
+      this.scene.add(this.rightStep2)
+  
+  
+    }
+    if(this.modelManager.pair1){
+     
+      this.rightStep = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh)
+      this.rightStep.userData = "rightStepRing1"
+  
+      // this.leftStep.position.x = -0.86
+      this.rightStep.position.x = -0.52
+     
+  
+      if(this.modelManager.modelId == "P1" || this.modelManager.modelId == "P4" || this.modelManager.modelId == "P6" || this.modelManager.modelId == "P9" || this.modelManager.modelId == "P12" || this.modelManager.modelId == "P13" || this.modelManager.modelId == "P14"){
+  
+  
+          this.rightStep.scale.y += -4
+      this.rightStep.scale.z += -4
+  
+      }
+    else  if(this.modelManager.modelId== "P2" || this.modelManager.modelId == "P5"){
+   
+          this.rightStep.scale.y += -4.5
+      this.rightStep.scale.z += -4.5
+      }
+  
+     
+  
+      else if(this.modelManager.modelId== "P3" || this.modelManager.modelId == "P10"){
+          console.log("scale check r1 right real 1 default")
+          this.rightStep.scale.y += -4.7
+          this.rightStep.scale.z += -4.7
+          this.rightStep.position.x = -0.504
+  
+      }
+      else{
+          this.rightStep.scale.y += -4
+          this.rightStep.scale.z += -4
+          // this.rightStep.position.x = -0.504
+  
+      }
+      // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+      // this.scene.add(this.leftStep)
+      this.scene.add(this.rightStep)
+      
+      this.rightStep2 = this.modelManager.cloneModelWithUniqueMaterial(this.modelManager.midMesh2)
+      this.rightStep2.userData = "rightStepRing2"
+      
+      // this.grooveManager.removeMidMeshes();
+      // this.leftStep.position.x = -0.86
+      this.rightStep2.position.x = 0.85
+      if(this.modelManager.modelId == "P1" || this.modelManager.modelId == "P4" || this.modelManager.modelId == "P6" || this.modelManager.modelId == "P9" || this.modelManager.modelId == "P12" || this.modelManager.modelId == "P13" || this.modelManager.modelId == "P14"){
+  
+  
+          this.rightStep2.scale.y += -4
+      this.rightStep2.scale.z += -4
+  
+      }
+    else  if(this.modelManager.modelId== "P2" || this.modelManager.modelId == "P5"){
+   
+          this.rightStep2.scale.y += -4.5
+      this.rightStep2.scale.z += -4.5
+      }
+      else if(this.modelManager.modelId== "P3" || this.modelManager.modelId == "P10"){
+          console.log("scale check r1 right real 1 default")
+          this.rightStep2.scale.y += -4.7
+          this.rightStep2.scale.z += -4.7
+          this.rightStep2.position.x = 0.848
+  
+  
+      }
+      else{
+          console.log("scale check r1 right real 1 default")
+          this.rightStep2.scale.y += -4
+          this.rightStep2.scale.z += -4
+          // this.rightStep2.position.x = 0.848
+  
+  
+      }
+      // console.log("aa chk razi",this.modelManager.midMesh.position.x)
+      // this.scene.add(this.leftStep)
+      this.grooveManager.removeMidMeshes();
+      this.scene.add(this.rightStep2)
+  
+    }
+  }

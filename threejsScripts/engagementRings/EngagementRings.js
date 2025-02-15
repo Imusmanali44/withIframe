@@ -55,6 +55,10 @@ export class EngagementRings {
   }
 
   loadEngRingById(id) {
+    const loaderOverlay = document.querySelector('.loader-overlay');
+    if (loaderOverlay) {
+      loaderOverlay.style.display = 'block';
+    }
     // Ensure the ID is within the range of modelData array
     if (id < 0 || id >= this.modelData.length) {
       console.error(`Invalid ID: ${id}. Please provide a valid model ID.`);
@@ -93,10 +97,14 @@ export class EngagementRings {
 
         }
         console.log(`Model loaded successfully: ${modelInfo.glbPath}`, model);
+        if (loaderOverlay) {
+          loaderOverlay.style.display = 'none';
+        }
         // this.scene.ringPath = modelInfo.glbPath
       },
       (xhr) => {
         // Progress callback
+
         console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
       },
       (error) => {

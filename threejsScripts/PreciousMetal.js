@@ -146,7 +146,7 @@ export class PreciousMetal {
       // offsetRing2 -= 0.05;
     }
     else if (val === "1:2") {
-      offsetRing2 += 0.1;
+      offsetRing2 += 0.05;
     }
     else if (val === "1:3") {
       offsetRing2 += 0.07
@@ -437,7 +437,7 @@ export class PreciousMetal {
         
       this.handlePair(ring1, ring2, val, triBool)
       await   this.modelManager.loadMidMesh(this.modelManager.GrooveType, triBool);
-        
+      this.pmHelper.setoffsetValueGroove(val,triBool);
       // },5000)
       console.log("groove type 2", this.modelManager.GrooveType, triBool, this.scene)
 

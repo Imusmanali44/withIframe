@@ -56,6 +56,7 @@ const StepTab = ({
                 {
                   action: "addStep",
                   value: "left",
+                  type: item.name,
                   // isBiCol: selectedPartitionTwotoneImg,
                   // isTriCol: selectedPartitionTriColoredImg,
                   // field: partition,
@@ -98,6 +99,8 @@ const StepTab = ({
                 {
                   action: "addStep",
                   value: "right",
+                  type: item.name,
+
                   // isBiCol: selectedPartitionTwotoneImg,
                   // isTriCol: selectedPartitionTriColoredImg,
                   // field: partition,

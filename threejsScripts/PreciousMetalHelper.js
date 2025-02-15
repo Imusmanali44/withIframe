@@ -52,6 +52,7 @@ biColorSegmentOnering(){
 }
 
 biColorSegment(){
+  this.modelManager.GrooveManagerIns.removeMidMeshes();
   if(this.modelManager.selectedModel == 1 && this.modelManager.pair1==false){
     this.biColorSegmentRing1();
 
@@ -149,6 +150,213 @@ biColorSegment(){
             }
           });}
 
+
+ }
+
+ setoffsetValueGroove(val,tribool){
+  if(this.modelManager.selectedModel==1 && !this.modelManager.pair1){
+   if(tribool==true){
+    if (val == "1:1:1") {
+
+      // offsetTri2 = -0.65
+      // offsetTri = 0.75
+    }
+    else if (val === "1:2:1") {
+      // offset = 0.1;
+      // offsetTri2 = -0.63
+      this.modelManager.midMesh.position.x = -0.63
+      this.modelManager.midMeshTri.position.x = -0.78
+      this.modelManager.midMesh2.position.x = 0.63
+      this.modelManager.midMeshTri2.position.x = 0.78
+
+
+     
+      // offsetTri = 0.78
+    }
+    else if (val === "1:3:1") {
+      
+      this.modelManager.midMesh.position.x = -0.6
+      this.modelManager.midMeshTri.position.x = -0.8
+      this.modelManager.midMesh2.position.x = 0.6
+      this.modelManager.midMeshTri2.position.x = 0.8
+    }
+    else if (val === "1:4:1") {
+   
+      this.modelManager.midMesh.position.x = -0.57
+      this.modelManager.midMeshTri.position.x = -0.83
+      this.modelManager.midMesh2.position.x = 0.57
+      this.modelManager.midMeshTri2.position.x = 0.83
+    }
+    else if (val === "2:1:2") {
+      // offset = 0.1;
+    
+      this.modelManager.midMesh.position.x =  -0.657
+      this.modelManager.midMeshTri.position.x = -0.737
+      this.modelManager.midMesh2.position.x =  0.657
+      this.modelManager.midMeshTri2.position.x = 0.737
+
+    }
+    else if (val === "3:1:1") {
+      // offset = 0.1;
+     
+      this.modelManager.midMesh.position.x =  -0.575
+      this.modelManager.midMeshTri.position.x = -0.665
+      this.modelManager.midMesh2.position.x =  0.715
+      this.modelManager.midMeshTri2.position.x = 0.800
+    }
+    else if (val === "2:1:1") {
+      // offset = 0.1;
+    
+      this.modelManager.midMesh.position.x =  -0.560
+      this.modelManager.midMeshTri.position.x = -0.665
+      this.modelManager.midMesh2.position.x =  0.715
+      this.modelManager.midMeshTri2.position.x = 0.810
+    }
+return;
+  }
+    if (val === "1:1") {
+      // offsetRing1 += 0.05;
+    }
+    else if (val === "1:2") {
+      // offsetRing1 += 0.05;
+      this.modelManager.midMesh.position.x -= 0.05;
+  
+  
+    }
+    else if (val === "1:3") {
+      // offsetRing1 += 0.07
+      this.modelManager.midMesh.position.x -= 0.07;
+  
+      
+    }
+    else if (val === "1:4") {
+      // offsetRing1 += 0.09
+      this.modelManager.midMesh.position.x -= 0.09;
+  
+  
+    }
+
+
+  }
+  if(this.modelManager.selectedModel==2 && !this.modelManager.pair1){
+
+    if (val === "1:1") {
+      // offsetRing1 += 0.05;
+    }
+    else if (val === "1:2") {
+      // offsetRing1 += 0.05;
+      // this.modelManager.midMesh.position.x -= 0.05;
+    this.modelManager.midMesh2.position.x -= 0.1;
+
+  
+  
+    }
+    else if (val === "1:3") {
+      // offsetRing1 += 0.07
+    this.modelManager.midMesh2.position.x -= 0.7;
+
+  
+      
+    }
+    else if (val === "1:4") {
+      // offsetRing1 += 0.09
+      this.modelManager.midMesh2.position.x -= 0.09;
+
+  
+  
+    }
+
+
+  }
+ else if(this.modelManager.pair1){
+  if(tribool==true){
+    if (val == "1:1:1") {
+
+      // offsetTri2 = -0.65
+      // offsetTri = 0.75
+    }
+    else if (val === "1:2:1") {
+      // offset = 0.1;
+      // offsetTri2 = -0.63
+      this.modelManager.midMesh.position.x = -0.63
+      this.modelManager.midMeshTri.position.x = -0.78
+      this.modelManager.midMesh2.position.x = 0.63
+      this.modelManager.midMeshTri2.position.x = 0.78
+
+
+     
+      // offsetTri = 0.78
+    }
+    else if (val === "1:3:1") {
+      
+      this.modelManager.midMesh.position.x = -0.6
+      this.modelManager.midMeshTri.position.x = -0.8
+      this.modelManager.midMesh2.position.x = 0.6
+      this.modelManager.midMeshTri2.position.x = 0.8
+    }
+    else if (val === "1:4:1") {
+   
+      this.modelManager.midMesh.position.x = -0.57
+      this.modelManager.midMeshTri.position.x = -0.83
+      this.modelManager.midMesh2.position.x = 0.57
+      this.modelManager.midMeshTri2.position.x = 0.83
+    }
+    else if (val === "2:1:2") {
+      // offset = 0.1;
+    
+      this.modelManager.midMesh.position.x =  -0.657
+      this.modelManager.midMeshTri.position.x = -0.737
+      this.modelManager.midMesh2.position.x =  0.657
+      this.modelManager.midMeshTri2.position.x = 0.737
+
+    }
+    else if (val === "3:1:1") {
+      // offset = 0.1;
+     
+      this.modelManager.midMesh.position.x =  -0.575
+      this.modelManager.midMeshTri.position.x = -0.665
+      this.modelManager.midMesh2.position.x =  0.715
+      this.modelManager.midMeshTri2.position.x = 0.800
+    }
+    else if (val === "2:1:1") {
+      // offset = 0.1;
+    
+      this.modelManager.midMesh.position.x =  -0.560
+      this.modelManager.midMeshTri.position.x = -0.665
+      this.modelManager.midMesh2.position.x =  0.715
+      this.modelManager.midMeshTri2.position.x = 0.810
+    }
+return;
+  }
+  
+  if (val === "1:1") {
+    // offsetRing1 += 0.05;
+  }
+  else if (val === "1:2") {
+    // offsetRing1 += 0.05;
+    this.modelManager.midMesh.position.x -= 0.05;
+    this.modelManager.midMesh2.position.x -= 0.05;
+
+
+  }
+  else if (val === "1:3") {
+    // offsetRing1 += 0.07
+    this.modelManager.midMesh.position.x -= 0.07;
+    this.modelManager.midMesh2.position.x -= 0.07;
+
+    
+  }
+  else if (val === "1:4") {
+    // offsetRing1 += 0.09
+    this.modelManager.midMesh.position.x -= 0.09;
+    this.modelManager.midMesh2.position.x -= 0.09;
+
+
+  }
+
+  // this.pMetalMain
+  }
+  
 
  }
 }
