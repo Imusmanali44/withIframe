@@ -158,8 +158,13 @@ export class MessageHandler {
               break;
             }
             else{
-            this.modelManager.StepsManagerIns.addLeftStep()
-            }
+              if(type=="Milgrain"){
+            this.modelManager.StepsManagerIns.addLeftStep(true)
+               }
+              else{
+                this.modelManager.StepsManagerIns.addLeftStep(false)
+
+              } }
           }
           if(value=="right"){
             if(type=="Without"){
@@ -168,7 +173,13 @@ export class MessageHandler {
             }
             else{
 
-              this.modelManager.StepsManagerIns.addRightStep()
+              if(type=="Milgrain"){
+                this.modelManager.StepsManagerIns.addRightStep(true)
+                   }
+                  else{
+                    this.modelManager.StepsManagerIns.addRightStep(false)
+    
+                  }
 
             }
 

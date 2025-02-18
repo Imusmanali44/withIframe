@@ -12,7 +12,9 @@ export class StepsManager {
     // console.log( )
   }
 
-  async addLeftStep() {
+  async addLeftStep(milgrainBool) {
+
+    
     const models = this.modelManager.currentDisplayedModels;
     
     // Check if any current model doesn't support steps
@@ -24,39 +26,50 @@ export class StepsManager {
         }
     }
 
-    // Helper function to get scale values based on model index
     const getScaleValues = (modelIndex) => {
         const scaleGroup1 = [0, 3, 5, 8, 11, 12, 13]; // P1, P4, P6, P9, P12, P13, P14
         const scaleGroup2 = [1, 4]; // P2, P5
         const scaleGroup3 = [2, 9]; // P3, P10
-
+    
+        // New scale values adjusted for base scale of ~1
         if (scaleGroup1.includes(modelIndex)) {
-            return { scaleY: -4, scaleZ: -4, positionOffset: 0 };
+            return { scaleY: -0.04, scaleZ: -0.04, positionOffset: 0 };
         } else if (scaleGroup2.includes(modelIndex)) {
-            return { scaleY: -4.5, scaleZ: -4.5, positionOffset: 0 };
+            return { scaleY: -0.045, scaleZ: -0.045, positionOffset: 0 };
         } else if (scaleGroup3.includes(modelIndex)) {
-            return { scaleY: -4.7, scaleZ: -4.7, positionOffset: -0.002 };
+            return { scaleY: -0.047, scaleZ: -0.047, positionOffset: -0.002 };
         }
-        return { scaleY: -4, scaleZ: -4, positionOffset: 0 };
+        return { scaleY: -0.04, scaleZ: -0.04, positionOffset: 0 };
     };
 
     // Function to create and position a step
     const createStep = async (isFirstModel, position) => {
-        await this.modelManager.loadMidMesh("Corner Joint", false);
+        await this.modelManager.loadMidMesh("Milgrain", false);
+       
         const midMesh = isFirstModel ? this.modelManager.midMesh : this.modelManager.midMesh2;
         const step = this.modelManager.cloneModelWithUniqueMaterial(midMesh);
-        
-        const modelIndex = isFirstModel ? 
-            models[0].userData.modelIndex : 
-            models[1].userData.modelIndex;
-        
-        const { scaleY, scaleZ, positionOffset } = getScaleValues(modelIndex);
-        
+        if(milgrainBool)  {
+            this.modelManager.GrooveManagerIns.toggleMilgrainGroove(step,milgrainBool)
+
+        }
+        else{
+            this.modelManager.GrooveManagerIns.toggleMilgrainGroove(step,false)
+
+        }
+        console.log(" bugg Initial scale:", step.scale);
+// console.log("Scale modifications:", scaleY, scaleZ);
+const modelIndex = isFirstModel ? 
+models[0].userData.modelIndex : 
+models[1].userData.modelIndex;
+
+const { scaleY, scaleZ, positionOffset } = getScaleValues(modelIndex);
+
         step.userData = isFirstModel ? "leftStepRing1" : "leftStepRing2";
         step.position.x = position + positionOffset;
-        step.scale.y += scaleY;
-        step.scale.z += scaleZ;
+        step.scale.y *= (1 + scaleY);
+        step.scale.z *= (1 + scaleZ);
         
+        console.log("bug Final scale:", step.scale);
         return step;
     };
 
@@ -66,7 +79,7 @@ export class StepsManager {
             this.modelManager.selectedModel === 1,
             this.modelManager.selectedModel === 1 ? -0.865 : 0.565
         );
-        this.grooveManager.removeMidMeshes();
+        // this.grooveManager.removeMidMeshes();
         this.scene.add(step);
         if (this.modelManager.selectedModel === 1) {
             this.leftStep = step;
@@ -83,12 +96,12 @@ export class StepsManager {
     this.leftStep = step1;
     this.leftStep2 = step2;
     
-    this.grooveManager.removeMidMeshes();
+    // this.grooveManager.removeMidMeshes();
     this.scene.add(step1);
     this.scene.add(step2);
 }
 
-async addRightStep() {
+async addRightStep(milgrainBool) {
     const models = this.modelManager.currentDisplayedModels;
     
     // Check if any current model doesn't support steps
@@ -107,21 +120,28 @@ async addRightStep() {
         const scaleGroup3 = [2, 9]; // P3, P10
 
         if (scaleGroup1.includes(modelIndex)) {
-            return { scaleY: -4, scaleZ: -4, positionOffset: 0 };
+            return { scaleY: -0.04, scaleZ: -0.04, positionOffset: 0 };
         } else if (scaleGroup2.includes(modelIndex)) {
-            return { scaleY: -4.5, scaleZ: -4.5, positionOffset: 0 };
+            return { scaleY: -0.045, scaleZ: -0.045, positionOffset: 0 };
         } else if (scaleGroup3.includes(modelIndex)) {
-            return { scaleY: -4.7, scaleZ: -4.7, positionOffset: 0.016 };
+            return { scaleY: -0.047, scaleZ: -0.047, positionOffset: 0.016 };
         }
-        return { scaleY: -4, scaleZ: -4, positionOffset: 0 };
+        return { scaleY: -0.04, scaleZ: -0.04, positionOffset: 0 };
     };
 
     // Function to create and position a step
     const createStep = async (isFirstModel, position) => {
-        await this.modelManager.loadMidMesh("U-groove", false);
+        await this.modelManager.loadMidMesh("Milgrain", false);
         const midMesh = isFirstModel ? this.modelManager.midMesh : this.modelManager.midMesh2;
         const step = this.modelManager.cloneModelWithUniqueMaterial(midMesh);
-        
+        if(milgrainBool)  {
+            this.modelManager.GrooveManagerIns.toggleMilgrainGroove(step,milgrainBool)
+
+        }
+        else{
+            this.modelManager.GrooveManagerIns.toggleMilgrainGroove(step,false)
+
+        }
         const modelIndex = isFirstModel ? 
             models[0].userData.modelIndex : 
             models[1].userData.modelIndex;
@@ -130,8 +150,15 @@ async addRightStep() {
         
         step.userData = isFirstModel ? "rightStepRing1" : "rightStepRing2";
         step.position.x = position + positionOffset;
-        step.scale.y += scaleY;
-        step.scale.z += scaleZ;
+        
+        // Multiply the scale instead of adding
+        step.scale.y *= (1 + scaleY);
+        step.scale.z *= (1 + scaleZ);
+        
+        // Add debug logs if needed
+        console.log("Right Step Initial scale:", { ...step.scale });
+        console.log("Right Step Scale modifications:", { scaleY, scaleZ });
+        console.log("Right Step Final scale:", { ...step.scale });
         
         return step;
     };
@@ -142,7 +169,7 @@ async addRightStep() {
             this.modelManager.selectedModel === 1,
             this.modelManager.selectedModel === 1 ? -0.52 : 0.85
         );
-        this.grooveManager.removeMidMeshes();
+        // this.grooveManager.removeMidMeshes();
         this.scene.add(step);
         if (this.modelManager.selectedModel === 1) {
             this.rightStep = step;
@@ -159,7 +186,7 @@ async addRightStep() {
     this.rightStep = step1;
     this.rightStep2 = step2;
     
-    this.grooveManager.removeMidMeshes();
+    // this.grooveManager.removeMidMeshes();
     this.scene.add(step1);
     this.scene.add(step2);
 }

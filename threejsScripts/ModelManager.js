@@ -38,6 +38,16 @@ export class ModelManager {
     this.midMesh2 = null
     this.midMesh2Tri = null
 
+    this.midmeshGroove1Ring1 = null
+    this.midmeshGroove2Ring1 = null
+    this.midmeshGroove3Ring1 = null
+    this.midmeshGroove4Ring1 = null
+
+    this.midmeshGroove1Ring2 = null
+    this.midmeshGroove2Ring2 = null
+    this.midmeshGroove3Ring2 = null
+    this.midmeshGroove4Ring2 = null
+
     // this.scene.add(this.modelGroupRing1);
     // this.scene.add(this.modelGroupRing2);
 
@@ -226,7 +236,16 @@ async loadMidMesh(type, isTri) {
     if (isTri) {
       this.GrooveManagerIns.triGroovePair();
     }
+    if(type=="Milgrain"){
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,true)
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,true)
 
+    }
+    else{
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,false)
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,false)
+
+    }
     return { midMesh: this.midMesh, midMesh2: this.midMesh2 };
   }
 
@@ -234,7 +253,7 @@ async loadMidMesh(type, isTri) {
   try {
     const gltf = await new Promise((resolve, reject) => {
       this.loader.load(
-        "models/midMesh/Mid.glb",
+        "models/midMesh/DmidMesh.glb",
         (gltf) => resolve(gltf),
         undefined,
         (error) => reject(error)
@@ -249,7 +268,7 @@ async loadMidMesh(type, isTri) {
         const originalMaterial = child.material;
         child.material = new THREE.MeshStandardMaterial({
           color: "#D8BC7E",
-          metalness: 0.6,
+          metalness: 0.9,
           roughness: 0.2,
           map: originalMaterial.map,
           normalMap: originalMaterial.normalMap,
@@ -290,7 +309,18 @@ async loadMidMesh(type, isTri) {
     if (isTri) {
       this.GrooveManagerIns.triGroovePair();
     }
-    
+    if(type=="Milgrain"){
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,true)
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,true)
+
+    }
+    else{
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,false)
+      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,false)
+
+    }
+ 
+
     console.log("Loaded and stored midMesh");
 
     return { midMesh: this.midMesh, midMesh2: this.midMesh2 };
