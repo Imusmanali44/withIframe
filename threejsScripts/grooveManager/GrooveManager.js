@@ -108,6 +108,56 @@ export class GrooveManager {
 
         console.log("Mid meshes removed from scene and set to null.", this.scene);
     }
+    // setInitialOffsetGroove(val,ringNum,grooveId){
+    //     if (this.modelManager.currentDisplayedModels.length == 2 ) {
+    //         if(ringNum=="Ring 1" && grooveId==2){
+    //             this.modelManager.midmeshGroove1Ring1.position.x = parseFloat(val)
+    //             this.modelManager.midMesh.position.x = -0.75
+    //           console.log("ring 1",this.modelManager.midmeshGroove1Ring1.position.x)
+    //         }}
+    //         if(ringNum=="Ring 1" && grooveId==3){
+    //             this.modelManager.midmeshGroove3Ring1.position.x = parseFloat(val)
+    //             console.log("ring 1",this.modelManager.midmeshGroove2Ring1.position.x)
+
+    //         //   console.log("ring 1",this.clippingPlaneRing1.constant, this.clippingPlaneRing1helper.constant, this.modelManager.midMesh.position.x)
+    //         }
+    //         if(ringNum=="Ring 1" && grooveId==4){
+    //             this.modelManager.midmeshGroove4Ring1.position.x = parseFloat(val)
+    //             console.log("ring 1",this.modelManager.midmeshGroove2Ring1.position.x)
+
+    //         //   console.log("ring 1",this.clippingPlaneRing1.constant, this.clippingPlaneRing1helper.constant, this.modelManager.midMesh.position.x)
+    //         }
+
+
+    // }
+    setoffsetValueGroove(val,ringNum) {
+        if (this.modelManager.currentDisplayedModels.length == 1 && this.biColorSingleBool) {
+            // this.clippingPlaneRingSingleBi.constant = parseFloat(-val)
+            // this.clippingPlaneRingHelperBi.constant = parseFloat(val)
+          }
+          if (this.modelManager.currentDisplayedModels.length == 2 ) {
+            if(ringNum=="Ring 1"){
+            //   this.clippingPlaneRing1.constant = parseFloat(-val)
+            //   this.clippingPlaneRing1helper.constant = parseFloat(val)
+              this.modelManager.midMesh.position.x = parseFloat(val)
+        console.log("ring 1",this.modelManager.midMesh.position.x)
+
+            //   console.log("ring 1",this.clippingPlaneRing1.constant, this.clippingPlaneRing1helper.constant, this.modelManager.midMesh.position.x)
+            }
+            
+          // else if (this.modelManager.currentDisplayedModels.length == 2) {
+            if(ringNum=="Ring 2"){
+            // this.clippingPlaneRing2.constant = parseFloat(-val)
+            // this.clippingPlaneRing2helper.constant = parseFloat(val)
+            this.modelManager.midMesh2.position.x = parseFloat(val)
+        console.log("ring 2",this.modelManager.midMesh2.position.x)
+
+            //   console.log("ring 2",this.clippingPlaneRing2.constant,this.clippingPlaneRing2helper.constant,this.modelManager.midMesh2.position.x )
+            }}
+
+
+    }
+
 
     async toggleMilgrainGroove(midMesh,enable = true) {
         // Helper function to process a mesh

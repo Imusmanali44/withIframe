@@ -1,7 +1,7 @@
 import { useState } from "react";
 import WidthDepthSurface from "./WidthDepthSurface";
 import { TrashSvg, AddSvg } from "../../../../static/SvgImages";
-import { GrooveRangeSlider  } from "../../../shared/GrooveRangeSlider";
+import { GrooveRangeSlider } from "../../../shared/GrooveRangeSlider";
 
 const DistributionOptions = [
   {
@@ -40,16 +40,15 @@ const StepGroove = ({
   const [ring2Grooves, setRing2Grooves] = useState([
     { id: 1, name: "Free Groove" },
   ]);
+
   const handleGrooveSelection = (item) => {
     setGroove(item.name);
-    console.log(`Selected Groove: ${item.name}`);
-    window.parent.postMessage({ action: 'addGroove', type: item.name }, "*")
+    window.parent.postMessage({ action: 'addGroove', type: item.name }, "*");
   };
 
   const addGrooveRing1 = () => {
     const newId = ring1Grooves.length + 1;
     setRing1Grooves([...ring1Grooves, { id: newId, name: "Free Groove" }]);
-    console.log("Added a new groove to Ring 1:", newId);
     window.parent.postMessage(
       { action: "addGroove", value: newId, type: "defaultAdd", selectedRing: "Ring 1" },
       "*"
@@ -59,7 +58,6 @@ const StepGroove = ({
   const addGrooveRing2 = () => {
     const newId = ring2Grooves.length + 1;
     setRing2Grooves([...ring2Grooves, { id: newId, name: "Free Groove" }]);
-    console.log("Added a new groove to Ring 2:", newId);
     window.parent.postMessage(
       { action: "addGroove", value: newId, type: "defaultAdd", selectedRing: "Ring 2" },
       "*"
@@ -68,27 +66,23 @@ const StepGroove = ({
 
   const removeGrooveRing1 = (id) => {
     setRing1Grooves(ring1Grooves.filter((groove) => groove.id !== id));
-    console.log(`Removed groove with ID ${id} from Ring 1`);
     window.parent.postMessage(
-      { action: "addGroove",  type: "defaultDelete", selectedRing: "Ring 1" },
+      { action: "addGroove", type: "defaultDelete", selectedRing: "Ring 1" },
       "*"
     );
   };
 
   const removeGrooveRing2 = (id) => {
     setRing2Grooves(ring2Grooves.filter((groove) => groove.id !== id));
-    console.log(`Removed groove with ID ${id} from Ring 2`);
     window.parent.postMessage(
-      { action: "addGroove",  type: "defaultDelete", selectedRing: "Ring 2" },
+      { action: "addGroove", type: "defaultDelete", selectedRing: "Ring 2" },
       "*"
     );
   };
-  const shouldShowBothRings = () => {
-    console.log('Active Ring aaaaaa:', activeRing);
-    return activeRing === "both";
-  };
+
   return (
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
+      {/* Tab buttons */}
       <div>
         <button
           className={`font-semibold mr-5 ${
@@ -114,6 +108,7 @@ const StepGroove = ({
         )}
       </div>
 
+      {/* Choice of groove tab content */}
       {subActiveTab === "choice_of_groove" && (
         <div className="mt-5">
           <label className="text-sm block font-semibold py-1">
@@ -143,11 +138,12 @@ const StepGroove = ({
         </div>
       )}
 
-{subActiveTab === "position" && (
+      {/* Position tab content */}
+      {subActiveTab === "position" && (
         <div className="mt-5">
           <div className="flex flex-row space-x-4">
             {/* Ring 1 */}
-            <div className={activeRing.type == "Wedding" ? "w-1/2" : "w-full" && window.ringsLength ==2}>
+            <div className={activeRing.type === "Wedding" ? "w-1/2" : "w-full"}>
               <label className="block font-semibold py-1">Ring 1</label>
               {ring1Grooves.map((grooveItem) => (
                 <div className="flex items-center mb-2.5" key={grooveItem.id}>
@@ -174,8 +170,8 @@ const StepGroove = ({
               </div>
             </div>
 
-            {/* Ring 2 - Only show if both rings should be displayed */}
-            {activeRing.type == "Wedding" && window.ringsLength ==2 && (
+            {/* Ring 2 */}
+            {activeRing.type === "Wedding" && window.ringsLength === 2 && (
               <div className="w-1/2">
                 <label className="block font-semibold py-1">Ring 2</label>
                 {ring2Grooves.map((grooveItem) => (
@@ -204,27 +200,31 @@ const StepGroove = ({
               </div>
             )}
           </div>
-          
+
+          {/* Sliders */}
           <div className="mt-4">
-            <GrooveRangeSlider
-              title={"Ring 1"}
-              min={5}
-              max={220}
-              step={5}
-              defaultValue={120}
-            />
-          </div>
-          <div className="mt-4">
-            <GrooveRangeSlider
-              title={"Ring 2"}
-              min={10}
-              max={200}
-              step={5}
-              defaultValue={100}
-            />
-          </div>
+  <GrooveRangeSlider
+    title="Ring 1"
+    grooves={ring1Grooves}
+    min={-0.85}
+    max={-0.55}
+    step={0.001}
+    defaultValue={-0.7}
+  />
+</div>
+{activeRing.type === "Wedding" && window.ringsLength === 2 && (
+  <div className="mt-4">
+    <GrooveRangeSlider
+      title="Ring 2"
+      grooves={ring2Grooves}
+      min={0.55}
+      max={0.85}
+      step={0.001}
+      defaultValue={0.7}
+    />
+  </div>
+          )}
         </div>
-        
       )}
     </div>
   );

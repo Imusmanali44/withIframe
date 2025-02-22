@@ -13,7 +13,7 @@ export class MessageHandler {
   }
 
   handleMessage(event) {
-    const { action, modelId, type, id, selectedRing, value, pair, isEngraving,isBiCol,isTriCol,isMetal,field } = event.data;
+    const { action, modelId, type, id, selectedRing, value, pair, isEngraving,isBiCol,isTriCol,isMetal,field,grooveId } = event.data;
     // console.log('Message received from parent:', event.data, action);
 
     switch (action) {
@@ -184,9 +184,21 @@ export class MessageHandler {
             }
 
           }
-          break;  
+          break;
+      case "changeGrooveSlider":
+        console.log("calss groove f", value, selectedRing, grooveId)
+        if (type == "initial") {
+          // this.modelManager.GrooveManagerIns.setInitialOffsetGroove(value, selectedRing, grooveId);
+          
+        }
+        else{
+          this.modelManager.GrooveManagerIns.setoffsetValueGroove(value, selectedRing);
+          // break;
+        
+        }
+        break;
       case "changeSlider":
-        // console.log("calss", value, selectedRing)
+        console.log("calss", value, selectedRing)
         this.pMetalManager.setoffsetValue(value, selectedRing)
         break;
       case "changeMultiSlider":

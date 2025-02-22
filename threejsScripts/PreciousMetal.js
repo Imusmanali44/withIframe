@@ -691,7 +691,7 @@ export class PreciousMetal {
         this.clippingPlaneRing1.constant = parseFloat(-val)
         this.clippingPlaneRing1helper.constant = parseFloat(val)
         this.modelManager.midMesh.position.x = parseFloat(val)
-        console.log("ring 1",this.clippingPlaneRing1.constant, this.clippingPlaneRing1helper.constant, this.modelManager.midMesh.position.x)
+        console.log("ring 1",this.modelManager.midMesh.position.x)
       }
       
     // else if (this.modelManager.currentDisplayedModels.length == 2) {
@@ -699,7 +699,7 @@ export class PreciousMetal {
       this.clippingPlaneRing2.constant = parseFloat(-val)
       this.clippingPlaneRing2helper.constant = parseFloat(val)
       this.modelManager.midMesh2.position.x = parseFloat(val)
-        console.log("ring 2",this.clippingPlaneRing2.constant,this.clippingPlaneRing2helper.constant,this.modelManager.midMesh2.position.x )
+        console.log("ring 2",this.modelManager.midMesh2.position.x )
       }}
     // else if(this.modelManager.currentDisplayedModels.length == 2 && this.modelManager.pair1){
     //   // this.clippingPlaneRing1.constant = parseFloat(-val) 
