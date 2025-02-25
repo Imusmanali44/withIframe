@@ -1,4 +1,9 @@
-import { tabOptions, nonExpertTabOptions } from "../../utils";
+import {
+  tabOptions,
+  nonExpertTabOptions,
+  engagementTabOptions,
+  engagementNonExpertTabOptions,
+} from "../../utils";
 import { StepLeftSvg, StepRightSvg } from "../../static/SvgImages";
 
 export const Tabs = ({
@@ -7,8 +12,16 @@ export const Tabs = ({
   setStep,
   isExpertMode,
   step,
+  activeRing,
 }) => {
-  const options = isExpertMode ? tabOptions : nonExpertTabOptions;
+  // Ensure activeRing exists before accessing type
+  const options = activeRing?.type === "Engagement"
+    ? isExpertMode
+      ? engagementTabOptions
+      : engagementNonExpertTabOptions
+    : isExpertMode
+      ? tabOptions
+      : nonExpertTabOptions;
 
   return (
     <nav className="flex items-center flex-row w-full">

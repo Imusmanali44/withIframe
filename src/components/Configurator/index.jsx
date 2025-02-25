@@ -4,7 +4,7 @@ import TabContent from "../Tabs/TabsContent";
 import { TopBar } from "./TopBar";
 import TabContentFooter from "../Tabs/TabContentFooter";
 import ConfiguratorFooter from "./Footer";
-import { AppContext } from "./config";
+// import { AppContext } from "./config";
 
 window.pair1 = 0
 window.selectedRing = 1;
@@ -75,6 +75,7 @@ const Configurator = ({ activeStep, setActiveStep, isExpertMode }) => {
         handleNext={handleNext}
         step={activeStep}
         isExpertMode={isExpertMode}
+        activeRing={activeRing}
       />
 
       <TopBar

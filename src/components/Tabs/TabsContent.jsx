@@ -25,126 +25,224 @@ const TabContent = ({
       handleNext={handleNext}
     />
   );
+  if (activeRing?.type === "Engagement") {
+    if (isExpertMode) {
+      switch (step) {
+        case 1:
+          return (
+            <>
+              <Sizes rings={rings} activeRing={activeRing} />
 
-  if (isExpertMode) {
-    switch (step) {
-      case 1:
-        return (
-          <>
-            <Profile
-              rings={rings}
-              activeRing={activeRing}
-              isPair={isPair}
-              setIsPair={setIsPair}
-            />
+              {stepButton()}
+            </>
+          );
+        case 2:
+          return (
+            <>
+              <PreciousMetal
+                isExpert
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+        case 3:
+          return (
+            <>
+              <Stone
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+                isExpertMode={isExpertMode}
+              />
+              {stepButton()}
+            </>
+          );
 
-            {stepButton()}
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <Sizes rings={rings} activeRing={activeRing} />
-            {stepButton()}
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <PreciousMetal
-              isExpert
-              isPair={isPair}
-              setIsPair={setIsPair}
-              rings={rings}
-              activeRing={activeRing}
-            />
-            {stepButton()}
-          </>
-        );
-
-      case 4:
-        return (
-          <>
-            <GrooveAndEdge
-              isPair={isPair}
-              setIsPair={setIsPair}
-              rings={rings}
-              activeRing={activeRing}
-            />
-            {stepButton()}
-          </>
-        );
-      case 5:
-        return (
-          <>
-            <Stone
-              isPair={isPair}
-              setIsPair={setIsPair}
-              rings={rings}
-              activeRing={activeRing}
-              isExpertMode={isExpertMode}
-            />
-            {stepButton()}
-          </>
-        );
-      case 6:
-        return (
-          <>
-            <EngravingOptions
-              isPair={isPair}
-              setIsPair={setIsPair}
-              rings={rings}
-              activeRing={activeRing}
-            />
-            {stepButton()}
-          </>
-        );
-      default:
-        return <div>Unknown step</div>;
+        case 4:
+          return (
+            <>
+              <EngravingOptions
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+        default:
+          return <div>Unknown step</div>;
+      }
+    } else {
+      switch (step) {
+        case 1:
+          return (
+            <>
+              <Stone
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+                isExpertMode={isExpertMode}
+              />
+              {stepButton()}
+            </>
+          );
+        case 2:
+          return (
+            <>
+              <EngravingOptions
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+        case 3:
+          return (
+            <>
+              <Sizes rings={rings} activeRing={activeRing} />
+              {stepButton()}
+            </>
+          );
+        default:
+          return <div>Unknown step</div>;
+      }
     }
   } else {
-    switch (step) {
-      case 1:
-        return (
-          <>
-            <PreciousMetal isPair={isPair} toggleIsPair={setIsPair} />
-            {stepButton()}
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <Stone
-              isPair={isPair}
-              setIsPair={setIsPair}
-              rings={rings}
-              activeRing={activeRing}
-              isExpertMode={isExpertMode}
-            />
-            {stepButton()}
-          </>
-        );
-      case 3:
-        return (
-          <>
-            <EngravingOptions
-              isPair={isPair}
-              setIsPair={setIsPair}
-              rings={rings}
-              activeRing={activeRing}
-            />
-            {stepButton()}
-          </>
-        );
-      case 4:
-        return (
-          <>
-            <Sizes rings={rings} activeRing={activeRing} />
-            {stepButton()}
-          </>
-        );
-      default:
-        return <div>Unknown step</div>;
+    if (isExpertMode) {
+      switch (step) {
+        case 1:
+          return (
+            <>
+              <Profile
+                rings={rings}
+                activeRing={activeRing}
+                isPair={isPair}
+                setIsPair={setIsPair}
+              />
+
+              {stepButton()}
+            </>
+          );
+        case 2:
+          return (
+            <>
+              <Sizes rings={rings} activeRing={activeRing} />
+              {stepButton()}
+            </>
+          );
+        case 3:
+          return (
+            <>
+              <PreciousMetal
+                isExpert
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+
+        case 4:
+          return (
+            <>
+              <GrooveAndEdge
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+        case 5:
+          return (
+            <>
+              <Stone
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+                isExpertMode={isExpertMode}
+              />
+              {stepButton()}
+            </>
+          );
+        case 6:
+          return (
+            <>
+              <EngravingOptions
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+        default:
+          return <div>Unknown step</div>;
+      }
+    } else {
+      switch (step) {
+        case 1:
+          return (
+            <>
+              <PreciousMetal
+                isExpert
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+        case 2:
+          return (
+            <>
+              <Stone
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+                isExpertMode={isExpertMode}
+              />
+              {stepButton()}
+            </>
+          );
+        case 3:
+          return (
+            <>
+              <EngravingOptions
+                isPair={isPair}
+                setIsPair={setIsPair}
+                rings={rings}
+                activeRing={activeRing}
+              />
+              {stepButton()}
+            </>
+          );
+        case 4:
+          return (
+            <>
+              <Sizes rings={rings} activeRing={activeRing} />
+              {stepButton()}
+            </>
+          );
+        default:
+          return <div>Unknown step</div>;
+      }
     }
   }
 };

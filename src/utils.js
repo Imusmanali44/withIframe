@@ -25,15 +25,15 @@ export const tabOptions = [
   },
   {
     id: 3,
-    title: " Precious metal",
+    title: "Precious metal",
   },
   {
     id: 4,
-    title: " Grooves / edges",
+    title: "Grooves / edges",
   },
   {
     id: 5,
-    title: " Stone setting",
+    title: "Stone setting",
   },
   {
     id: 6,
@@ -44,11 +44,11 @@ export const tabOptions = [
 export const nonExpertTabOptions = [
   {
     id: 1,
-    title: " Precious metal",
+    title: "Precious metal",
   },
   {
     id: 2,
-    title: " Stone setting",
+    title: "Stone setting",
   },
   {
     id: 3,
@@ -56,6 +56,40 @@ export const nonExpertTabOptions = [
   },
   {
     id: 4,
+    title: "Sizes",
+  },
+];
+
+export const engagementTabOptions = [
+  {
+    id: 1,
+    title: "Sizes",
+  },
+  {
+    id: 2,
+    title: "Precious metal",
+  },
+  {
+    id: 3,
+    title: "Stone setting",
+  },
+  {
+    id: 4,
+    title: "Engraving",
+  },
+];
+
+export const engagementNonExpertTabOptions = [
+  {
+    id: 1,
+    title: "Stone setting",
+  },
+  {
+    id: 2,
+    title: "Engraving",
+  },
+  {
+    id: 3,
     title: "Sizes",
   },
 ];

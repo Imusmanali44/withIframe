@@ -260,7 +260,7 @@ export const PreciousMetal = ({
     //   { action: "PreciousMetal", value: 0 },
     //   "*"
     // );
-  }, [rings.length]);
+  }, [rings?.length]);
   const getTwoToneOptions = () => {
     return options.map(option => {
       // Add opacity 0.3 for specific patterns

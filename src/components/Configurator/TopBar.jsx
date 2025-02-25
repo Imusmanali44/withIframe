@@ -1,5 +1,5 @@
-var currentModel = 0
-var isPair1 = 0
+// var currentModel = 0
+// var isPair1 = 0
 import { Fragment, useEffect } from "react";
 import Modal from "../shared/Modal";
 import useModal from "../../hooks/useModal";
