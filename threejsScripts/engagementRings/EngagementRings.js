@@ -13,6 +13,7 @@ export class EngagementRings {
       { glbPath: 'models/eng/VR002S-BD.glb' },
       { glbPath: 'models/eng/VR003.glb' },
       { glbPath: 'models/eng/VR003S-BD.glb' },
+      { glbPath: 'models/eng/VR003S-BD.glb' },
       { glbPath: 'models/eng/VR004.glb' },
       { glbPath: 'models/eng/VR005.glb' },
       { glbPath: 'models/eng/VR005S-BD.glb' },
@@ -22,33 +23,61 @@ export class EngagementRings {
       { glbPath: 'models/eng/VR008.glb' },
       { glbPath: 'models/eng/VR009.glb' },
       { glbPath: 'models/eng/VR010.glb' },
-
-
-
       { glbPath: 'models/eng/VR011.glb' },
       { glbPath: 'models/eng/VR101.glb' },
       { glbPath: 'models/eng/VR102.glb' },
       { glbPath: 'models/eng/VR103.glb' },
-
       { glbPath: 'models/eng/VR104.glb' },
       { glbPath: 'models/eng/VR104S-BD.glb' },
       { glbPath: 'models/eng/VR105.glb' },
       { glbPath: 'models/eng/VR201.glb' },
-
-
       { glbPath: 'models/eng/VR202.glb' },
       { glbPath: 'models/eng/VR203.glb' },
       { glbPath: 'models/eng/VR301.glb' },
       { glbPath: 'models/eng/VR302.glb' },
-
       { glbPath: 'models/eng/VR401.glb' },
       { glbPath: 'models/eng/VR401S-BD.glb' },
       { glbPath: 'models/eng/VR402.glb' },
       { glbPath: 'models/eng/VR402S-BD.glb' },
-
       { glbPath: 'models/eng/VR403.glb' },
       { glbPath: 'models/eng/VR403S-BD.glb' },
       { glbPath: 'models/eng/VR404.glb' },
+      // Added models from the image
+      { glbPath: 'models/eng/VR411SC.glb' },
+      { glbPath: 'models/eng/VR410SC.glb' },
+      { glbPath: 'models/eng/VR409PL.glb' },
+      { glbPath: 'models/eng/VR409BD.glb' },
+      { glbPath: 'models/eng/VR408SC.glb' },
+      { glbPath: 'models/eng/VR305PL.glb' },
+      { glbPath: 'models/eng/VR305SC.glb' },
+      { glbPath: 'models/eng/VR304PL.glb' },
+      { glbPath: 'models/eng/VR303PL.glb' },
+      { glbPath: 'models/eng/VR021BD.glb' },
+      { glbPath: 'models/eng/VR021PL.glb' },
+      { glbPath: 'models/eng/VR020BD.glb' },
+      { glbPath: 'models/eng/VR019BD.glb' },
+      { glbPath: 'models/eng/VR018PS.glb' },
+      { glbPath: 'models/eng/VR016SH.glb' },
+      { glbPath: 'models/eng/VR016CH.glb' },
+      { glbPath: 'models/eng/VR016BD.glb' },
+      { glbPath: 'models/eng/VR016PL.glb' },
+      { glbPath: 'models/eng/VR015CH.glb' },
+      { glbPath: 'models/eng/VR015PL.glb' },
+      { glbPath: 'models/eng/VR015BD.glb' },
+      { glbPath: 'models/eng/VR015SC.glb' },
+      { glbPath: 'models/eng/VR014SC.glb' },
+      { glbPath: 'models/eng/VR014PL.glb' },
+      { glbPath: 'models/eng/VR014CH.glb' },
+      { glbPath: 'models/eng/VR014BD.glb' },
+      { glbPath: 'models/eng/VR013SC.glb' },
+      { glbPath: 'models/eng/VR013PL.glb' },
+      { glbPath: 'models/eng/VR013CH.glb' },
+      { glbPath: 'models/eng/VR013BD.glb' },
+      { glbPath: 'models/eng/VR403S-BD.glb' },
+      { glbPath: 'models/eng/VR402.glb' },
+      { glbPath: 'models/eng/VR402S-BD.glb' },
+      { glbPath: 'models/eng/VR401S-BD.glb' },
+      { glbPath: 'models/eng/VR401.glb' }
 
     ];
     // this.initLighting();
@@ -88,7 +117,7 @@ export class EngagementRings {
         this.scene.add(model);
         this.modelManager.currentDisplayedModels.push(model);
         // this.modelManager.applyColorToModel(model,'#D8BC7E')
-        if (modelInfo.glbPath == "models/eng/VR002.glb" || modelInfo.glbPath=="models/eng/VR003S-BD.glb") {
+        if (modelInfo.glbPath == "models/eng/VR002.glb" || modelInfo.glbPath == "models/eng/VR003S-BD.glb") {
           // this.applyColorExcludingMeshes(model, '#D8BC7E', true);
         }
         else {
@@ -113,17 +142,17 @@ export class EngagementRings {
       }
     );
   }
-  applyColorExcludingMeshes(model, color,reverse = false) {
+  applyColorExcludingMeshes(model, color, reverse = false) {
     model.traverse((child) => {
       // Check if the traversed object is a mesh
       if (child.isMesh) {
-    
-        if (reverse==true && child.name.includes("_")) {
+
+        if (reverse == true && child.name.includes("_")) {
           if (child.material && child.material.color) {
             child.material.color.set(color);
           }
           console.warn("aaaaaa", child.name)
-          
+
         }
 
 

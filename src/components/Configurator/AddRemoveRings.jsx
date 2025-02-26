@@ -39,8 +39,10 @@ const ringImages = {
     { id: 21, name: "Engagement 21", src: Ring1 },
     { id: 22, name: "Engagement 22", src: Ring1 },
     { id: 23, name: "Engagement 23", src: Ring1 },
-    { id: 25, name: "Engagement 24", src: Ring1 },
-    { id: 26, name: "Engagement 27", src: Ring1 },
+    { id: 24, name: "Engagement 24", src: Ring1 }, // Fixed id and name
+    { id: 25, name: "Engagement 25", src: Ring1 }, // Fixed name
+    { id: 26, name: "Engagement 26", src: Ring1 }, // Fixed name
+    { id: 27, name: "Engagement 27", src: Ring1 }, // Added missing id 27
     { id: 28, name: "Engagement 28", src: Ring1 },
     { id: 29, name: "Engagement 29", src: Ring1 },
     { id: 30, name: "Engagement 30", src: Ring1 },
@@ -48,7 +50,36 @@ const ringImages = {
     { id: 32, name: "Engagement 32", src: Ring1 },
     { id: 33, name: "Engagement 33", src: Ring1 },
     { id: 34, name: "Engagement 34", src: Ring1 },
-    { id: 0, name: "Engagement 35", src: Ring1 },
+    { id: 35, name: "Engagement 35", src: Ring1 }, // Changed id from 0 to 35
+    { id: 36, name: "Engagement 36", src: Ring1 }, // Uncommented and fixed
+    { id: 37, name: "Engagement 37", src: Ring1 }, // New entries from here
+    { id: 38, name: "Engagement 38", src: Ring1 },
+    { id: 39, name: "Engagement 39", src: Ring1 },
+    { id: 40, name: "Engagement 40", src: Ring1 },
+    { id: 41, name: "Engagement 41", src: Ring1 },
+    { id: 42, name: "Engagement 42", src: Ring1 },
+    { id: 43, name: "Engagement 43", src: Ring1 },
+    { id: 44, name: "Engagement 44", src: Ring1 },
+    { id: 45, name: "Engagement 45", src: Ring1 },
+    { id: 46, name: "Engagement 46", src: Ring1 },
+    { id: 47, name: "Engagement 47", src: Ring1 },
+    { id: 48, name: "Engagement 48", src: Ring1 },
+    { id: 49, name: "Engagement 49", src: Ring1 },
+    { id: 50, name: "Engagement 50", src: Ring1 },
+    { id: 51, name: "Engagement 51", src: Ring1 },
+    { id: 52, name: "Engagement 52", src: Ring1 },
+    { id: 53, name: "Engagement 53", src: Ring1 },
+    { id: 54, name: "Engagement 54", src: Ring1 },
+    { id: 55, name: "Engagement 55", src: Ring1 },
+    { id: 56, name: "Engagement 56", src: Ring1 },
+    { id: 57, name: "Engagement 57", src: Ring1 },
+    { id: 58, name: "Engagement 58", src: Ring1 },
+    { id: 59, name: "Engagement 59", src: Ring1 },
+    { id: 60, name: "Engagement 60", src: Ring1 },
+    { id: 61, name: "Engagement 61", src: Ring1 },
+    { id: 62, name: "Engagement 62", src: Ring1 },
+    { id: 63, name: "Engagement 63", src: Ring1 },
+    { id: 64, name: "Engagement 64", src: Ring1 }
     // { id: 36, name: "Engagement 36", src: Ring1 },
 
 
