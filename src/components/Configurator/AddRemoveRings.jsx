@@ -115,8 +115,15 @@ const AddRemoveRings = ({ rings, setRings }) => {
   useEffect(() => {
     console.log("test", selectedRing)
     if (selectedRing && selectedRing.name.toLowerCase().includes("engage")) {
-      window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
-    window.ringsLength++;
+      if(window.ringsLength ==2){
+        alert("Delete a wedding ring to add an engagement ring")
+        return;
+      }
+      else{
+        window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
+        window.ringsLength++;
+      }
+      
 
     }
 
@@ -153,10 +160,13 @@ const AddRemoveRings = ({ rings, setRings }) => {
   };
 
   const handleInputChange = (id, value) => {
+    console.log("ello")
     setInputValues({ ...inputValues, [id]: value });
   };
 
   const selectRing = (ring) => {
+    console.log(" ello 2")
+
     setSelectedRing(ring);
     if (rings.length < 4) {
       // Find the lowest available ID that's not in use
@@ -266,9 +276,15 @@ const AddRemoveRings = ({ rings, setRings }) => {
               <h4>Wedding</h4>
             </div>
             <div
-              className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
-              onClick={() => setSelectedType("Engagement")}
-            >
+  className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
+  onClick={() => {
+    if (window.ringsLength == 2) {
+      alert("Delete a wedding ring to add an engagement ring");
+      return;
+    }
+    setSelectedType("Engagement");
+  }}
+>
               <i className="svg-icon text-center">
                 <AddEngagementRingSvg />
               </i>
@@ -276,7 +292,15 @@ const AddRemoveRings = ({ rings, setRings }) => {
             </div>
             <div
               className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
-              onClick={() => setSelectedType("Memoir")}
+             
+              onClick={() => {
+                if (window.ringsLength == 2) {
+                  alert("Delete a wedding ring to add an engagement ring");
+                  return;
+                }
+                setSelectedType("Memoir");
+              }}
+            
             >
               <i className="svg-icon text-center">
                 <AddMemoirRingSvg />
