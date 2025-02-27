@@ -179,8 +179,9 @@ export class ModelManager {
   
         return Promise.all(modelLoadPromises);
       })
-      .then((models) => {
+      .then( async (models) => {
         console.log("All models loaded.");
+        // await this.loadStepMesh();
         // Verify models array is complete and in order
         const missingModels = this.models.findIndex(model => model === null);
         if (missingModels !== -1) {
@@ -329,7 +330,64 @@ async loadMidMesh(type, isTri) {
     throw error;
   }
 }
+async loadStepMesh(type, isTri) {
 
+  try {
+    const gltf = await new Promise((resolve, reject) => {
+      this.loader.load(
+        "models/midMesh/DmidMesh.glb",
+        (gltf) => resolve(gltf),
+        undefined,
+        (error) => reject(error)
+      );
+    });
+
+    this.stepMesh = gltf.scene;
+
+    // Traverse and update material
+    this.stepMesh.traverse((child) => {
+      if (child.isMesh && child.material) {
+        const originalMaterial = child.material;
+        child.material = new THREE.MeshStandardMaterial({
+          color: "#D8BC7E",
+          metalness: 0.9,
+          roughness: 0.2,
+          map: originalMaterial.map,
+          normalMap: originalMaterial.normalMap,
+          metalnessMap: originalMaterial.metalnessMap,
+          roughnessMap: originalMaterial.roughnessMap,
+          emissiveMap: originalMaterial.emissiveMap,
+          emissive: originalMaterial.emissive,
+          stencilWrite: true,
+          stencilRef: 0,
+          stencilFunc: THREE.NotEqualStencilFunc,
+          stencilZPass: THREE.KeepStencilOp,
+          depthWrite: true,
+          polygonOffset: true,
+          polygonOffsetFactor: -14,
+          polygonOffsetUnits: -14,
+        });
+      }
+    });
+
+    // Get scaling values for the current model
+    const { x, y, z } = this.GrooveManagerIns.getScaleForModel(this.modelId, "Milgrain");
+    this.stepMesh.scale.set(x, y, z);
+    // this.stepMesh.position.x = -0.7;
+    this.stepMesh2 = this.cloneModelWithUniqueMaterial(this.stepMesh);
+    this.stepMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+    this.stepMesh2.position.set(0.7, -0.15, 0);
+
+    // Add the first mesh to the scene
+    // this.scene.add(this.stepMesh);
+
+}
+catch (error) {
+  console.error("Error loading midMeshStep:", error);
+  throw error;
+}
+
+}
 
   
   optimalThicknessBool(value) {
@@ -1213,9 +1271,9 @@ async loadMidMesh(type, isTri) {
 
 
   engraveTextOnModel(text, options = {}) {
-    console.log("Engraving text on the inner mesh...");
+    console.log("Engraving text on the inner mesh...", text);
     let sValue = 0.0005
-    this.tempPos = -0.0098
+    this.tempPos = -0.85
 
     // if(this.currentModel=="P1"){
     //     sValue = 0.0005
@@ -1234,11 +1292,11 @@ async loadMidMesh(type, isTri) {
     // }
     // Default configurations
     const fontConfigurations = {
-      1: { size: 0.0009, height: sValue, rotation: { x: 0, y: 0, z: 0 } },
-      2: { size: 0.0009, height: sValue },
-      3: { size: 0.0009, height: sValue },
-      4: { size: 0.0009, height: sValue },
-      5: { size: 0.0009, height: sValue },
+      1: { size: 0.5, height: sValue, rotation: { x: 0, y: 0, z: 0 } },
+      2: { size: 0.5, height: sValue },
+      3: { size: 0.5, height: sValue },
+      4: { size: 0.5, height: sValue },
+      5: { size: 0.5, height: sValue },
     };
 
     const config = { ...fontConfigurations[this.fontIndex || 1], ...options };
@@ -1273,7 +1331,7 @@ async loadMidMesh(type, isTri) {
         const textGeometry = new TextGeometry(text, {
           font: font,
           size: config.size,
-          depth: config.height,
+          depth: 0.3,
           curveSegments: 12,
           bevelEnabled: false,
         });
@@ -1282,8 +1340,8 @@ async loadMidMesh(type, isTri) {
 
         const bender = new Bender();
         // Apply bending if needed
-        // bender.bend(textGeometry, "x", Math.PI / 16);
-
+        bender.bend(textGeometry, "y", Math.PI/9 );
+        console.log("bender")
         // Create text mesh
         const textMaterial = new THREE.MeshStandardMaterial({
           color: this.currentColor,
@@ -1293,11 +1351,13 @@ async loadMidMesh(type, isTri) {
         const textMesh = new THREE.Mesh(textGeometry, textMaterial);
         textMesh.name = "test"
         // Position text slightly above the inner surface
-        textMesh.position.set(0, 0.00020, this.tempPos);
-        textMesh.rotation.set(0, 0, 0); // Align text along the ring's curvature
-
+        textMesh.position.set(0.7, -0.16, this.tempPos);
+        textMesh.rotation.set(0, 0, Math.PI/2); // Align text along the ring's curvature
+        textMesh.scale.set(0.3, 0.3, 0.3); // Scale the text
         // Add the text mesh to the inner mesh
-        innerMesh.add(textMesh);
+        // innerMesh.add(textMesh);
+        console.log("innerMesh", model,innerMesh)
+        this.scene.add(textMesh);
 
         console.log("Engraving applied to the inner mesh.", boundingBox.min.y);
       };

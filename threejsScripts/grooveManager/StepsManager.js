@@ -44,9 +44,11 @@ export class StepsManager {
 
     // Function to create and position a step
     const createStep = async (isFirstModel, position) => {
-        await this.modelManager.loadMidMesh("Milgrain", false);
+        
+        // await this.modelManager.loadMidMesh("Milgrain", false);
+        await this.modelManager.loadStepMesh();
        
-        const midMesh = isFirstModel ? this.modelManager.midMesh : this.modelManager.midMesh2;
+        const midMesh = isFirstModel ? this.modelManager.stepMesh : this.modelManager.stepMesh2;
         const step = this.modelManager.cloneModelWithUniqueMaterial(midMesh);
         if(milgrainBool)  {
             this.modelManager.GrooveManagerIns.toggleMilgrainGroove(step,milgrainBool)
@@ -56,6 +58,7 @@ export class StepsManager {
             this.modelManager.GrooveManagerIns.toggleMilgrainGroove(step,false)
 
         }
+        // this.grooveManager.removeMidMeshes();
         console.log(" bugg Initial scale:", step.scale);
 // console.log("Scale modifications:", scaleY, scaleZ);
 const modelIndex = isFirstModel ? 
@@ -131,8 +134,10 @@ async addRightStep(milgrainBool) {
 
     // Function to create and position a step
     const createStep = async (isFirstModel, position) => {
-        await this.modelManager.loadMidMesh("Milgrain", false);
-        const midMesh = isFirstModel ? this.modelManager.midMesh : this.modelManager.midMesh2;
+        // await this.modelManager.loadMidMesh("Milgrain", false);
+        await this.modelManager.loadStepMesh();
+
+        const midMesh = isFirstModel ? this.modelManager.stepMesh : this.modelManager.stepMesh2;
         const step = this.modelManager.cloneModelWithUniqueMaterial(midMesh);
         if(milgrainBool)  {
             this.modelManager.GrooveManagerIns.toggleMilgrainGroove(step,milgrainBool)
