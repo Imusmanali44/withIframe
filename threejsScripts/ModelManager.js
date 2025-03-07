@@ -8,6 +8,10 @@ import { PreciousMetal } from "./PreciousMetal";
 // import  CSG  from '/utils/CSGMesh.js'
 import Bender from '/utils/bender.js'
 import { TextureLoader } from 'three';
+// import { CSG } from 'three-bvh-csg';
+// import { Brush, Evaluator, SUBTRACTION }  from 'three-bvh-csg';
+import {  Brush, Evaluator, SUBTRACTION  } from 'three-bvh-csg';
+
 
 
 
@@ -188,7 +192,7 @@ export class ModelManager {
           throw new Error(`Model loading incomplete or out of order at index ${missingModels}`);
         }
         
-        this.currentColor = "#A09F9D";
+        this.currentColor = "#D8BC7E";
         this.switchModel(0, 1, true, false);
       })
       .catch((err) => {
@@ -588,7 +592,7 @@ catch (error) {
 
 
   switchModel(index, selectedRingId = 1, pair1 = true, pair2 = false) {
-    this.currentColor = "#A09F9D";
+    this.currentColor = "#D8BC7E";
     // this.GrooveManagerIns.removeMidMeshes();
 
     if (this.PreciousMetal.isEnable == true) {
@@ -603,7 +607,7 @@ catch (error) {
       console.warn('Invalid model index:', index);
       return;
     }
-    // this.engraveTextOnModel("GG")
+    // this.engraveTextOnModel("GGGGG")
     // Handle pairing logic
     console.log("chk 0", pair1, selectedRingId, this.pair1)
 
@@ -1267,125 +1271,385 @@ catch (error) {
 
 
 
-
-
-
   engraveTextOnModel(text, options = {}) {
-    console.log("Engraving text on the inner mesh...", text);
-    let sValue = 0.0005
-    this.tempPos = -0.85
-
-    // if(this.currentModel=="P1"){
-    //     sValue = 0.0005
-    // }
-    // if( this.currentModel=="P2" || this.currentModel=="P3" ){
-    //   sValue = 0.0003
-
-    // }
-    // if( this.currentModel=="P4"){
-    //   sValue = 0.0004
-    //   this.tempPos = -0.0087
-    // }
-    // if( this.currentModel=="P5"){
-    //   sValue = 0.0004
-
-    // }
-    // Default configurations
+    console.log("Engraving...");
+    
+    // Default configurations for each font based on this.fontIndex
     const fontConfigurations = {
-      1: { size: 0.5, height: sValue, rotation: { x: 0, y: 0, z: 0 } },
-      2: { size: 0.5, height: sValue },
-      3: { size: 0.5, height: sValue },
-      4: { size: 0.5, height: sValue },
-      5: { size: 0.5, height: sValue },
+      1: {
+        size: 0.45,
+
+        height: 0.05,
+        depthOffset: 0.34,
+        color: this.currentColor,
+        position: { x: 0, y: -0.5, z: -0.6 },
+        rotation: { x: -0.5, y: 0, z: 1.55 },
+      },
+      2: {
+        size: 0.45,
+
+        height: 0.05,
+        depthOffset: 0.34,
+        color: this.currentColor,
+        position: { x: 0, y: -0.5, z: -0.6 },
+        rotation: { x: -0.5, y: 0, z: 1.55 },
+      },
+      3: {
+        size: 0.45,
+
+        height: 0.05,
+        depthOffset: 0.34,
+        color: this.currentColor,
+        position: { x: 0, y: -0.5, z: -0.6 },
+        rotation: { x: -0.5, y: 0, z: 1.55 },
+      },
+      4: {
+        size: 0.45,
+        height: 0.05,
+        depthOffset: 0.34,
+        color: this.currentColor,
+        position: { x: 0, y: -0.5, z: -0.6 },
+        rotation: { x: -0.5, y: 0, z: 1.55 },
+      },
     };
-
-    const config = { ...fontConfigurations[this.fontIndex || 1], ...options };
-
-    console.log("hello 22", this.fontIndex, this.currentFont)
-
-    // Load font
+  
+    // Select the configuration for the current font index or use defaults
+    const config = fontConfigurations[this.fontIndex] || fontConfigurations[1];
+  
+    // Overwrite configuration with options if provided
+    const {
+      size = config.size,
+      height = config.height,
+      depthOffset = config.depthOffset,
+      color = config.color,
+      position = config.position,
+      rotation = config.rotation,
+    } = options;
+  
+    // Load the font based on the currentFont path
     this.fontLoader.load(this.currentFont, (font) => {
       const createEngraving = (model) => {
-        let innerMesh = null;
-
-        // Locate the Inner mesh
-        model.traverse((child) => {
-          if (child.isMesh && child.name.includes("Inner")) {
-            innerMesh = child;
-          }
-        });
-
-        if (!innerMesh) {
-          console.error("Inner mesh not found.");
-          return;
-        }
-
-        // Compute bounding box of the Inner mesh
-        innerMesh.geometry.computeBoundingBox();
-        const boundingBox = innerMesh.geometry.boundingBox;
-
-        const innerRadius = (boundingBox.max.x - boundingBox.min.x) / 2; // Approximate radius
-        const depthOffset = 0.0002; // Slight offset to make it visible on top of the surface
-
-        // Create the text geometry
         const textGeometry = new TextGeometry(text, {
           font: font,
-          size: config.size,
-          depth: 0.3,
-          curveSegments: 12,
-          bevelEnabled: false,
+          size: size,
+          height: height
         });
-
+  
+        // Center the text geometry
+        textGeometry.computeBoundingBox();
         textGeometry.center();
-
         const bender = new Bender();
         // Apply bending if needed
-        bender.bend(textGeometry, "y", Math.PI/9 );
-        console.log("bender")
-        // Create text mesh
-        const textMaterial = new THREE.MeshStandardMaterial({
-          color: this.currentColor,
-          metalness: 0.8,
-          roughness: 0.5,
-        });
-        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        textMesh.name = "test"
-        // Position text slightly above the inner surface
-        textMesh.position.set(0.7, -0.16, this.tempPos);
-        textMesh.rotation.set(0, 0, Math.PI/2); // Align text along the ring's curvature
-        textMesh.scale.set(0.3, 0.3, 0.3); // Scale the text
-        // Add the text mesh to the inner mesh
-        // innerMesh.add(textMesh);
-        console.log("innerMesh", model,innerMesh)
-        this.scene.add(textMesh);
+        console.log("model", model)
+        if(model.userData.modelIndex==0 ){   
 
-        console.log("Engraving applied to the inner mesh.", boundingBox.min.y);
-      };
+            bender.bend(textGeometry, "y", Math.PI/10.7);
 
-      const engraveOnModels = (models) => {
-        models.forEach((model) => {
-          if (model) {
-            createEngraving(model);
-          } else {
-            console.warn("Model not found for engraving.");
           }
-        });
-      };
+          else if (model.userData.modelIndex==1){
 
-      // Check if pair1 is active and engrave on both rings
+            bender.bend(textGeometry, "y", Math.PI/10.65);
+          }
+          else if (model.userData.modelIndex==2){
+
+            bender.bend(textGeometry, "y", Math.PI/10.75);
+
+
+          }
+          else if (model.userData.modelIndex==3){
+
+            bender.bend(textGeometry, "y", Math.PI/10.75);
+
+
+
+          }
+          else if (model.userData.modelIndex==4){
+
+            bender.bend(textGeometry, "y", Math.PI/11.75);
+
+
+          }
+          else if (model.userData.modelIndex==5){
+
+            bender.bend(textGeometry, "y", Math.PI/11.75); 
+
+
+          }
+          else if (model.userData.modelIndex==6){
+
+            bender.bend(textGeometry, "y", Math.PI/10.8);
+
+
+          }
+          else if (model.userData.modelIndex==7){
+
+            bender.bend(textGeometry, "y", Math.PI/11);
+          }
+
+
+          else{
+            bender.bend(textGeometry, "y", Math.PI/10.75);
+
+          }
+      
+
+        
+
+  
+        // Instead of using CSG operations (which aren't working),
+        // we'll modify our approach to create an engraved appearance:
+        
+        // 1. First, create the text mesh
+        const textMaterial = new THREE.MeshStandardMaterial({
+          color: color,
+          metalness: 0.5,
+          roughness: 0.7,
+          // Make the material slightly transparent to give depth
+          transparent: true,
+          opacity: 0.4,
+          // Use depthWrite: false to prevent z-fighting
+          depthWrite: false,
+          side: THREE.FrontSide 
+        });
+  
+        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+        textMesh.name = "engravingText";
+  
+        // 2. Position the text correctly on the ring
+        textMesh.position.set(
+          position.x,
+          position.y,
+          position.z - depthOffset // Position it slightly inset into the model
+        );
+        textMesh.rotation.set(rotation.x, rotation.y, rotation.z);
+        textMesh.scale.set(0.3, 0.3, 0.3);
+        
+        // 3. Create a slightly larger backing mesh with the ring's material color but darker
+        // This creates the illusion of depth
+        const backingGeometry = textGeometry.clone();
+        const backingMaterial = new THREE.MeshStandardMaterial({
+          color: new THREE.Color(color).multiplyScalar(0.3), // Darker version of the same color
+          metalness: 0.5,
+          roughness: 0.7,
+        depthWrite: true,
+          // polygonOffset: true,
+          // polygonOffsetFactor: -1.1,
+          // polygonOffsetUnits: 1,   
+          side: THREE.FrontSide 
+             });
+        
+        const backingMesh = new THREE.Mesh(backingGeometry, backingMaterial);
+        // backingMesh.name = "engravingBackground";
+        backingMesh.position.copy(textMesh.position);
+
+        if(model.userData.modelIndex==0 ){   
+console.log("model 1")
+
+          backingMesh.position.z += 0.0585; // Slightly behind the text
+          backingMesh.position.y += 0.0193;
+
+        }
+        else if (model.userData.modelIndex==1){
+          console.log("model 2",model.userData.modelIndex)
+
+          backingMesh.position.z += 0.058; // Slightly behind the text
+          backingMesh.position.y += 0.019
+
+        }
+        else if(model.userData.modelIndex==2){
+console.log("model 3")
+          backingMesh.position.z += 0.0385; // Slightly behind the text
+          backingMesh.position.y += 0.0098;
+        }
+        else if(model.userData.modelIndex==3){
+          console.log("model 4")
+          backingMesh.position.z += 0.03; // Slightly behind the text
+          backingMesh.position.y += 0.005;
+                  }
+        else if (model.userData.modelIndex==4){
+
+          backingMesh.position.z += 0.053; // Slightly behind the text
+          backingMesh.position.y += 0.003;
+
+        }
+        else if (model.userData.modelIndex==5){
+
+          backingMesh.position.z += 0.043; // Slightly behind the text
+          backingMesh.position.y += 0.01;
+
+        }
+        else if (model.userData.modelIndex==6){
+
+          backingMesh.position.z += 0.06; // Slightly behind the text
+          backingMesh.position.y += 0.02;
+
+        }
+        else if (model.userData.modelIndex==7){
+
+          backingMesh.position.z += 0.025; // Slightly behind the text
+          backingMesh.position.y += 0.005;
+
+        }
+        else{
+          backingMesh.position.z += 0.06; // Slightly behind the text
+          backingMesh.position.y += 0.02;
+
+        }
+        // Slightly behind the text
+
+        backingMesh.rotation.copy(textMesh.rotation);
+        backingMesh.scale.copy(textMesh.scale);
+        backingMesh.scale.multiplyScalar(1); // Slightly larger
+        
+        // Add both meshes to the model
+        backingMesh.name = "test"
+        textMesh.name = "test"
+        model.add(backingMesh);
+        model.add(textMesh);
+        
+        console.log(`Engraved text "${text}" on the model`, this.currentFont);
+      };
+  
+      // Handle engraving for the selected model or both models in the pair
       if (this.pair1 && this.currentDisplayedModels.length > 1) {
+        // Engrave on both ring 1 and ring 2 if pair1 is active
         const ring1 = this.currentDisplayedModels[0];
         const ring2 = this.currentDisplayedModels[1];
-        engraveOnModels([ring1, ring2]);
+  
+        if (ring1) createEngraving(ring1);
+        if (ring2) createEngraving(ring2);
+  
         console.log(`Engraved text "${text}" on both pair1 rings.`);
       } else {
         // Engrave only on the selected model
         const model = this.currentDisplayedModels[this.selectedModel - 1];
-        engraveOnModels([model]);
+        if (!model) {
+          console.warn('Model not found for selectedRingId:', this.selectedModel);
+          return;
+        }
+        createEngraving(model);
         console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
       }
     });
   }
+
+  // engraveTextOnModelss(text, options = {}) {
+  //   console.log("Engraving text on the inner mesh...", text);
+  //   let sValue = 0.0005
+  //   this.tempPos = -0.85
+
+  //   // if(this.currentModel=="P1"){
+  //   //     sValue = 0.0005
+  //   // }
+  //   // if( this.currentModel=="P2" || this.currentModel=="P3" ){
+  //   //   sValue = 0.0003
+
+  //   // }
+  //   // if( this.currentModel=="P4"){
+  //   //   sValue = 0.0004
+  //   //   this.tempPos = -0.0087
+  //   // }
+  //   // if( this.currentModel=="P5"){
+  //   //   sValue = 0.0004
+
+  //   // }
+  //   // Default configurations
+  //   const fontConfigurations = {
+  //     1: { size: 0.5, height: sValue, rotation: { x: 0, y: 0, z: 0 } },
+  //     2: { size: 0.5, height: sValue },
+  //     3: { size: 0.5, height: sValue },
+  //     4: { size: 0.5, height: sValue },
+  //     5: { size: 0.5, height: sValue },
+  //   };
+
+  //   const config = { ...fontConfigurations[this.fontIndex || 1], ...options };
+
+  //   console.log("hello 22", this.fontIndex, this.currentFont)
+
+  //   // Load font
+  //   this.fontLoader.load(this.currentFont, (font) => {
+  //     const createEngraving = (model) => {
+  //       let innerMesh = null;
+
+  //       // Locate the Inner mesh
+  //       model.traverse((child) => {
+  //         if (child.isMesh && child.name.includes("Inner")) {
+  //           innerMesh = child;
+  //         }
+  //       });
+
+  //       if (!innerMesh) {
+  //         console.error("Inner mesh not found.");
+  //         return;
+  //       }
+
+  //       // Compute bounding box of the Inner mesh
+  //       innerMesh.geometry.computeBoundingBox();
+  //       const boundingBox = innerMesh.geometry.boundingBox;
+
+  //       const innerRadius = (boundingBox.max.x - boundingBox.min.x) / 2; // Approximate radius
+  //       const depthOffset = 0.0002; // Slight offset to make it visible on top of the surface
+
+  //       // Create the text geometry
+  //       const textGeometry = new TextGeometry(text, {
+  //         font: font,
+  //         size: config.size,
+  //         depth: 0.3,
+  //         curveSegments: 12,
+  //         bevelEnabled: false,
+  //       });
+
+  //       textGeometry.center();
+
+  //       const bender = new Bender();
+  //       // Apply bending if needed
+  //       bender.bend(textGeometry, "y", Math.PI/9 );
+  //       console.log("bender")
+  //       // Create text mesh
+  //       const textMaterial = new THREE.MeshStandardMaterial({
+  //         color: this.currentColor,
+  //         metalness: 0.8,
+  //         roughness: 0.5,
+  //       });
+  //       const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+  //       textMesh.name = "test"
+  //       // Position text slightly above the inner surface
+  //       textMesh.position.set(0, -0.005, -0.005);
+  //       // x: 0, y: -0.005, z: -0.005 
+  //       textMesh.rotation.set(-0.6,  0.2,  1.5 ); // Align text along the ring's curvature
+  //       textMesh.scale.set(0.03, 0.03, 0.03); // Scale the text
+  //       // Add the text mesh to the inner mesh
+  //       innerMesh.add(textMesh);
+  //       // console.log("innerMesh", model,innerMesh)
+  //       // this.scene.add(textMesh);
+
+  //       console.log("Engraving applied to the inner mesh.", boundingBox.min.y);
+  //     };
+
+  //     const engraveOnModels = (models) => {
+  //       models.forEach((model) => {
+  //         if (model) {
+  //           createEngraving(model);
+  //         } else {
+  //           console.warn("Model not found for engraving.");
+  //         }
+  //       });
+  //     };
+
+  //     // Check if pair1 is active and engrave on both rings
+  //     if (this.pair1 && this.currentDisplayedModels.length > 1) {
+  //       const ring1 = this.currentDisplayedModels[0];
+  //       const ring2 = this.currentDisplayedModels[1];
+  //       engraveOnModels([ring1, ring2]);
+  //       console.log(`Engraved text "${text}" on both pair1 rings.`);
+  //     } else {
+  //       // Engrave only on the selected model
+  //       const model = this.currentDisplayedModels[this.selectedModel - 1];
+  //       engraveOnModels([model]);
+  //       console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
+  //     }
+  //   });
+  // }
 
 
 

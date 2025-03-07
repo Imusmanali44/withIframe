@@ -94,7 +94,7 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
           placeholder=""
           value={engravingText}
           onChange={(e) => handleInputChange(e.target.value)}
-          maxLength={8}
+          maxLength={15}
         />
         <div className="text-right text-[#bdbdbd] text-sm">
           {35 - engravingText.length}
@@ -111,7 +111,7 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
             placeholder=""
             value={engravingText}
             onChange={(e) => handleInputChange(e.target.value)}
-            maxLength={8}
+            maxLength={15}
           />
           <div className="text-right text-[#bdbdbd] text-sm">
             {35 - engravingText.length}

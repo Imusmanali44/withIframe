@@ -655,3 +655,126 @@ let helperModelPosY = -0.15
   
     }
   }
+
+
+
+  ////////////////
+
+
+  engraveTextOnModel(text, options = {}) {
+      console.log("Engraving text on the inner mesh...", text);
+      let sValue = 0.0005
+      this.tempPos = -0.88
+  
+      // if(this.currentModel=="P1"){
+      //     sValue = 0.0005
+      // }
+      // if( this.currentModel=="P2" || this.currentModel=="P3" ){
+      //   sValue = 0.0003
+  
+      // }
+      // if( this.currentModel=="P4"){
+      //   sValue = 0.0004
+      //   this.tempPos = -0.0087
+      // }
+      // if( this.currentModel=="P5"){
+      //   sValue = 0.0004
+  
+      // }
+      // Default configurations
+      const fontConfigurations = {
+        1: { size: 0.5, height: sValue, rotation: { x: 0, y: 0, z: 0 } },
+        2: { size: 0.5, height: sValue },
+        3: { size: 0.5, height: sValue },
+        4: { size: 0.5, height: sValue },
+        5: { size: 0.5, height: sValue },
+      };
+  
+      const config = { ...fontConfigurations[this.fontIndex || 1], ...options };
+  
+      console.log("hello 22", this.fontIndex, this.currentFont)
+  
+      // Load font
+      this.fontLoader.load(this.currentFont, (font) => {
+        const createEngraving = (model) => {
+          let innerMesh = null;
+  
+          // Locate the Inner mesh
+          model.traverse((child) => {
+            if (child.isMesh && child.name.includes("Inner")) {
+              innerMesh = child;
+            }
+          });
+  
+          if (!innerMesh) {
+            console.error("Inner mesh not found.");
+            return;
+          }
+  
+          // Compute bounding box of the Inner mesh
+          innerMesh.geometry.computeBoundingBox();
+          const boundingBox = innerMesh.geometry.boundingBox;
+  
+          const innerRadius = (boundingBox.max.x - boundingBox.min.x) / 2; // Approximate radius
+          const depthOffset = 0.0002; // Slight offset to make it visible on top of the surface
+  
+          // Create the text geometry
+          const textGeometry = new TextGeometry(text, {
+            font: font,
+            size: config.size,
+            depth: 0.1,
+            curveSegments: 12,
+            bevelEnabled: false,
+          });
+  
+          textGeometry.center();
+  
+          const bender = new Bender();
+          // Apply bending if needed
+          bender.bend(textGeometry, "y", Math.PI/9 );
+          console.log("bender")
+          // Create text mesh
+          const textMaterial = new THREE.MeshStandardMaterial({
+            color: this.currentColor,
+            metalness: 0.8,
+            roughness: 0.5,
+          });
+          const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+          textMesh.name = "test"
+          // Position text slightly above the inner surface
+          textMesh.position.set(0.7, -0.16, this.tempPos);
+          textMesh.rotation.set(0, 0, Math.PI/2); // Align text along the ring's curvature
+          textMesh.scale.set(0.3, 0.3, 0.3); // Scale the text
+          // Add the text mesh to the inner mesh
+          // innerMesh.add(textMesh);
+          console.log("innerMesh", model,innerMesh)
+          this.scene.add(textMesh);
+  
+          console.log("Engraving applied to the inner mesh.", boundingBox.min.y);
+        };
+  
+        const engraveOnModels = (models) => {
+          models.forEach((model) => {
+            if (model) {
+              createEngraving(model);
+            } else {
+              console.warn("Model not found for engraving.");
+            }
+          });
+        };
+  
+        // Check if pair1 is active and engrave on both rings
+        if (this.pair1 && this.currentDisplayedModels.length > 1) {
+          const ring1 = this.currentDisplayedModels[0];
+          const ring2 = this.currentDisplayedModels[1];
+          engraveOnModels([ring1, ring2]);
+          console.log(`Engraved text "${text}" on both pair1 rings.`);
+        } else {
+          // Engrave only on the selected model
+          const model = this.currentDisplayedModels[this.selectedModel - 1];
+          engraveOnModels([model]);
+          console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
+        }
+      });
+    }
+  
