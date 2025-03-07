@@ -1348,7 +1348,7 @@ catch (error) {
           }
           else if (model.userData.modelIndex==1){
 
-            bender.bend(textGeometry, "y", Math.PI/10.65);
+            bender.bend(textGeometry, "y", Math.PI/10.75);
           }
           else if (model.userData.modelIndex==2){
 
@@ -1365,13 +1365,13 @@ catch (error) {
           }
           else if (model.userData.modelIndex==4){
 
-            bender.bend(textGeometry, "y", Math.PI/11.75);
+            bender.bend(textGeometry, "y", Math.PI/11.5);
 
 
           }
           else if (model.userData.modelIndex==5){
 
-            bender.bend(textGeometry, "y", Math.PI/11.75); 
+            bender.bend(textGeometry, "y", Math.PI/11); 
 
 
           }
@@ -1385,8 +1385,37 @@ catch (error) {
 
             bender.bend(textGeometry, "y", Math.PI/11);
           }
+          else if (model.userData.modelIndex==8){
+
+            bender.bend(textGeometry, "y", Math.PI/11);
+          }
+          else if (model.userData.modelIndex==9){
+
+            bender.bend(textGeometry, "y", Math.PI/11); 
+
+          }
+        else if (model.userData.modelIndex==10){
+          
+          bender.bend(textGeometry, "y", Math.PI/11);
 
 
+          }
+          else if (model.userData.modelIndex==11){
+            bender.bend(textGeometry, "y", Math.PI/11);
+
+
+          }
+        else if (model.userData.modelIndex==12){
+          bender.bend(textGeometry, "y", Math.PI/10.75); 
+        }
+        else if (model.userData.modelIndex==13){
+          bender.bend(textGeometry, "y", Math.PI/10.65);
+        }
+        else if (model.userData.modelIndex==14){    
+          bender.bend(textGeometry, "y", Math.PI/10.8);
+
+
+        }
           else{
             bender.bend(textGeometry, "y", Math.PI/10.75);
 
@@ -1468,14 +1497,14 @@ console.log("model 3")
                   }
         else if (model.userData.modelIndex==4){
 
-          backingMesh.position.z += 0.053; // Slightly behind the text
-          backingMesh.position.y += 0.003;
+          backingMesh.position.z += 0.033; // Slightly behind the text
+          backingMesh.position.y += 0.005;
 
         }
         else if (model.userData.modelIndex==5){
 
-          backingMesh.position.z += 0.043; // Slightly behind the text
-          backingMesh.position.y += 0.01;
+          backingMesh.position.z += 0.025; // Slightly behind the text
+          backingMesh.position.y += 0.005;
 
         }
         else if (model.userData.modelIndex==6){
@@ -1488,6 +1517,41 @@ console.log("model 3")
 
           backingMesh.position.z += 0.025; // Slightly behind the text
           backingMesh.position.y += 0.005;
+
+        }
+        else if (model.userData.modelIndex==8){
+          backingMesh.position.z += 0.02; // Slightly behind the text
+          // backingMesh.position.y += 0.015
+
+        }
+        else if (model.userData.modelIndex==9){
+          backingMesh.position.z -= 0.0037; // Slightly behind the text
+          backingMesh.position.y -= 0.004;
+
+        }
+        else if (model.userData.modelIndex==10){
+          backingMesh.position.z += 0.02; // Slightly behind the text
+          // backingMesh.position.y += 0.015
+
+        }
+        else if (model.userData.modelIndex==11){
+          backingMesh.position.z += 0.035; // Slightly behind the text
+          backingMesh.position.y += 0.008;
+
+        }
+        else if (model.userData.modelIndex==12){
+          backingMesh.position.z += 0.0385; // Slightly behind the text
+          backingMesh.position.y += 0.006;
+
+        }
+        else if (model.userData.modelIndex==13){
+          backingMesh.position.z += 0.018; // Slightly behind the text
+          // backingMesh.position.y += 0.015
+
+        }
+        else if (model.userData.modelIndex==14){
+          backingMesh.position.z += 0.06; // Slightly behind the text
+          backingMesh.position.y += 0.02;
 
         }
         else{
