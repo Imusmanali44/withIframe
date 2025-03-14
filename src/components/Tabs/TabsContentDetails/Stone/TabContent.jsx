@@ -26,71 +26,90 @@ import StoneSettingPositionMiddle from "../../../../assets/images/StoneSetting/p
 import StoneSettingPositionRight from "../../../../assets/images/StoneSetting/position/right.svg";
 import StoneSettingPositionFree from "../../../../assets/images/StoneSetting/position/free.svg";
 
-const RingStoneStyleOptions = [
-  {
-    name: "Without",
-    img: StoneStyleWithout,
-  },
-  {
-    name: "Smooth conversion",
-    img: StoneStyleSmooth,
-  },
-  {
-    name: "Pavé",
-    img: StoneStylePave,
-  },
-  {
-    name: "Rail setting",
-    img: StoneStyleRailSetting,
-  },
-  {
-    name: "Rail setting across",
-    img: StoneStyleRailSettingAcross,
-  },
-  {
-    name: "Smooth conversion side",
-    img: StoneStyleSmoothConversionSide,
-  },
-  {
-    name: "Paved side",
-    img: StoneStylePavedSide,
-  },
-  {
-    name: "Channel side",
-    img: StoneStyleChannelAside,
-  },
-  {
-    name: "Free layout",
-    img: StoneStyleFreeLayout,
-  },
-  {
-    name: "Tension ring",
-    img: StoneStyleTensionRing,
-  },
-  {
-    name: "Tension ring diagonally",
-    img: StoneStyleTensionRingDiagonally,
-  },
-  {
-    name: "Canal around",
-    img: StoneStyleCanalAround,
-  },
-];
+import {StoneRangeSlider} from "../../../shared/StoneRangeSlider";
 
-const RingStoneTypeOptions = [
-  {
-    name: "Brilliant",
-    img: StoneTypeBrilliant,
-  },
-  {
-    name: "Princess",
-    img: StoneTypePrincess,
-  },
-  {
-    name: "Baguette",
-    img: StoneTypeBaguette,
-  },
-];
+
+  const RingStoneStyleOptions = [
+    {
+      name: "Without",
+      img: StoneStyleWithout,
+      disabled: false
+    },
+    {
+      name: "Smooth conversion",
+      img: StoneStyleSmooth,
+      disabled: false
+    },
+    {
+      name: "Pavé",
+      img: StoneStylePave,
+      disabled: false
+    },
+    {
+      name: "Rail setting",
+      img: StoneStyleRailSetting,
+      disabled: false
+    },
+    {
+      name: "Rail setting across",
+      img: StoneStyleRailSettingAcross,
+      disabled: true
+    },
+    {
+      name: "Smooth conversion side",
+      img: StoneStyleSmoothConversionSide,
+      disabled: true
+    },
+    {
+      name: "Paved side",
+      img: StoneStylePavedSide,
+      disabled: true
+    },
+    {
+      name: "Channel side",
+      img: StoneStyleChannelAside,
+      disabled: true
+    },
+    {
+      name: "Free layout",
+      img: StoneStyleFreeLayout,
+      disabled: true
+    },
+    {
+      name: "Tension ring",
+      img: StoneStyleTensionRing,
+      disabled: true
+    },
+    {
+      name: "Tension ring diagonally",
+      img: StoneStyleTensionRingDiagonally,
+      disabled: true
+    },
+    {
+      name: "Canal around",
+      img: StoneStyleCanalAround,
+      disabled: true
+    },
+  ];
+  
+  // Modified RingStoneTypeOptions array
+  const RingStoneTypeOptions = [
+    {
+      name: "Brilliant",
+      img: StoneTypeBrilliant,
+      disabled: false
+    },
+    {
+      name: "Princess",
+      img: StoneTypePrincess,
+      disabled: true
+    },
+    {
+      name: "Baguette",
+      img: StoneTypeBaguette,
+      disabled: true
+    },
+  ];
 
 const PositionTypeOptions = [
   {
@@ -183,15 +202,29 @@ const TabContent = ({
             {RingStoneStyleOptions.map((item, index) => (
               <button
                 key={index}
-                onClick={() => setStoneStyle(item.name)}
-                className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 hover:border-[#205fa8] ${
-                  stoneStyle === item.name
-                    ? "border-[#205fa8]"
-                    : "border-[#e1e1e1]"
-                }`}
+                onClick={() => {
+                  if (!item.disabled) {
+                    window.parent.postMessage(
+                      { action: "addStone", value: item.name },
+                      "*"
+                    );
+                    console.log(`Clicked: ${item.name}, Index: ${index}`);
+                    setStoneStyle(item.name);
+                  }
+                }}
+                className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 
+                  ${item.disabled 
+                    ? "opacity-40 cursor-not-allowed border-[#e1e1e1] bg-gray-50" 
+                    : `hover:border-[#205fa8] ${stoneStyle === item.name ? "border-[#205fa8]" : "border-[#e1e1e1]"}`
+                  }`}
+                disabled={item.disabled}
               >
-                <span className="mx-2 text-sm leading-none">{item.name}</span>
-                <img src={item.img} className="mx-auto mt-3" alt={item.name} />
+                <span className={`mx-2 text-sm leading-none ${item.disabled ? "text-gray-400" : ""}`}>
+                  {item.name}
+                </span>
+                <div className={`${item.disabled ? "opacity-30" : ""}`}>
+                  <img src={item.img} className="mx-auto mt-3" alt={item.name} />
+                </div>
               </button>
             ))}
           </div>
@@ -203,23 +236,32 @@ const TabContent = ({
               <h3 className="mb-2 font-semibold text-sm text-black">
                 Grinding
               </h3>
-              <div className="flex items-start space-x-2 ">
+              <div className="flex items-start space-x-2">
                 {RingStoneTypeOptions.map((item, index) => (
                   <button
                     key={index}
-                    onClick={() => setStoneType(item.name)}
-                    className={`bg-white w-full border p-2 ${
-                      stoneType === item.name
-                        ? "border-[#205fa8]"
-                        : "border-[#e1e1e1]"
-                    }`}
+                    onClick={() => {
+                      if (!item.disabled) {
+                        setStoneType(item.name);
+                      }
+                    }}
+                    className={`bg-white w-full border p-2 
+                      ${item.disabled 
+                        ? "opacity-40 cursor-not-allowed border-[#e1e1e1] bg-gray-50" 
+                        : `${stoneType === item.name ? "border-[#205fa8]" : "border-[#e1e1e1]"}`
+                      }`}
+                    disabled={item.disabled}
                   >
-                    <span className="text-sm">{item.name}</span>
-                    <img
-                      src={item.img}
-                      className="mx-auto mt-1 w-16 h-16"
-                      alt={item.name}
-                    />
+                    <span className={`text-sm ${item.disabled ? "text-gray-400" : ""}`}>
+                      {item.name}
+                    </span>
+                    <div className={`${item.disabled ? "opacity-30" : ""}`}>
+                      <img
+                        src={item.img}
+                        className="mx-auto mt-1 w-16 h-16"
+                        alt={item.name}
+                      />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -230,7 +272,11 @@ const TabContent = ({
               </h3>
               <select
                 value={stoneSize}
-                onChange={(e) => setStoneSize(e.target.value)}
+                onChange={(e) => {setStoneSize(e.target.value), console.log(`Clicked size ${e.target.value}`),
+                window.parent.postMessage(
+                  { action: "stoneSize", value: e.target.value },
+                  "*"
+                );}}
                 className="border border-[#e1e1e1] p-2 rounded w-full"
               >
                 {StoneSizeOptions.map((size, index) => (
@@ -351,33 +397,43 @@ const TabContent = ({
               </div>
             )}
             <div>
-              <label className="mb-2 block font-semibold text-sm text-black">
-                Position
-              </label>
+  <label className="mb-2 block font-semibold text-sm text-black">
+    Position
+  </label>
 
-              <div className="flex flex-wrap gap-2.5">
-                {PositionTypeOptions.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setStoneStyle(item.name)}
-                    className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 hover:border-[#205fa8] ${
-                      stoneStyle === item.name
-                        ? "border-[#205fa8]"
-                        : "border-[#e1e1e1]"
-                    }`}
-                  >
-                    <span className="mx-2 text-sm leading-none">
-                      {item.name}
-                    </span>
-                    <img
-                      src={item.img}
-                      className="mx-auto mt-3"
-                      alt={item.name}
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
+  <div className="flex flex-wrap gap-2.5">
+    {PositionTypeOptions.map((item, index) => (
+      <button
+        key={index}
+        onClick={() => {
+          setStoneStyle(item.name);
+          console.log(`Clicked position ${item.name}`);
+          window.parent.postMessage(
+            { action: "stonePosition", value: item.name },
+            "*"
+          );
+        }}
+        className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 hover:border-[#205fa8] ${
+          stoneStyle === item.name
+            ? "border-[#205fa8]"
+            : "border-[#e1e1e1]"
+        }`}
+      >
+        <span className="mx-2 text-sm leading-none">
+          {item.name}
+        </span>
+        <img
+          src={item.img}
+          className="mx-auto mt-3"
+          alt={item.name}
+        />
+      </button>
+    ))}
+  </div>
+  
+  {/* Render the FreePositionComponent when "Free" position is selected */}
+  {stoneStyle === "Free" && <StoneRangeSlider />}
+</div>
           </div>
         );
       default:
@@ -389,7 +445,7 @@ const TabContent = ({
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
       {/* Add and remove stone buttons */}
       <div className="flex items-center gap-5">
-        {stones.length < 3 && (
+        {/* {stones.length < 3 && (
           <div
             className="flex items-center gap-2 cursor-pointer"
             onClick={addStone}
@@ -399,7 +455,7 @@ const TabContent = ({
             </div>
             Add stone group
           </div>
-        )}
+        )} */}
         {stones.length > 1 && (
           <div
             className="flex items-center gap-2 cursor-pointer"

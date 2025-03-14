@@ -32,6 +32,31 @@ export class MessageHandler {
         this.currentSelectedRing(modelId)
         // console.log("current selected model",modelId)
         break;
+        case "addStone":
+          if(value=="Smooth conversion"){
+          this.modelManager.StoneManagerIns.loadDiamondToRing({
+            ringIndex: this.modelManager.selectedModel,
+            // scale: { x: 19.70, y: 19.70, z: 37.00 }
+             });}
+          if(value=="Without"){
+            console.log("remove diamond", this.modelManager.selectedModel)
+            this.modelManager.StoneManagerIns.removeDiamondFromRing(this.modelManager.selectedModel)
+          
+          }   
+             break;
+             case "stoneSize":
+              this.modelManager.StoneManagerIns.changeStoneSize(value)
+              break;
+              case "stonePosition":
+                if (typeof value === 'string' || value instanceof String) {
+                this.modelManager.StoneManagerIns.changeStonePosition(value)
+              }
+              else{
+                this.modelManager.StoneManagerIns.handleStonePositionSlider(value)
+
+              }
+                break;         
+
       case 'updatePairStatus':
         console.log("ipair", value)
         this.modelManager.currentPairUpdate(value)

@@ -194,6 +194,7 @@ export class ModelManager {
         
         this.currentColor = "#D8BC7E";
         this.switchModel(0, 1, true, false);
+       
       })
       .catch((err) => {
         console.error("Error in model loading:", err);
@@ -203,6 +204,7 @@ export class ModelManager {
  
   
  // Function to handle model-specific scaling
+
 
 
 // Updated loadMidMesh function
@@ -615,6 +617,9 @@ catch (error) {
 
       // Change both 1st and 2nd rings
       this.showCurrentModels(index, this.pair1); // For 1st and 2nd rings
+      // this.loadDiamondToRing({
+      //   scale: 100
+      // });
       console.log("chk 1")
       let prevVal = 0
       if (this.PreciousMetal.isEnable == true) {
@@ -1102,114 +1107,7 @@ catch (error) {
     console.log(`Color ${color} applied to the model.`);
   }
 
-  //   changeModelColor(colorValue, isPair = false) {
-  //     console.log("colorvalue",colorValue)
-  //     // Function to determine color intensity based on the color
-  //     const getColorIntensity = (color) => {
-  //         // Define custom intensities for specific colors
-  //         const intensityMap = {
-  //             '#A09F9D': 2.0, // silver
-  //             '#E9D4A4': 1.14, // Gold
-  //             '#D99058': 1.8, // apricot gold
-  //             '#B76E79': 1.2, //rose gold
-  //             '#C2412D': 1.0, // red Gold
-  //         };
-
-  //         return intensityMap[color.toUpperCase()] || 2.0; // Default intensity if color not listed
-  //     };
-
-  //     this.currentColor = colorValue;
-
-  //     const applyColorToShaderMaterial = (model, colorIntensity) => {
-  //         model.traverse((child) => {
-  //             if (child.isMesh) {
-  //                 child.material = new THREE.ShaderMaterial({
-  //                     uniforms: {
-  //                         matcapTexture: { value: this.matcapTexture },
-  //                         highlightTexture: { value: this.highlightTexture },
-  //                         blendFactor: { value: 0.1 }, // Adjust to control blend between textures
-  //                         color: { value: new THREE.Color(colorValue) }, // Apply dynamic color
-  //                         colorIntensity: { value: colorIntensity } // Dynamic intensity
-  //                     },
-  //                     vertexShader: `
-  //                       varying vec3 vNormal;
-  //                       varying vec3 vViewPosition;
-  //                       varying vec2 vUv;
-
-  //                       void main() {
-  //                         vUv = uv;
-  //                         vNormal = normalize(normalMatrix * normal);
-  //                         vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-  //                         vViewPosition = -modelViewPosition.xyz;
-  //                         gl_Position = projectionMatrix * modelViewPosition;
-  //                       }
-  //                     `,
-  //                     fragmentShader: `
-  //                       uniform sampler2D matcapTexture;
-  //                       uniform sampler2D highlightTexture;
-  //                       uniform float blendFactor;
-  //                       uniform vec3 color;
-  //                       uniform float colorIntensity;
-
-  //                       varying vec3 vNormal;
-  //                       varying vec3 vViewPosition;
-  //                       varying vec2 vUv;
-
-  //                       void main() {
-  //                         vec3 viewDir = normalize(vViewPosition);
-  //                         vec3 reflectedDir = reflect(viewDir, normalize(vNormal));
-  //                         float m = 2.82842712474619 * sqrt(reflectedDir.z + 1.5);
-  //                         vec2 uv = reflectedDir.xy / m + 0.7;
-
-  //                         // Sample both MatCap textures and increase their brightness
-  //                         vec4 matcapColor = texture2D(matcapTexture, uv) * 1.5;
-  //                         vec4 highlightColor = texture2D(highlightTexture, uv) * 1.3;
-
-  //                         // Blend the textures with an adjusted factor
-  //                         vec4 blendedColor = mix(matcapColor, highlightColor, blendFactor);
-
-  //                         // Apply the color tint with dynamic intensity
-  //                         gl_FragColor = vec4(blendedColor.rgb * color * colorIntensity, blendedColor.a);
-  //                       }
-  //                     `,
-  //                     clipping: true
-  //                 });
-  //                 child.material.clipping = true,
-  //                 child.material.needsUpdate = true; // Ensure the material updates
-  //             }
-  //         });
-  //     };
-
-  //     // Determine intensity for the selected color
-  //     const colorIntensity = getColorIntensity(colorValue);
-
-  //     // Apply color to the selected model
-  //     const model = this.currentDisplayedModels[this.selectedModel - 1];
-  //     if (!model) {
-  //         console.warn('Model not found for selectedRingId:', this.selectedModel);
-  //         return;
-  //     }
-  //     applyColorToShaderMaterial(model, colorIntensity);
-  //     console.log(`Color changed for ring ${this.selectedModel} to: ${colorValue} with intensity ${colorIntensity}`);
-
-  //     // If pair1 is active and isPair is true, change color for both ring 1 and ring 2
-  //     if (this.pair1 && this.currentDisplayedModels.length > 1) {
-  //         const ring1 = this.currentDisplayedModels[0]; // Ring 1
-  //         const ring2 = this.currentDisplayedModels[1]; // Ring 2
-  //         applyColorToShaderMaterial(ring1, colorIntensity);
-  //         applyColorToShaderMaterial(ring2, colorIntensity);
-  //         console.log(`Color changed for pair1 (ring 1 and ring 2) to: ${colorValue} with intensity ${colorIntensity}`);
-  //     }
-
-  //     // If pair2 is active and isPair is true, change color for both ring 3 and ring 4
-  //     if (this.pair2 && this.currentDisplayedModels.length > 3) {
-  //         const ring3 = this.currentDisplayedModels[2]; // Ring 3
-  //         const ring4 = this.currentDisplayedModels[3]; // Ring 4
-  //         applyColorToShaderMaterial(ring3, colorIntensity);
-  //         applyColorToShaderMaterial(ring4, colorIntensity);
-  //         console.log(`Color changed for pair2 (ring 3 and ring 4) to: ${colorValue} with intensity ${colorIntensity}`);
-  //     }
-  // }
+  
 
   changeModelColor(colorValue, isPair = false) {
     console.log("colorvalue", colorValue);

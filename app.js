@@ -12,6 +12,7 @@ import { PreciousMetalHelper } from './threejsScripts/PreciousMetalHelper.js';
 import {EngagementRings} from "./threejsScripts/engagementRings/EngagementRings.js"
 import { GrooveManager } from './threejsScripts/grooveManager/GrooveManager.js';
 import { StepsManager } from './threejsScripts/grooveManager/StepsManager.js';
+import { StoneManager } from './threejsScripts/stoneManager/stoneManager.js';
 
 
 
@@ -44,6 +45,8 @@ class RotatingRingApp {
     this.EngagementRings = new EngagementRings(this.scene,this.modelManager);
     this.GrooveManager = new GrooveManager(this.scene,this.modelManager)
     this.StepsManager = new StepsManager(this.scene,this.modelManager, this.GrooveManager)
+    this.StoneManager = new StoneManager(this.scene,this.modelManager)
+    this.modelManager.StoneManagerIns = this.StoneManager
     this.modelManager.EngagementRingsins  = this.EngagementRings 
     this.modelManager.GrooveManagerIns  = this.GrooveManager 
     this.modelManager.StepsManagerIns = this.StepsManager
