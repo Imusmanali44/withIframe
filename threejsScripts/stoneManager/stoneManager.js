@@ -19,18 +19,19 @@ export class StoneManager {
    
   }
   async loadDiamondToRing(options = {}) {
-    // Default options with updated scale and rotation values from the UI image
+    // Default options based on the UI controls in the images
     const defaultOptions = {
       ringIndex: 1, // 1 for first ring, 2 for second ring
-      scale: { x: 19.70, y: 19.70, z: 37.00 }, // Default scales from the Diamond Controls UI
-      position: { x: 0, y: 0, z: 0 },
-      rotation: { x: -0.2, y: 0, z: 0 }, // Default rotations from the UI
+      scale: { x: 17.20, y: 17.20, z: 21.50 }, // Default scales from Image 2
+      position: { x: 0, y: 0.50, z: 1.05 }, // Default positions from Image 1 & 2
+      rotation: { x: -0.13, y: 0.00, z: 0.00 }, // Default rotations from Image 1
       textureUrl: 'diamondm/dtext.jpg',
+      modelUrl: 'diamondm/d1.glb',
       effects: {
-        map: false,
-        normalMap: true,
-        roughnessMap: true,
-        metalnessMap: false,
+        map: false, // Base Color is unchecked
+        normalMap: true, // Normal Map is checked
+        roughnessMap: true, // Roughness is checked
+        metalnessMap: false, // Metallic is unchecked
         emissiveMap: false,
         aoMap: false,
         envMap: false,
@@ -41,6 +42,12 @@ export class StoneManager {
     // Merge default options with provided options
     const config = { ...defaultOptions, ...options };
     config.effects = { ...defaultOptions.effects, ...options.effects };
+    
+    // Handle uniform scale if provided (from Image 2)
+    if (options.uniformScale) {
+      const scale = options.uniformScale;
+      config.scale = { x: scale, y: scale, z: scale };
+    }
     
     // Ensure scale is properly merged if the user only provided partial scale values
     if (options.scale && typeof options.scale !== 'object') {
@@ -68,6 +75,19 @@ export class StoneManager {
       };
     }
   
+    // Ensure position is properly merged if the user provided position values
+    if (options.position && typeof options.position !== 'object') {
+      // Unlikely case, but handle it anyway
+      config.position = { x: options.position, y: options.position, z: options.position };
+    } else if (options.position) {
+      // Merge with defaults if user provided a partial position object
+      config.position = {
+        x: options.position.x !== undefined ? options.position.x : defaultOptions.position.x,
+        y: options.position.y !== undefined ? options.position.y : defaultOptions.position.y,
+        z: options.position.z !== undefined ? options.position.z : defaultOptions.position.z
+      };
+    }
+  
     // Convert ringIndex to array index (0-based)
     const ringArrayIndex = config.ringIndex - 1;
     
@@ -92,7 +112,7 @@ export class StoneManager {
       // Load the diamond model
       const gltf = await new Promise((resolve, reject) => {
         this.modelManager.loader.load(
-          'diamondm/Square Diamond.glb', // Path to diamond model
+          config.modelUrl, // Path to diamond model
           (gltf) => resolve(gltf),
           (xhr) => console.log(`Diamond loading: ${(xhr.loaded / xhr.total) * 100}% loaded`),
           (error) => reject(error)
@@ -149,7 +169,7 @@ export class StoneManager {
         }
       });
       
-      console.log(`Diamond successfully added to ring ${config.ringIndex} with scale: ${JSON.stringify(config.scale)} and rotation: ${JSON.stringify(config.rotation)}`);
+      console.log(`Diamond successfully added to ring ${config.ringIndex} with scale: ${JSON.stringify(config.scale)}, position: ${JSON.stringify(config.position)}, and rotation: ${JSON.stringify(config.rotation)}`);
       return diamondModel;
     } catch (error) {
       console.error('Error loading diamond model:', error);
@@ -160,7 +180,208 @@ export class StoneManager {
       return Promise.reject(error);
     }
   }
+  async addDiamondsToRingFront(options = {}) {
+    // Default configurations
+    const defaultOptions = {
+      ringIndex: 1, // Target ring (1 for first ring, 2 for second ring)
+      diamondCount: 3, // Number of diamonds to place around the ring
+      coverage: 0.1, // Coverage proportion (0.5 = half the ring, 1.0 = full ring)
+      baseScale: 4.0, // Base scale factor for all diamonds
+      individualScale: { x: 3.5, y: 3.5, z: 4.0 }, // Individual diamond scale
+      baseRadius: 1.03, // Distance from center of ring (radius)
+      startAngle: 0, // Starting angle in radians
+      zOffset: 0.25, // Z-axis offset (front face positioning)
+      modelUrl: 'diamondm/d1.glb', // URL to diamond model
+      textureUrl: 'diamondm/dtext.jpg', // Texture for diamonds
+      effects: {
+        map: false,
+        normalMap: true,
+        roughnessMap: true,
+        metalnessMap: false,
+        emissiveMap: false,
+        aoMap: false,
+        envMap: false,
+        displacementMap: false
+      }
+    };
   
+    // Merge default options with provided options
+    const config = { ...defaultOptions, ...options };
+    config.effects = { ...defaultOptions.effects, ...options.effects };
+  
+    // Handle scale options
+    if (options.individualScale) {
+      config.individualScale = {
+        x: options.individualScale.x !== undefined ? options.individualScale.x : defaultOptions.individualScale.x,
+        y: options.individualScale.y !== undefined ? options.individualScale.y : defaultOptions.individualScale.y,
+        z: options.individualScale.z !== undefined ? options.individualScale.z : defaultOptions.individualScale.z
+      };
+    }
+  
+    // Adjust for uniform scale if provided
+    if (options.uniformScale) {
+      const scale = options.uniformScale;
+      config.individualScale = { x: scale, y: scale, z: scale };
+    }
+  
+    // Automatic scaling based on diamond count and base scale
+    // More diamonds = smaller individual diamonds
+    const sizeAdjustmentFactor = Math.max(0.5, 1 - (config.diamondCount / 40)); // Reduce size as count increases
+    const adjustedScale = {
+      x: config.individualScale.x * config.baseScale * sizeAdjustmentFactor,
+      y: config.individualScale.y * config.baseScale * sizeAdjustmentFactor,
+      z: config.individualScale.z * config.baseScale * sizeAdjustmentFactor * 0.6 // Reduce depth more to embed in ring
+    };
+  
+    // Convert ringIndex to array index (0-based)
+    const ringArrayIndex = config.ringIndex - 1;
+    
+    // Get the specified ring model
+    if (ringArrayIndex < 0 || ringArrayIndex >= this.modelManager.currentDisplayedModels.length) {
+      console.error(`Ring ${config.ringIndex} not found. Available rings: ${this.modelManager.currentDisplayedModels.length}`);
+      return Promise.reject(new Error(`Ring ${config.ringIndex} not found`));
+    }
+    
+    const targetRing = this.modelManager.currentDisplayedModels[ringArrayIndex];
+    if (!targetRing) {
+      console.error(`Ring ${config.ringIndex} model not found`);
+      return Promise.reject(new Error(`Ring ${config.ringIndex} model not found`));
+    }
+  
+    // Create a holder for all diamonds
+    const diamondsHolder = new THREE.Object3D();
+    diamondsHolder.name = "diamondsHolder";
+    targetRing.add(diamondsHolder);
+  
+    // Calculate angles for diamond placement
+    const totalAngle = Math.PI * 2 * config.coverage; // Total angle coverage
+    const angleStep = totalAngle / Math.max(1, config.diamondCount - 1); // Handle case where diamondCount is 1
+    const startAngle = config.startAngle - (totalAngle / 2); // Center the distribution
+  
+    // Load the diamond model once to reuse
+    try {
+      const gltf = await new Promise((resolve, reject) => {
+        this.modelManager.loader.load(
+          config.modelUrl,
+          (gltf) => resolve(gltf),
+          (xhr) => console.log(`Diamond loading: ${(xhr.loaded / xhr.total) * 100}% loaded`),
+          (error) => reject(error)
+        );
+      });
+  
+      // Create and position each diamond
+      const diamondModels = [];
+      for (let i = 0; i < config.diamondCount; i++) {
+        // Clone the original diamond model
+        const diamondModel = gltf.scene.clone();
+        diamondModel.name = `diamond_${i}`;
+        
+        // Calculate the angle for this diamond
+        const angle = startAngle + (i * angleStep);
+        
+        // Create individual holder for each diamond to manage its position
+        const diamondHolder = new THREE.Object3D();
+        diamondHolder.name = `diamondHolder_${i}`;
+        
+        // Position on the front face of the ring band in a straight line
+        // This is the key change - we don't use angle for Y position, so they line up in a straight row
+        diamondHolder.position.set(
+          Math.sin(angle) * config.baseRadius,  // X position around the circle
+          Math.cos(angle) * config.baseRadius,  // Y position around the circle
+          config.zOffset                        // Z offset to place on front face
+        );
+        
+        // Critical: Make all diamonds face the same direction (front-facing)
+        // This ensures they all have the same orientation like in your reference image
+        diamondHolder.rotation.set(0, angle, 0);  // Only rotate around Y to follow the ring
+        
+        // Apply scale consistently to all diamonds
+        diamondModel.scale.set(
+          adjustedScale.x,
+          adjustedScale.y,
+          adjustedScale.z
+        );
+        
+        // Apply material properties
+        diamondModel.traverse((child) => {
+          if (child.isMesh && child.material) {
+            // Clone the material to avoid affecting other instances
+            child.material = child.material.clone();
+            
+            // Apply standard material properties
+            child.material.metalness = 0.7;
+            child.material.roughness = 0.1;
+            
+            // Apply texture if provided
+            if (config.textureUrl && this.applyDiamondTexture) {
+              this.applyDiamondTexture(
+                diamondModel, 
+                config.textureUrl, 
+                config.effects
+              );
+            }
+            
+            child.material.needsUpdate = true;
+          }
+        });
+        
+        // Add diamond to its holder, then add holder to the main holder
+        
+        diamondHolder.add(diamondModel);
+        diamondsHolder.add(diamondHolder);
+        diamondModels.push(diamondModel);
+      }
+  
+      // Apply global adjustments to the entire diamond holder
+      // Keep your working settings that you added
+      diamondsHolder.rotation.x = Math.PI/2;
+      diamondsHolder.rotation.y = Math.PI/2;
+      diamondsHolder.position.x = -0.25;
+      diamondsHolder.position.y = 0;
+      
+      // Apply model-specific Z position adjustments
+      const modelIndex = targetRing.userData?.modelIndex;
+      if (modelIndex === 0) {
+        diamondsHolder.position.z = 0.15;
+      } 
+      else if (modelIndex === 1) {
+        diamondsHolder.position.z = 0.14;
+      }
+      else if (modelIndex >= 2 && modelIndex <= 5) {
+        diamondsHolder.position.z = 0.13;
+      }
+      else if (modelIndex >= 6 && modelIndex <= 10) {
+        diamondsHolder.position.z = 0.12;
+      }
+      else {
+        diamondsHolder.position.z = 0.14; // Default
+      }
+      
+      // CRITICAL FIX: Apply the same rotation to all diamond models
+      // This ensures they all face the same direction and look uniform
+      diamondsHolder.children.forEach(holder => {
+        // Reset any individual holder rotations that might be causing inconsistency
+        holder.rotation.set(0, holder.rotation.y, 0);
+        
+        // Apply the same orientation to all diamond models inside holders
+        if (holder.children.length > 0) {
+          const diamond = holder.children[0];
+          // Set specific rotation for diamond model (matches reference image)
+          diamond.rotation.set(-Math.PI/2, 0, 0);
+        }
+      });
+  
+      console.log(`Added ${config.diamondCount} diamonds to the front of ring ${config.ringIndex}`);
+      return diamondModels;
+    } catch (error) {
+      console.error('Error loading diamond models:', error);
+      // Clean up if there was an error
+      if (diamondsHolder) {
+        targetRing.remove(diamondsHolder);
+      }
+      return Promise.reject(error);
+    }
+  }
   /**
    * Change the rotation of the diamond on a specific ring
    * @param {Object} rotation The rotation values { x, y, z }
