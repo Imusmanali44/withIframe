@@ -33,15 +33,27 @@ export class MessageHandler {
         // console.log("current selected model",modelId)
         break;
         case "addStone":
-          
+          if(type=="Number"){
+            
+              this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+              this.modelManager.StoneManagerIns.addDiamondsToRingFront({
+          // this.modelManager.StoneManagerIns.loadDiamondToRing({
+
+                diamondCount: value,
+                ringIndex: this.modelManager.selectedModel,
+                // modelUrl: "diamondm/d2.glb"
+                // scale: { x: 19.70, y: 19.70, z: 37.00 }
+                 },value);
+
+          }
           if(value=="Smooth conversion"){
-            this.modelManager.StoneManagerIns.removeDiamondFromRing(this.modelManager.selectedModel)
+            this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
           this.modelManager.StoneManagerIns.loadDiamondToRing({
             ringIndex: this.modelManager.selectedModel,
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
-             });}
+             },value);}
              if(value=="Pavé"){
-              this.modelManager.StoneManagerIns.removeDiamondFromRing(this.modelManager.selectedModel)
+              this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
               // this.modelManager.StoneManagerIns.addDiamondsToRingFront({
           this.modelManager.StoneManagerIns.loadDiamondToRing({
 
@@ -49,19 +61,19 @@ export class MessageHandler {
                 ringIndex: this.modelManager.selectedModel,
                 modelUrl: "diamondm/d2.glb"
                 // scale: { x: 19.70, y: 19.70, z: 37.00 }
-                 });}
+                 },value);}
                  if(value=="Rail setting"){
-                  this.modelManager.StoneManagerIns.removeDiamondFromRing(this.modelManager.selectedModel)
+                  this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
                   this.modelManager.StoneManagerIns.loadDiamondToRing({
                     ringIndex: this.modelManager.selectedModel,
                     modelUrl: "diamondm/d1.glb",
       rotation: { x: -0.13, y: 0.00, z: 0.25 }, // Default rotations from Image 1
 
                     // scale: { x: 19.70, y: 19.70, z: 37.00 }
-                     });}
+                     },value);}
           if(value=="Without"){
             console.log("remove diamond", this.modelManager.selectedModel)
-            this.modelManager.StoneManagerIns.removeDiamondFromRing(this.modelManager.selectedModel)
+            this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
           
           }   
              break;

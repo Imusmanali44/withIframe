@@ -302,7 +302,11 @@ const TabContent = ({
                 </h3>
                 <select
                   value={stoneNumber}
-                  onChange={(e) => setStoneNumber(e.target.value)}
+                  onChange={(e) => {setStoneNumber(e.target.value),
+                  window.parent.postMessage(
+                    { action: "addStone", value: e.target.value , type: "Number" },
+                    "*")
+                  }}
                   className="border border-[#e1e1e1] p-2 rounded w-full"
                 >
                   {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
@@ -323,7 +327,7 @@ const TabContent = ({
                         : "cursor-pointer"
                     }`}
                   >
-                    <input
+                    {/* <input
                       type="checkbox"
                       checked={isGrouped}
                       onChange={handleCheckboxChange}
@@ -333,12 +337,12 @@ const TabContent = ({
                           ? "cursor-not-allowed disabled:opacity-40"
                           : "cursor-pointer"
                       } `}
-                    />
-                    Arrange stones as a group
+                    /> */}
+                    {/* Arrange stones as a group */}
                   </label>
                 </div>
               </div>
-              {stoneNumber > 1 && (
+              {/* {stoneNumber > 1 && (
                 <div className="w-1/2">
                   <h3 className="mb-2 font-semibold text-sm text-black">
                     Distribution
@@ -355,7 +359,7 @@ const TabContent = ({
                     ))}
                   </select>
                 </div>
-              )}
+              )} */}
             </div>
             {isGrouped && (
               <div className="flex gap-4 mb-6">

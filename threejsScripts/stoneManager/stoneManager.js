@@ -18,8 +18,10 @@ export class StoneManager {
 
    
   }
-  async loadDiamondToRing(options = {}) {
+  async loadDiamondToRing(options = {},value) {
     // Default options based on the UI controls in the images
+    // let x = value 
+
     const defaultOptions = {
       ringIndex: 1, // 1 for first ring, 2 for second ring
       scale: { x: 17.20, y: 17.20, z: 21.50 }, // Default scales from Image 2
@@ -106,7 +108,9 @@ export class StoneManager {
     // Create a holder for diamond to easily position it relative to the ring
     const diamondHolder = new THREE.Object3D();
     diamondHolder.name = "diamondHolder";
+    targetRing.userData.StoneType = value;
     targetRing.add(diamondHolder);
+    console.log("targetRing",targetRing)
   
     try {
       // Load the diamond model
@@ -188,10 +192,11 @@ export class StoneManager {
       coverage: 0.1, // Coverage proportion (0.5 = half the ring, 1.0 = full ring)
       baseScale: 4.0, // Base scale factor for all diamonds
       individualScale: { x: 3.5, y: 3.5, z: 4.0 }, // Individual diamond scale
-      baseRadius: 1.03, // Distance from center of ring (radius)
+      baseRadius: 1.011, // Distance from center of ring (radius)
       startAngle: 0, // Starting angle in radians
       zOffset: 0.25, // Z-axis offset (front face positioning)
-      modelUrl: 'diamondm/d1.glb', // URL to diamond model
+      // Default diamond model - will be overridden based on stone type
+      modelUrl: 'diamondm/d1.glb', 
       textureUrl: 'diamondm/dtext.jpg', // Texture for diamonds
       effects: {
         map: false,
@@ -208,6 +213,48 @@ export class StoneManager {
     // Merge default options with provided options
     const config = { ...defaultOptions, ...options };
     config.effects = { ...defaultOptions.effects, ...options.effects };
+  
+    // Convert ringIndex to array index (0-based)
+    const ringArrayIndex = config.ringIndex - 1;
+    
+    // Get the specified ring model
+    if (ringArrayIndex < 0 || ringArrayIndex >= this.modelManager.currentDisplayedModels.length) {
+      console.error(`Ring ${config.ringIndex} not found. Available rings: ${this.modelManager.currentDisplayedModels.length}`);
+      return Promise.reject(new Error(`Ring ${config.ringIndex} not found`));
+    }
+    
+    const targetRing = this.modelManager.currentDisplayedModels[ringArrayIndex];
+    if (!targetRing) {
+      console.error(`Ring ${config.ringIndex} model not found`);
+      return Promise.reject(new Error(`Ring ${config.ringIndex} model not found`));
+    }
+  console.log("targetRing razi",targetRing)
+    // Check stone type in targetRing's userData and select appropriate model
+    if (targetRing.userData && targetRing.userData.StoneType) {
+      const stoneType = targetRing.userData.StoneType;
+      
+      console.log(`Stone type detected: ${stoneType}`);
+      
+      // Select model based on stone type
+      switch(stoneType) {
+        case "Smooth conversion":
+          config.modelUrl = "diamondm/d1.glb";
+          break;
+        case "Pavé":
+          config.modelUrl = "diamondm/d2.glb";
+          break;
+        case "Rail setting":
+          config.modelUrl = "diamondm/d1.glb";
+          // config.rotation = { x: -0.13, y: 0.00, z: 0.25 };
+          break;
+        // Add more cases for additional stone types
+        default:
+          // Keep the default model url if stone type doesn't match
+          console.log(`Using default diamond model for unknown stone type: ${stoneType}`);
+      }
+    } else {
+      console.log("No stone type found in userData, using default diamond model");
+    }
   
     // Handle scale options
     if (options.individualScale) {
@@ -233,21 +280,6 @@ export class StoneManager {
       z: config.individualScale.z * config.baseScale * sizeAdjustmentFactor * 0.6 // Reduce depth more to embed in ring
     };
   
-    // Convert ringIndex to array index (0-based)
-    const ringArrayIndex = config.ringIndex - 1;
-    
-    // Get the specified ring model
-    if (ringArrayIndex < 0 || ringArrayIndex >= this.modelManager.currentDisplayedModels.length) {
-      console.error(`Ring ${config.ringIndex} not found. Available rings: ${this.modelManager.currentDisplayedModels.length}`);
-      return Promise.reject(new Error(`Ring ${config.ringIndex} not found`));
-    }
-    
-    const targetRing = this.modelManager.currentDisplayedModels[ringArrayIndex];
-    if (!targetRing) {
-      console.error(`Ring ${config.ringIndex} model not found`);
-      return Promise.reject(new Error(`Ring ${config.ringIndex} model not found`));
-    }
-  
     // Create a holder for all diamonds
     const diamondsHolder = new THREE.Object3D();
     diamondsHolder.name = "diamondsHolder";
@@ -257,6 +289,8 @@ export class StoneManager {
     const totalAngle = Math.PI * 2 * config.coverage; // Total angle coverage
     const angleStep = totalAngle / Math.max(1, config.diamondCount - 1); // Handle case where diamondCount is 1
     const startAngle = config.startAngle - (totalAngle / 2); // Center the distribution
+  
+    console.log(`Loading diamond model: ${config.modelUrl}`);
   
     // Load the diamond model once to reuse
     try {
@@ -284,7 +318,6 @@ export class StoneManager {
         diamondHolder.name = `diamondHolder_${i}`;
         
         // Position on the front face of the ring band in a straight line
-        // This is the key change - we don't use angle for Y position, so they line up in a straight row
         diamondHolder.position.set(
           Math.sin(angle) * config.baseRadius,  // X position around the circle
           Math.cos(angle) * config.baseRadius,  // Y position around the circle
@@ -292,8 +325,7 @@ export class StoneManager {
         );
         
         // Critical: Make all diamonds face the same direction (front-facing)
-        // This ensures they all have the same orientation like in your reference image
-        diamondHolder.rotation.set(0, angle, 0);  // Only rotate around Y to follow the ring
+        diamondHolder.rotation.set(0, 0, angle);  // Only rotate around Y to follow the ring
         
         // Apply scale consistently to all diamonds
         diamondModel.scale.set(
@@ -309,8 +341,8 @@ export class StoneManager {
             child.material = child.material.clone();
             
             // Apply standard material properties
-            child.material.metalness = 0.7;
-            child.material.roughness = 0.1;
+            child.material.metalness = 0.8;
+            child.material.roughness = 0;
             
             // Apply texture if provided
             if (config.textureUrl && this.applyDiamondTexture) {
@@ -326,14 +358,12 @@ export class StoneManager {
         });
         
         // Add diamond to its holder, then add holder to the main holder
-        
         diamondHolder.add(diamondModel);
         diamondsHolder.add(diamondHolder);
         diamondModels.push(diamondModel);
       }
   
       // Apply global adjustments to the entire diamond holder
-      // Keep your working settings that you added
       diamondsHolder.rotation.x = Math.PI/2;
       diamondsHolder.rotation.y = Math.PI/2;
       diamondsHolder.position.x = -0.25;
@@ -585,7 +615,7 @@ export class StoneManager {
  * Remove diamond from a specific ring
  * @param {Number} ringIndex Which ring to remove the diamond from (1 or 2, default: 1)
  */
-removeDiamondFromRing(ringIndex = 1) {
+removeDiamondsFromRing(ringIndex = 1) {
   // Convert ringIndex to array index (0-based)
   const ringArrayIndex = ringIndex - 1;
   
@@ -600,35 +630,54 @@ removeDiamondFromRing(ringIndex = 1) {
     return;
   }
   
-  const diamondHolder = targetRing.getObjectByName("diamondHolder");
-  console.log(diamondHolder, "diamondHolder",targetRing, "targetRing")
-  if (diamondHolder) {
-    // Remove all children (diamond) from the holder
-    while (diamondHolder.children.length > 0) {
-      const child = diamondHolder.children[0];
-      diamondHolder.remove(child);
+  // Try to find the diamondsHolder (with 's' - for multiple diamonds)
+  let diamondsHolder = targetRing.getObjectByName("diamondsHolder");
+  
+  // If not found, try the original name (for backward compatibility)
+  if (!diamondsHolder) {
+    diamondsHolder = targetRing.getObjectByName("diamondHolder");
+  }
+  
+  console.log(diamondsHolder, "diamondsHolder", targetRing, "targetRing");
+  
+  if (diamondsHolder) {
+    // Recursively dispose of all children and their materials/geometries
+    const disposeObject = (obj) => {
+      // First dispose of all children
+      while (obj.children.length > 0) {
+        disposeObject(obj.children[0]);
+        obj.remove(obj.children[0]);
+      }
       
-      // Dispose of geometries and materials to free memory
-      if (child.isMesh) {
-        if (child.geometry) child.geometry.dispose();
-        if (child.material) {
+      // Then dispose of the object's geometry and materials
+      if (obj.isMesh) {
+        if (obj.geometry) obj.geometry.dispose();
+        if (obj.material) {
           // Handle array of materials
-          if (Array.isArray(child.material)) {
-            child.material.forEach(material => material.dispose());
+          if (Array.isArray(obj.material)) {
+            obj.material.forEach(material => material.dispose());
           } else {
-            child.material.dispose();
+            obj.material.dispose();
           }
         }
       }
-    }
+    };
     
-    // Remove the diamond holder from the model
-    targetRing.remove(diamondHolder);
-    console.log(`Diamond removed from ring ${ringIndex}`);
+    // Dispose of all children in the diamonds holder
+    disposeObject(diamondsHolder);
+    
+    // Remove the diamonds holder from the ring
+    targetRing.remove(diamondsHolder);
+    console.log(`Diamonds removed from ring ${ringIndex}`);
   } else {
-    console.log(`No diamond found on ring ${ringIndex}`);
+    console.log(`No diamonds found on ring ${ringIndex}`);
   }
 }
+/**
+ * Change the size of all diamonds on a ring
+ * @param {String} value Size value (e.g., '1.0', '1.3', '1.5')
+ * @param {Number} ringIndex Optional: Which ring to modify (defaults to currently selected model)
+ */
 changeStoneSize(value, ringIndex = null) {
   // If no ringIndex is provided, use the currently selected model
   const targetRingIndex = ringIndex || this.modelManager.selectedModel;
@@ -638,72 +687,95 @@ changeStoneSize(value, ringIndex = null) {
   
   // Verify ring exists
   if (ringArrayIndex < 0 || ringArrayIndex >= this.modelManager.currentDisplayedModels.length) {
-    console.error(`Ring ${targetRingIndex} not found for resizing diamond.`);
+    console.error(`Ring ${targetRingIndex} not found for resizing diamonds.`);
     return;
   }
   
   const targetRing = this.modelManager.currentDisplayedModels[ringArrayIndex];
   if (!targetRing) {
-    console.error(`Ring model ${targetRingIndex} not found for resizing diamond.`);
+    console.error(`Ring model ${targetRingIndex} not found for resizing diamonds.`);
     return;
   }
   
-  // Find the diamond holder
-  const diamondHolder = targetRing.getObjectByName("diamondHolder");
-  if (!diamondHolder) {
-    console.log(`No diamond found on ring ${targetRingIndex} to resize.`);
-    return;
-  }
+  // Find the diamonds holder (with 's' for multiple diamonds)
+  let diamondsHolder = targetRing.getObjectByName("diamondsHolder");
   
-  // Find the diamond model inside the holder
-  let diamondModel = null;
-  diamondHolder.traverse((child) => {
-    if (child.name === "diamond") {
-      diamondModel = child;
+  // If not found, try the original name (for backward compatibility)
+  if (!diamondsHolder) {
+    diamondsHolder = targetRing.getObjectByName("diamondHolder");
+    
+    // If still not found, no diamonds to resize
+    if (!diamondsHolder) {
+      console.log(`No diamonds found on ring ${targetRingIndex} to resize.`);
+      return;
     }
-  });
-  
-  if (!diamondModel) {
-    console.error(`Diamond model not found inside holder on ring ${targetRingIndex}.`);
-    return;
   }
-  
-  // Get the current scale (we assume it's uniform in all dimensions)
-  const currentScale = diamondModel.scale.z;
   
   // Default base scale factor (for 1.0 mm)
   const baseScale = 19.7;
   
   // Calculate new scale based on the value
-  let newScale;
   let xyScale;
-  let zScale;
   
   if (value.includes("1.3")) {
-    console.log("1.3")
+    console.log("Setting diamond size to 1.3mm");
     // Increase by 30% on XY for 1.3 mm
     xyScale = baseScale * 1.15;
-    zScale = currentScale; // Keep Z scale the same
   } else if (value.includes("1.5")) {
-    console.log("1.5")
+    console.log("Setting diamond size to 1.5mm");
     // Increase by 50% on XY for 1.5 mm
     xyScale = baseScale * 1.2;
-    zScale = currentScale; // Keep Z scale the same
   } else {
     // Default size (1.0 mm)
+    console.log("Setting diamond size to 1.0mm");
     xyScale = baseScale;
-    zScale = currentScale;
   }
   
-  // Apply new scale to the diamond model
-  // Scale only X and Y dimensions, keeping Z the same to maintain proportions
-  diamondModel.scale.set(xyScale, xyScale, zScale);
+  // Count how many diamonds were resized
+  let diamondCount = 0;
   
-  console.log(`Changed diamond size on ring ${targetRingIndex} to ${value} (Scale: ${xyScale} , ${zScale})`);
+  // For multi-diamond setup (diamondsHolder)
+  if (diamondsHolder.name === "diamondsHolder") {
+    // Iterate through all diamond holders
+    diamondsHolder.children.forEach((holder, index) => {
+      // Find the diamond model in each holder
+      if (holder.children.length > 0) {
+        const diamondModel = holder.children[0];
+        
+        // Get current Z scale to maintain proportions
+        const currentZScale = diamondModel.scale.z;
+        
+        // Apply new scale to the diamond model (keep Z scale the same)
+        diamondModel.scale.set(xyScale, xyScale, currentZScale);
+        diamondCount++;
+      }
+    });
+  } 
+  // For single diamond setup (original method)
+  else {
+    // Find the diamond model inside the holder
+    let diamondModel = null;
+    diamondsHolder.traverse((child) => {
+      if (child.name === "diamond") {
+        diamondModel = child;
+      }
+    });
+    
+    if (diamondModel) {
+      // Get current Z scale to maintain proportions
+      const currentZScale = diamondModel.scale.z;
+      
+      // Apply new scale to the diamond model
+      diamondModel.scale.set(xyScale, xyScale, currentZScale);
+      diamondCount = 1;
+    }
+  }
+  
+  console.log(`Changed ${diamondCount} diamond(s) size on ring ${targetRingIndex} to ${value} (Scale: ${xyScale})`);
 }
 
 /**
- * Change the position of the diamond on a specific ring (left, middle, right)
+ * Change the position of all diamonds on a specific ring (left, middle, right)
  * @param {String} position The position value ('Left', 'Middle', 'Right', or 'Free')
  * @param {Number} ringIndex Optional: Which ring to modify (defaults to currently selected model)
  * @param {Object} customPosition Optional: Custom position for 'Free' position type {x, y, z}
@@ -717,27 +789,29 @@ changeStonePosition(position, ringIndex = null, customPosition = null) {
   
   // Verify ring exists
   if (ringArrayIndex < 0 || ringArrayIndex >= this.modelManager.currentDisplayedModels.length) {
-    console.error(`Ring ${targetRingIndex} not found for repositioning diamond.`);
+    console.error(`Ring ${targetRingIndex} not found for repositioning diamonds.`);
     return;
   }
   
   const targetRing = this.modelManager.currentDisplayedModels[ringArrayIndex];
   if (!targetRing) {
-    console.error(`Ring model ${targetRingIndex} not found for repositioning diamond.`);
+    console.error(`Ring model ${targetRingIndex} not found for repositioning diamonds.`);
     return;
   }
   
-  // Find the diamond holder
-  const diamondHolder = targetRing.getObjectByName("diamondHolder");
-  if (!diamondHolder) {
-    console.log(`No diamond found on ring ${targetRingIndex} to reposition.`);
-    return;
-  }
+  // Find the diamonds holder (with 's' for multiple diamonds)
+  let diamondsHolder = targetRing.getObjectByName("diamondsHolder");
   
-  // Store current y and z positions to maintain them
-  const currentX = diamondHolder.position.x;
-  const currentY = diamondHolder.position.y;
-  const currentZ = diamondHolder.position.z;
+  // If not found, try the original name (for backward compatibility)
+  if (!diamondsHolder) {
+    diamondsHolder = targetRing.getObjectByName("diamondHolder");
+    
+    // If still not found, no diamonds to reposition
+    if (!diamondsHolder) {
+      console.log(`No diamonds found on ring ${targetRingIndex} to reposition.`);
+      return;
+    }
+  }
   
   // Set new position based on selected option
   let newX = 0; // Default (Middle)
@@ -753,38 +827,30 @@ changeStonePosition(position, ringIndex = null, customPosition = null) {
       newX = 0;
       break;
     case 'Free':
-      // // If customPosition is provided and it's a Free position type, use the custom values
-      // if (customPosition) {
-      //   newX = customPosition.x !== undefined ? customPosition.x : diamondHolder.position.x;
-        
-      //   // Update Y and Z if provided in custom position
-      //   if (customPosition.y !== undefined) {
-      //     diamondHolder.position.y = customPosition.y;
-      //   }
-        
-      //   if (customPosition.z !== undefined) {
-      //     diamondHolder.position.z = customPosition.z;
-      //   }
-      // }
-      console.log("free not available")
-      break;
+      console.log("Free position not available");
+      return;
     default:
       console.warn(`Unknown position: ${position}. Using 'Middle' as default.`);
       newX = 0;
   }
   
-  // Apply the new X position, keeping Y and Z unchanged for standard positions
-  diamondHolder.position.x = newX;
+  // Current position of the diamond holder for offset calculation
+  const currentX = diamondsHolder.position.x;
   
-  // Only log the position that was actually changed
-  if (position === 'Free' && customPosition) {
-    console.log(`Changed diamond position on ring ${targetRingIndex} to custom position:`, 
-      {x: diamondHolder.position.x, y: diamondHolder.position.y, z: diamondHolder.position.z});
-  } else {
-    console.log(`Changed diamond position on ring ${targetRingIndex} to ${position} (X: ${newX})`);
-  }
+  // Calculate the offset to apply
+  const offsetX = newX - currentX;
+  
+  // Apply the new X position to the entire diamond holder
+  diamondsHolder.position.x = newX;
+  
+  console.log(`Changed diamond position on ring ${targetRingIndex} to ${position} (X: ${newX})`);
 }
 
+/**
+ * Handle precise positioning of diamonds using a slider value
+ * @param {Number} positionValue The X-axis position value from the slider
+ * @param {String} selectedRing Optional: Which ring to modify ('1' or '2', defaults to currently selected model)
+ */
 handleStonePositionSlider(positionValue, selectedRing = null) {
   // If no selectedRing is provided, use the currently selected model
   const targetRingIndex = selectedRing ? 
@@ -796,34 +862,37 @@ handleStonePositionSlider(positionValue, selectedRing = null) {
   
   // Verify ring exists
   if (ringArrayIndex < 0 || ringArrayIndex >= this.modelManager.currentDisplayedModels.length) {
-    console.error(`Ring ${targetRingIndex} not found for repositioning stone.`);
+    console.error(`Ring ${targetRingIndex} not found for repositioning stones.`);
     return;
   }
   
   const targetRing = this.modelManager.currentDisplayedModels[ringArrayIndex];
   if (!targetRing) {
-    console.error(`Ring model ${targetRingIndex} not found for repositioning stone.`);
+    console.error(`Ring model ${targetRingIndex} not found for repositioning stones.`);
     return;
   }
   
-  // Find the diamond holder
-  const diamondHolder = targetRing.getObjectByName("diamondHolder");
-  if (!diamondHolder) {
-    console.log(`No stone found on ring ${targetRingIndex} to reposition.`);
-    return;
+  // Find the diamonds holder (with 's' for multiple diamonds)
+  let diamondsHolder = targetRing.getObjectByName("diamondsHolder");
+  
+  // If not found, try the original name (for backward compatibility)
+  if (!diamondsHolder) {
+    diamondsHolder = targetRing.getObjectByName("diamondHolder");
+    
+    // If still not found, no diamonds to reposition
+    if (!diamondsHolder) {
+      console.log(`No stones found on ring ${targetRingIndex} to reposition.`);
+      return;
+    }
   }
   
-  // Store current y and z positions to maintain them
-  const currentY = diamondHolder.position.y;
-  const currentZ = diamondHolder.position.z;
-  
-  // Apply the new X position, keeping Y and Z unchanged
-  diamondHolder.position.x = positionValue;
+  // Apply the new X position
+  diamondsHolder.position.x = positionValue;
   
   // For user feedback, determine the position name
   let positionName = "Center";
-  if (positionValue < -0.05) positionName = "Left";
-  else if (positionValue > 0.05) positionName = "Right";
+  if (positionValue < -0.03) positionName = "Left";
+  else if (positionValue > 0.03) positionName = "Right";
   
   console.log(`Changed stone position on ring ${targetRingIndex} to ${positionName} (X: ${positionValue.toFixed(3)})`);
 }
