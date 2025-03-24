@@ -1,3 +1,5 @@
+window.distribution = "Together";
+
 import { useState } from "react";
 import { AddSvg, TrashSvg } from "../../../../static/SvgImages";
 import StoneColorPurity from "./StoneColorPurity";
@@ -304,12 +306,12 @@ const TabContent = ({
                   value={stoneNumber}
                   onChange={(e) => {setStoneNumber(e.target.value),
                   window.parent.postMessage(
-                    { action: "addStone", value: e.target.value , type: "Number" },
+                    { action: "addStone", value: e.target.value , type: "Number" ,stoneDist: window.distribution },
                     "*")
                   }}
                   className="border border-[#e1e1e1] p-2 rounded w-full"
                 >
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  {Array.from({ length: 70 }, (_, i) => i + 1).map((num) => (
                     <option key={num} value={num}>
                       {num}
                     </option>
@@ -342,14 +344,21 @@ const TabContent = ({
                   </label>
                 </div>
               </div>
-              {/* {stoneNumber > 1 && (
+              {stoneNumber > 1 && (
                 <div className="w-1/2">
                   <h3 className="mb-2 font-semibold text-sm text-black">
                     Distribution
                   </h3>
                   <select
                     value={distribution}
-                    onChange={(e) => setDistribution(e.target.value)}
+                     onChange={(e) => {setDistribution(e.target.value),
+                      window.distribution = e.target.value,
+                      console.log(`Clicked distribution ${window.distribution}`)
+
+                    // window.parent.postMessage(
+                    //   { action: "addStone", value: e.target.value , stoneDist: e.target.value },
+                    //   "*")
+                    }}
                     className="border border-[#e1e1e1] p-2 rounded w-full"
                   >
                     {DistributionOptions.map((size, index) => (
@@ -359,7 +368,7 @@ const TabContent = ({
                     ))}
                   </select>
                 </div>
-              )} */}
+              )}
             </div>
             {isGrouped && (
               <div className="flex gap-4 mb-6">

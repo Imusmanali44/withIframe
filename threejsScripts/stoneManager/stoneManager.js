@@ -189,10 +189,11 @@ export class StoneManager {
     const defaultOptions = {
       ringIndex: 1, // Target ring (1 for first ring, 2 for second ring)
       diamondCount: 3, // Number of diamonds to place around the ring
-      coverage: 0.1, // Coverage proportion (0.5 = half the ring, 1.0 = full ring)
+      coverage: 0.1, // Default coverage (will be overridden by distribution option)
+      distribution: 'Together', // Default distribution type
       baseScale: 4.0, // Base scale factor for all diamonds
       individualScale: { x: 3.5, y: 3.5, z: 4.0 }, // Individual diamond scale
-      baseRadius: 1.011, // Distance from center of ring (radius)
+      baseRadius: 1.15, // Distance from center of ring (radius)
       startAngle: 0, // Starting angle in radians
       zOffset: 0.25, // Z-axis offset (front face positioning)
       // Default diamond model - will be overridden based on stone type
@@ -228,7 +229,8 @@ export class StoneManager {
       console.error(`Ring ${config.ringIndex} model not found`);
       return Promise.reject(new Error(`Ring ${config.ringIndex} model not found`));
     }
-  console.log("targetRing razi",targetRing)
+    console.log("targetRing razi", targetRing);
+  
     // Check stone type in targetRing's userData and select appropriate model
     if (targetRing.userData && targetRing.userData.StoneType) {
       const stoneType = targetRing.userData.StoneType;
@@ -245,9 +247,7 @@ export class StoneManager {
           break;
         case "Rail setting":
           config.modelUrl = "diamondm/d1.glb";
-          // config.rotation = { x: -0.13, y: 0.00, z: 0.25 };
           break;
-        // Add more cases for additional stone types
         default:
           // Keep the default model url if stone type doesn't match
           console.log(`Using default diamond model for unknown stone type: ${stoneType}`);
@@ -273,7 +273,7 @@ export class StoneManager {
   
     // Automatic scaling based on diamond count and base scale
     // More diamonds = smaller individual diamonds
-    const sizeAdjustmentFactor = Math.max(0.5, 1 - (config.diamondCount / 40)); // Reduce size as count increases
+    const sizeAdjustmentFactor = Math.max(0.9, 1 - (config.diamondCount / 40)); // Reduce size as count increases
     const adjustedScale = {
       x: config.individualScale.x * config.baseScale * sizeAdjustmentFactor,
       y: config.individualScale.y * config.baseScale * sizeAdjustmentFactor,
@@ -285,12 +285,75 @@ export class StoneManager {
     diamondsHolder.name = "diamondsHolder";
     targetRing.add(diamondsHolder);
   
-    // Calculate angles for diamond placement
-    const totalAngle = Math.PI * 2 * config.coverage; // Total angle coverage
-    const angleStep = totalAngle / Math.max(1, config.diamondCount - 1); // Handle case where diamondCount is 1
-    const startAngle = config.startAngle - (totalAngle / 2); // Center the distribution
+    // Process distribution option
+    let distributionSpacing = 1.0; // Default spacing multiplier
+    let effectiveCoverage = config.coverage; // Default to the provided coverage
+    
+    // Update coverage based on distribution type
+    switch(config.distribution) {
+      case 'Together':
+        // Stones are placed close together
+        effectiveCoverage = 0.1; // Small portion of the ring
+        distributionSpacing = 1.0;
+        break;
+      case 'Half stone distance':
+        // Half-spaced stones
+        effectiveCoverage = 0.25; 
+        distributionSpacing = 1.5;
+        break;
+      case 'Whole stone distance':
+        // Normal spaced stones
+        effectiveCoverage = 0.33;
+        distributionSpacing = 2.0;
+        break;
+      case 'Double stone spacing':
+        // Double-spaced stones
+        effectiveCoverage = 0.5;
+        distributionSpacing = 3.0;
+        break;
+      case 'A third ring':
+        // Cover 1/3 of the ring 
+        effectiveCoverage = 0.33;
+        break;
+      case 'Half ring':
+        // Cover half of the ring
+        effectiveCoverage = 0.5;
+        break;
+      case 'Whole ring':
+        // Cover the entire ring
+        effectiveCoverage = 1.0;
+        break;
+      default:
+        // Use provided coverage if distribution option is not recognized
+        console.log(`Unknown distribution type: ${config.distribution}, using default coverage`);
+    }
+    
+    console.log(`Distribution: ${config.distribution}, Effective coverage: ${effectiveCoverage}`);
+    
+    // Calculate angles for diamond placement with proper coverage
+    // For full coverage (coverage = 1), we need to distribute around 360 degrees (2*PI)
+    // For half coverage (coverage = 0.5), we need 180 degrees (PI)
+    const totalAngle = 2 * Math.PI * effectiveCoverage; // Total angle coverage based on distribution
+    
+    // Calculate angle step based on diamond count and distribution spacing
+    let angleStep = 0;
+    if (config.diamondCount > 1) {
+      // For "Together" and specific spacing options, adjust the angle step
+      if (['Together', 'Half stone distance', 'Whole stone distance', 'Double stone spacing'].includes(config.distribution)) {
+        // Calculate a base step and then apply spacing multiplier
+        const baseStep = totalAngle / (config.diamondCount * distributionSpacing);
+        angleStep = baseStep * distributionSpacing;
+      } else {
+        // For ring coverage options (third, half, whole), distribute evenly
+        angleStep = totalAngle / config.diamondCount;
+      }
+    }
+    
+    // Center the distribution around the start angle
+    const startAngle = config.startAngle - (totalAngle / 2);
   
     console.log(`Loading diamond model: ${config.modelUrl}`);
+    console.log(`Diamond placement: count=${config.diamondCount}, coverage=${effectiveCoverage}, totalAngle=${totalAngle}, angleStep=${angleStep}`);
   
     // Load the diamond model once to reuse
     try {
@@ -317,15 +380,16 @@ export class StoneManager {
         const diamondHolder = new THREE.Object3D();
         diamondHolder.name = `diamondHolder_${i}`;
         
-        // Position on the front face of the ring band in a straight line
+        // Position around the ring properly based on angle
         diamondHolder.position.set(
           Math.sin(angle) * config.baseRadius,  // X position around the circle
           Math.cos(angle) * config.baseRadius,  // Y position around the circle
           config.zOffset                        // Z offset to place on front face
         );
         
-        // Critical: Make all diamonds face the same direction (front-facing)
-        diamondHolder.rotation.set(0, 0, angle);  // Only rotate around Y to follow the ring
+        // Make diamonds follow the ring curvature
+        // diamondHolder.lookAt(0, 0, 0);  // Make it look at center
+        // diamondHolder.rotateX(Math.PI / 2);  // Additional rotation to adjust orientation
         
         // Apply scale consistently to all diamonds
         diamondModel.scale.set(
@@ -372,7 +436,7 @@ export class StoneManager {
       // Apply model-specific Z position adjustments
       const modelIndex = targetRing.userData?.modelIndex;
       if (modelIndex === 0) {
-        diamondsHolder.position.z = 0.15;
+        // diamondsHolder.position.z = 0.15;
       } 
       else if (modelIndex === 1) {
         diamondsHolder.position.z = 0.14;
@@ -387,17 +451,21 @@ export class StoneManager {
         diamondsHolder.position.z = 0.14; // Default
       }
       
-      // CRITICAL FIX: Apply the same rotation to all diamond models
-      // This ensures they all face the same direction and look uniform
-      diamondsHolder.children.forEach(holder => {
-        // Reset any individual holder rotations that might be causing inconsistency
-        holder.rotation.set(0, holder.rotation.y, 0);
+      // Apply consistent orientation to all diamonds
+      diamondsHolder.children.forEach((holder, index) => {
+        // Get the angle for this diamond
+        const angle = startAngle + (index * angleStep);
         
-        // Apply the same orientation to all diamond models inside holders
+        // Apply rotation to make diamond face outward correctly
         if (holder.children.length > 0) {
           const diamond = holder.children[0];
-          // Set specific rotation for diamond model (matches reference image)
-          diamond.rotation.set(-Math.PI/2, 0, 0);
+          
+          // Reset rotation
+          diamond.rotation.set(0, 0, 0);
+          
+          // Apply rotation to align with the ring curvature
+          diamond.rotateX(-Math.PI/2);
+          diamond.rotateY(angle); // This makes diamonds follow the ring
         }
       });
   

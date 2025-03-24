@@ -13,7 +13,7 @@ export class MessageHandler {
   }
 
   handleMessage(event) {
-    const { action, modelId, type, id, selectedRing, value, pair, isEngraving,isBiCol,isTriCol,isMetal,field,grooveId } = event.data;
+    const { action, modelId, type, id, selectedRing, value, pair, isEngraving,isBiCol,isTriCol,isMetal,field,grooveId,stoneDist } = event.data;
     // console.log('Message received from parent:', event.data, action);
 
     switch (action) {
@@ -33,17 +33,18 @@ export class MessageHandler {
         // console.log("current selected model",modelId)
         break;
         case "addStone":
-          if(type=="Number"){
-            
+          if(type=="Number" ){
+            console.log("add stone aa", value, stoneDist)
               this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
               this.modelManager.StoneManagerIns.addDiamondsToRingFront({
           // this.modelManager.StoneManagerIns.loadDiamondToRing({
 
                 diamondCount: value,
                 ringIndex: this.modelManager.selectedModel,
+                distribution: stoneDist
                 // modelUrl: "diamondm/d2.glb"
                 // scale: { x: 19.70, y: 19.70, z: 37.00 }
-                 },value);
+                 } );
 
           }
           if(value=="Smooth conversion"){
