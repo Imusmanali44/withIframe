@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
 
+// Initialize global variables to store slider values
+if (typeof window !== "undefined") {
+  window.stoneSliderVal1 = 0;
+  window.stoneSliderVal2 = 0;
+}
+
 export const StoneRangeSlider = ({
   title = "Stone Position",
   min = -0.11,
@@ -10,24 +16,61 @@ export const StoneRangeSlider = ({
   handleIcon = "./src/assets/drop.png",
 }) => {
   const [position, setPosition] = useState(defaultValue);
+  const ringNumber = window.selectedRing
 
-  // Initialize position on component mount
+  // Initialize position on component mount and handle selectedRing changes
   useEffect(() => {
-    // Send initial position message to parent
-    // window.parent.postMessage(
-    //   {
-    //     action: "stonePosition",
-    //     value: defaultValue,
-    //     selectedRing: title,
-    //     type: "initial"
-    //   },
-    //   "*"
-    // );
-  }, []);
+    // Set initial global variable value
+    if (ringNumber === 1) {
+      window.stoneSliderVal1 = defaultValue;
+      
+    } else {
+      window.stoneSliderVal2 = defaultValue;
+    }
+
+    // Set initial position
+    setPosition(defaultValue);
+
+    // Function to sync slider position with global variable when selected ring changes
+    const handleSelectedRingChange = () => {
+      const currentVal = ringNumber === 1 ? window.stoneSliderVal1 : window.stoneSliderVal2;
+      if (window.selectedRing === ringNumber) {
+        setPosition(currentVal);
+      }
+    };
+
+    // Set up event listener for selectedRing changes
+    if (typeof window !== "undefined") {
+      // Create a MutationObserver to watch for changes to window.selectedRing
+      const checkSelectedRing = () => {
+        if (window.selectedRing === ringNumber) {
+          // Update position from stored value when this ring becomes selected
+          const storedValue = ringNumber === 1 ? window.stoneSliderVal1 : window.stoneSliderVal2;
+          setPosition(storedValue);
+        }
+      };
+
+      // Initial check
+      checkSelectedRing();
+
+      // Setup interval to check for window.selectedRing changes
+      const intervalId = setInterval(checkSelectedRing, 300);
+
+      // Clean up interval on component unmount
+      return () => clearInterval(intervalId);
+    }
+  }, [ringNumber, defaultValue]);
 
   const handleChange = (event) => {
     const newValue = parseFloat(event.target.value);
     setPosition(newValue);
+
+    // Update the global variable
+    if (ringNumber === 1) {
+      window.stoneSliderVal1 = newValue;
+    } else {
+      window.stoneSliderVal2 = newValue;
+    }
 
     console.log(`Stone position changed to:`, newValue);
     window.parent.postMessage(

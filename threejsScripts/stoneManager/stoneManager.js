@@ -110,7 +110,7 @@ export class StoneManager {
     diamondHolder.name = "diamondHolder";
     targetRing.userData.StoneType = value;
     targetRing.add(diamondHolder);
-    console.log("targetRing",targetRing)
+    console.log("diamondHolder",diamondHolder)
   
     try {
       // Load the diamond model
@@ -184,6 +184,7 @@ export class StoneManager {
       return Promise.reject(error);
     }
   }
+
   async addDiamondsToRingFront(options = {}) {
     // Default configurations
     const defaultOptions = {
@@ -336,6 +337,43 @@ export class StoneManager {
     const totalAngle = 2 * Math.PI * effectiveCoverage; // Total angle coverage based on distribution
     
     // Calculate angle step based on diamond count and distribution spacing
+    const maxDiamondCounts = {
+      'Together': 8,
+      'Half stone distance': 12,
+      'Whole stone distance': 15,
+      'Double stone spacing': 20,
+      'A third ring': 30,
+      'Half ring': 50,
+      'Whole ring': 69
+    };
+    
+    // Get the maximum allowed for the current distribution type
+    let maxAllowedDiamonds;
+    if (config.distribution in maxDiamondCounts) {
+      maxAllowedDiamonds = maxDiamondCounts[config.distribution];
+    } else {
+      // Default fallback if the distribution is not in our predefined list
+      maxAllowedDiamonds = 4;
+    }
+    
+    // Check if the provided diamond count exceeds the maximum allowed
+    if (config.diamondCount > maxAllowedDiamonds) {
+      // Create warning message with helpful information
+      const warningMessage = `Too many diamonds (${config.diamondCount}) for "${config.distribution}" distribution.
+      Maximum allowed: ${maxAllowedDiamonds}.
+      Proceeding with ${maxAllowedDiamonds} diamonds instead.`;
+      
+      console.warn(warningMessage);
+      
+      // Show alert to user
+      if (typeof alert === 'function') {
+        alert(warningMessage);
+      }
+      
+      // Adjust the diamond count to the maximum allowed
+      config.diamondCount = maxAllowedDiamonds;
+    }
+
     let angleStep = 0;
     if (config.diamondCount > 1) {
       // For "Together" and specific spacing options, adjust the angle step
@@ -348,6 +386,45 @@ export class StoneManager {
         angleStep = totalAngle / config.diamondCount;
       }
     }
+    
+    // NEW: Maximum allowable diamond count validation based on distribution type
+    // Define maximum diamond counts for each distribution type to prevent visual overlap
+    // const maxDiamondCounts = {
+    //   'Together': 8,
+    //   'Half stone distance': 12,
+    //   'Whole stone distance': 15,
+    //   'Double stone spacing': 20,
+    //   'A third ring': 30,
+    //   'Half ring': 50,
+    //   'Whole ring': 69
+    // };
+    
+    // Get the maximum allowed for the current distribution type
+    // let maxAllowedDiamonds;
+    // if (config.distribution in maxDiamondCounts) {
+    //   maxAllowedDiamonds = maxDiamondCounts[config.distribution];
+    // } else {
+    //   // Default fallback if the distribution is not in our predefined list
+    //   maxAllowedDiamonds = 4;
+    // }
+    
+    // // Check if the provided diamond count exceeds the maximum allowed
+    // if (config.diamondCount > maxAllowedDiamonds) {
+    //   // Create warning message with helpful information
+    //   const warningMessage = `Too many diamonds (${config.diamondCount}) for "${config.distribution}" distribution.
+    //   Maximum allowed: ${maxAllowedDiamonds}.
+    //   Proceeding with ${maxAllowedDiamonds} diamonds instead.`;
+      
+    //   console.warn(warningMessage);
+      
+    //   // Show alert to user
+    //   if (typeof alert === 'function') {
+    //     alert(warningMessage);
+    //   }
+      
+    //   // Adjust the diamond count to the maximum allowed
+    //   config.diamondCount = maxAllowedDiamonds;
+    // }
     
     // Center the distribution around the start angle
     const startAngle = config.startAngle - (totalAngle / 2);
@@ -386,10 +463,6 @@ export class StoneManager {
           Math.cos(angle) * config.baseRadius,  // Y position around the circle
           config.zOffset                        // Z offset to place on front face
         );
-        
-        // Make diamonds follow the ring curvature
-        // diamondHolder.lookAt(0, 0, 0);  // Make it look at center
-        // diamondHolder.rotateX(Math.PI / 2);  // Additional rotation to adjust orientation
         
         // Apply scale consistently to all diamonds
         diamondModel.scale.set(
@@ -432,6 +505,7 @@ export class StoneManager {
       diamondsHolder.rotation.y = Math.PI/2;
       diamondsHolder.position.x = -0.25;
       diamondsHolder.position.y = 0;
+      console.log("diamondHolder numbeer",diamondsHolder.position)
       
       // Apply model-specific Z position adjustments
       const modelIndex = targetRing.userData?.modelIndex;
@@ -869,10 +943,10 @@ changeStonePosition(position, ringIndex = null, customPosition = null) {
   
   // Find the diamonds holder (with 's' for multiple diamonds)
   let diamondsHolder = targetRing.getObjectByName("diamondsHolder");
-  
   // If not found, try the original name (for backward compatibility)
   if (!diamondsHolder) {
     diamondsHolder = targetRing.getObjectByName("diamondHolder");
+    console.log("helo",diamondsHolder)
     
     // If still not found, no diamonds to reposition
     if (!diamondsHolder) {
@@ -883,16 +957,16 @@ changeStonePosition(position, ringIndex = null, customPosition = null) {
   
   // Set new position based on selected option
   let newX = 0; // Default (Middle)
-  
+  if(targetRing.getObjectByName("diamondHolder")){
   switch (position) {
     case 'Left':
-      newX = -0.05;
+      newX += -0.05;
       break;
     case 'Right':
-      newX = 0.05;
+      newX += 0.05;
       break;
     case 'Middle':
-      newX = 0;
+      newX += 0;
       break;
     case 'Free':
       console.log("Free position not available");
@@ -900,8 +974,33 @@ changeStonePosition(position, ringIndex = null, customPosition = null) {
     default:
       console.warn(`Unknown position: ${position}. Using 'Middle' as default.`);
       newX = 0;
+  }}
+else{
+  switch (position) {
+    case 'Left':
+      newX += -0.05;
+      newX += -0.25;
+      break;
+    case 'Right':
+      newX += 0.05;
+      newX += -0.25;
+
+      break;
+    case 'Middle':
+      newX += 0;
+      newX = -0.25;
+
+      break;
+    case 'Free':
+      console.log("Free position not available");
+      return;
+    default:
+      console.warn(`Unknown position: ${position}. Using 'Middle' as default.`);
+      newX = 0;
+      newX = -0.25;
+
   }
-  
+}
   // Current position of the diamond holder for offset calculation
   const currentX = diamondsHolder.position.x;
   
@@ -914,11 +1013,6 @@ changeStonePosition(position, ringIndex = null, customPosition = null) {
   console.log(`Changed diamond position on ring ${targetRingIndex} to ${position} (X: ${newX})`);
 }
 
-/**
- * Handle precise positioning of diamonds using a slider value
- * @param {Number} positionValue The X-axis position value from the slider
- * @param {String} selectedRing Optional: Which ring to modify ('1' or '2', defaults to currently selected model)
- */
 handleStonePositionSlider(positionValue, selectedRing = null) {
   // If no selectedRing is provided, use the currently selected model
   const targetRingIndex = selectedRing ? 
@@ -942,10 +1036,12 @@ handleStonePositionSlider(positionValue, selectedRing = null) {
   
   // Find the diamonds holder (with 's' for multiple diamonds)
   let diamondsHolder = targetRing.getObjectByName("diamondsHolder");
+  let isSingleDiamond = false;
   
   // If not found, try the original name (for backward compatibility)
   if (!diamondsHolder) {
     diamondsHolder = targetRing.getObjectByName("diamondHolder");
+    isSingleDiamond = true;
     
     // If still not found, no diamonds to reposition
     if (!diamondsHolder) {
@@ -954,14 +1050,18 @@ handleStonePositionSlider(positionValue, selectedRing = null) {
     }
   }
   
-  // Apply the new X position
-  diamondsHolder.position.x = positionValue;
+  // Apply the new X position with offset adjustment
+  // For diamondsHolder (multiple), adjust based on default offset of -0.25
+  // For diamondHolder (single), use the position value directly
+  const adjustedPositionValue = isSingleDiamond ? positionValue : positionValue - 0.25;
+  diamondsHolder.position.x = adjustedPositionValue;
   
-  // For user feedback, determine the position name
+  // For user feedback, determine the position name based on the visual position
+  // (same thresholds for both single and multiple cases)
   let positionName = "Center";
   if (positionValue < -0.03) positionName = "Left";
   else if (positionValue > 0.03) positionName = "Right";
   
-  console.log(`Changed stone position on ring ${targetRingIndex} to ${positionName} (X: ${positionValue.toFixed(3)})`);
+  console.log(`Changed stone position on ring ${targetRingIndex} to ${positionName} (X: ${adjustedPositionValue.toFixed(3)})`);
 }
 }

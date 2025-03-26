@@ -30,7 +30,15 @@ import StoneSettingPositionFree from "../../../../assets/images/StoneSetting/pos
 
 import {StoneRangeSlider} from "../../../shared/StoneRangeSlider";
 
-
+const maxStonesPerDistribution = {
+  'Together': 8,
+  'Half stone distance': 12,
+  'Whole stone distance': 15,
+  'Double stone spacing': 20,
+  'A third ring': 30,
+  'Half ring': 50,
+  'Whole ring': 69
+};
   const RingStoneStyleOptions = [
     {
       name: "Without",
@@ -294,126 +302,127 @@ const TabContent = ({
             />
           </div>
         );
-      case "Number":
-        return (
-          <div className="flex flex-col">
-            <div className="flex mb-6 gap-6">
-              <div className="w-1/2">
-                <h3 className="mb-2 font-semibold text-sm text-black">
-                  Number
-                </h3>
-                <select
-                  value={stoneNumber}
-                  onChange={(e) => {setStoneNumber(e.target.value),
-                  window.parent.postMessage(
-                    { action: "addStone", value: e.target.value , type: "Number" ,stoneDist: window.distribution },
-                    "*")
-                  }}
-                  className="border border-[#e1e1e1] p-2 rounded w-full"
-                >
-                  {Array.from({ length: 70 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-                <div
-                  className={`flex flex-col mt-2 ${
-                    stoneNumber === "1" && "cursor-not-allowed"
-                  }`}
-                >
-                  <label
-                    className={`block relative text-sm font-semibold ${
-                      stoneNumber === "1"
-                        ? "select-none opacity-40 cursor-not-allowed"
-                        : "cursor-pointer"
-                    }`}
-                  >
-                    {/* <input
-                      type="checkbox"
-                      checked={isGrouped}
-                      onChange={handleCheckboxChange}
-                      disabled={stoneNumber === "1"}
-                      className={`mr-2 ${
-                        stoneNumber === "1"
-                          ? "cursor-not-allowed disabled:opacity-40"
-                          : "cursor-pointer"
-                      } `}
-                    /> */}
-                    {/* Arrange stones as a group */}
-                  </label>
-                </div>
-              </div>
-              {stoneNumber > 1 && (
+        case "Number":
+          return (
+            <div className="flex flex-col">
+              <div className="flex mb-6 gap-6">
                 <div className="w-1/2">
                   <h3 className="mb-2 font-semibold text-sm text-black">
-                    Distribution
+                    Number
                   </h3>
                   <select
-                    value={distribution}
-                     onChange={(e) => {setDistribution(e.target.value),
-                      window.distribution = e.target.value,
-                      console.log(`Clicked distribution ${window.distribution}`)
-
-                    // window.parent.postMessage(
-                    //   { action: "addStone", value: e.target.value , stoneDist: e.target.value },
-                    //   "*")
+                    value={stoneNumber}
+                    onChange={(e) => {
+                      setStoneNumber(e.target.value),
+                      window.parent.postMessage(
+                        { action: "addStone", value: e.target.value, type: "Number", stoneDist: window.distribution },
+                        "*")
                     }}
                     className="border border-[#e1e1e1] p-2 rounded w-full"
                   >
-                    {DistributionOptions.map((size, index) => (
-                      <option key={index} value={size}>
-                        {size}
+                    {Array.from(
+                      { length: maxStonesPerDistribution[distribution] || 70 }, 
+                      (_, i) => i + 1
+                    ).map((num) => (
+                      <option key={num} value={num}>
+                        {num}
                       </option>
                     ))}
                   </select>
+                  <div
+                    className={`flex flex-col mt-2 ${
+                      stoneNumber === "1" && "cursor-not-allowed"
+                    }`}
+                  >
+                    <label
+                      className={`block relative text-sm font-semibold ${
+                        stoneNumber === "1"
+                          ? "select-none opacity-40 cursor-not-allowed"
+                          : "cursor-pointer"
+                      }`}
+                    >
+                      {/* Arrange stones as a group */}
+                    </label>
+                  </div>
+                </div>
+                {stoneNumber > 1 && (
+                  <div className="w-1/2">
+                    <h3 className="mb-2 font-semibold text-sm text-black">
+                      Distribution
+                    </h3>
+                    <select
+                      value={distribution}
+                      onChange={(e) => {
+                        setDistribution(e.target.value),
+                        window.distribution = e.target.value,
+                        console.log(`Clicked distribution ${window.distribution}`);
+                        
+                        // If current stone number exceeds max for new distribution, adjust it
+                        const maxForNewDistribution = maxStonesPerDistribution[e.target.value] || 70;
+                        if (parseInt(stoneNumber) > maxForNewDistribution) {
+                          setStoneNumber(String(maxForNewDistribution));
+                          window.parent.postMessage(
+                            { action: "addStone", value: String(maxForNewDistribution), type: "Number", stoneDist: e.target.value },
+                            "*");
+                        }
+                      }}
+                      className="border border-[#e1e1e1] p-2 rounded w-full"
+                    >
+                      {DistributionOptions.map((size, index) => (
+                        <option key={index} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Max stones: {maxStonesPerDistribution[distribution] || 70}
+                    </p>
+                  </div>
+                )}
+              </div>
+              {isGrouped && (
+                <div className="flex gap-4 mb-6">
+                  <div className="w-2/5">
+                    <h3 className="mb-2 font-semibold text-sm text-black">
+                      Stones per Group
+                    </h3>
+                    <select
+                      value={stonesPerGroup}
+                      onChange={(e) => setStonesPerGroup(e.target.value)}
+                      className="border border-[#e1e1e1] p-2 rounded w-full"
+                    >
+                      {/* Options for stones per group */}
+                      {StonesPerGroupOptions.map((num) => (
+                        <option key={num} value={num}>
+                          {num}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+        
+                  <div className="w-3/5">
+                    <h3 className="mb-2 font-semibold text-sm text-black">
+                      Division of Groups
+                    </h3>
+                    <select
+                      value={groupDivision}
+                      onChange={(e) => setGroupDivision(e.target.value)}
+                      className="border border-[#e1e1e1] p-2 rounded w-full"
+                    >
+                      {/* Options for division of groups */}
+                      {DivisionGroupsOptions.map((num) => (
+                        <option key={num} value={num}>
+                          {num}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               )}
-            </div>
-            {isGrouped && (
-              <div className="flex gap-4 mb-6">
-                <div className="w-2/5">
-                  <h3 className="mb-2 font-semibold text-sm text-black">
-                    Stones per Group
-                  </h3>
-                  <select
-                    value={stonesPerGroup}
-                    onChange={(e) => setStonesPerGroup(e.target.value)}
-                    className="border border-[#e1e1e1] p-2 rounded w-full"
-                  >
-                    {/* Options for stones per group */}
-                    {StonesPerGroupOptions.map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="w-3/5">
-                  <h3 className="mb-2 font-semibold text-sm text-black">
-                    Division of Groups
-                  </h3>
-                  <select
-                    value={groupDivision}
-                    onChange={(e) => setGroupDivision(e.target.value)}
-                    className="border border-[#e1e1e1] p-2 rounded w-full"
-                  >
-                    {/* Options for division of groups */}
-                    {DivisionGroupsOptions.map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            )}
-            <div>
-  <label className="mb-2 block font-semibold text-sm text-black">
-    Position
-  </label>
-
+              <div>
+                <label className="mb-2 block font-semibold text-sm text-black">
+                  Position
+                </label>
   <div className="flex flex-wrap gap-2.5">
     {PositionTypeOptions.map((item, index) => (
       <button
