@@ -97,9 +97,9 @@ const ringImages = {
     { id: 10, name: "Memoir 10", src: Ring1 },
     { id: 11, name: "Memoir 11", src: Ring1 },
     { id: 12, name: "Memoir 12", src: Ring1 },
-    { id: 13, name: "Memoir 13", src: Ring1 },
-    { id: 14, name: "Memoir 14", src: Ring1 },
-    { id: 15, name: "Memoir 15", src: Ring1 },
+    // { id: 13, name: "Memoir 13", src: Ring1 },
+    // { id: 14, name: "Memoir 14", src: Ring1 },
+    // { id: 15, name: "Memoir 15", src: Ring1 },
 
 
 
@@ -114,7 +114,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
   // Effect to send a message when the selectedRing is updated
   useEffect(() => {
     console.log("test", selectedRing)
-    if (selectedRing && selectedRing.name.toLowerCase().includes("engage")) {
+    if (selectedRing && (selectedRing.name.toLowerCase().includes("engage") || selectedRing.name.toLowerCase().includes("memoir")) ) {
       if(window.ringsLength ==2){
         alert("Delete a wedding ring to add an engagement ring")
         return;

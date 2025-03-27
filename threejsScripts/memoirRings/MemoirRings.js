@@ -1,0 +1,217 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+export class MemoirRings {
+  constructor(scene, modelManager) {
+    this.scene = scene;
+    this.modelManager = modelManager;
+    this.ringPath = null;
+    this.modelData = [
+      { glbPath: 'models/memoir/01.glb', texturePath: 'path/to/texture1.jpg' },
+      { glbPath: 'models/memoir/02.glb', texturePath: 'path/to/texture2.jpg' },
+      { glbPath: 'models/memoir/03.glb' },
+      { glbPath: 'models/memoir/04.glb' },
+      { glbPath: 'models/memoir/05.glb' },
+      { glbPath: 'models/memoir/06.glb' },
+      { glbPath: 'models/memoir/07.glb' },
+      { glbPath: 'models/memoir/08.glb' },
+      { glbPath: 'models/memoir/09.glb' },
+      { glbPath: 'models/memoir/10.glb' },
+      { glbPath: 'models/memoir/11.glb' },
+      { glbPath: 'models/memoir/12.glb' }
+    ];
+    // this.initLighting();
+  }
+
+  loadMemoirRingById(id) {
+    id = id - 1
+    const loaderOverlay = document.querySelector('.loader-overlay');
+    if (loaderOverlay) {
+      loaderOverlay.style.display = 'block';
+    }
+    console.log(`Loading memoir ring model with ID: ${id}`);
+    // Ensure the ID is within the range of modelData array
+    if (id < 0 || id > this.modelData.length ) {
+      console.error(`Invalid ID: ${id}. Please provide a valid model ID.`);
+      return;
+    }
+
+    // Get the model data for the given ID
+    const modelInfo = this.modelData[id];
+
+    // Check if the model path exists
+    if (!modelInfo.glbPath) {
+      console.error(`Model path not found for ID: ${id}`);
+      return;
+    }
+
+    // Load the GLTF model using GLTFLoader
+    const loader = new GLTFLoader();
+    loader.load(
+      modelInfo.glbPath,
+      (gltf) => {
+        // Add the loaded model to the scene
+        const model = gltf.scene;
+        model.position.x = 0.7;
+        model.position.y = -0.22;
+
+        model.scale.set(0.85, 0.85, 0.85)
+        this.scene.add(model);
+        this.modelManager.currentDisplayedModels.push(model);
+        // this.modelManager.applyColorToModel(model,'#D8BC7E')
+      // this.applyDiamondTextureToRing(model);
+        console.log(`Model loaded successfully: ${modelInfo.glbPath}`, model);
+        if (loaderOverlay) {
+          loaderOverlay.style.display = 'none';
+        }
+        // this.scene.ringPath = modelInfo.glbPath
+      },
+      (xhr) => {
+        // Progress callback
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+      },
+      (error) => {
+        // Error callback
+        console.error(`Error loading model: ${modelInfo.glbPath}`, error);
+      }
+    );
+  }
+  
+  applyColorExcludingMeshes(model, color, reverse = false) {
+    model.traverse((child) => {
+      // Check if the traversed object is a mesh
+      if (child.isMesh) {
+
+        if (reverse == true && child.name.includes("ring")) {
+          if (child.material && child.material.color) {
+            child.material.color.set(color);
+          }
+          console.warn("aaaaaa", child.name)
+        }
+
+        // Skip meshes whose names contain "_1"
+        if (child.name.includes("diamond") && !reverse) {
+          // Do nothing
+        }
+        // Apply the color to the mesh material
+        // if (Array.isArray(child.material)) {
+        //   // If there are multiple materials, apply to each one
+        //   child.material.forEach((mat) => {
+        //     if (mat && mat.color) {
+        //       mat.color.set(color);
+        //     }
+        //   });
+        else if (child.material && child.material.color && !reverse) {
+          console.warn("aaaaaa 2")
+          child.material.color.set(color);
+        }
+      }
+    });
+  }
+
+
+  applyDiamondTextureToRing(model) {
+    const textureUrl = 'diamondm/dtext.jpg'; // Hard-coded texture URL
+    
+    // Default effects configuration
+    const effects = {
+      map: false,
+      normalMap: true,
+      roughnessMap: true,
+      metalnessMap: false,
+      emissiveMap: false,
+      aoMap: false,
+      envMap: false,
+      displacementMap: false
+    };
+    
+    // Create a texture loader for the new texture
+    const textureLoader = new THREE.TextureLoader();
+    
+    // Load the texture
+    textureLoader.load(
+      textureUrl,
+      (texture) => {
+        // Configure texture
+        texture.encoding = THREE.sRGBEncoding;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        
+        // Find all meshes with "diamond" in their name and apply the texture
+        model.traverse((child) => {
+          if (child.isMesh && child.name.includes('diamond')) {
+            console.log(`Applying diamond texture to: ${child.name}`);
+            
+            // Store material properties that might need to be preserved
+            const originalColor = child.material ? child.material.color.clone() : null;
+            
+            // Ensure material is cloned to avoid affecting other instances
+            if (child.material) {
+              child.material = child.material.clone();
+              
+              // Apply texture to each enabled map type
+              if (effects.map) {
+                child.material.map = texture;
+              }
+              
+              if (effects.normalMap) {
+                child.material.normalMap = texture;
+                child.material.normalScale = new THREE.Vector2(1, 1);
+              }
+              
+              if (effects.roughnessMap) {
+                child.material.roughnessMap = texture;
+              }
+              
+              if (effects.metalnessMap) {
+                child.material.metalnessMap = texture;
+              }
+              
+              if (effects.emissiveMap) {
+                child.material.emissiveMap = texture;
+                child.material.emissive = new THREE.Color(1, 1, 1);
+                child.material.emissiveIntensity = 0.5;
+              }
+              
+              if (effects.aoMap) {
+                child.material.aoMap = texture;
+              }
+              
+              if (effects.envMap) {
+                child.material.envMap = texture;
+                child.material.envMapIntensity = 1.0;
+              }
+              
+              if (effects.displacementMap) {
+                child.material.displacementMap = texture;
+                child.material.displacementScale = 0.1;
+              }
+              
+              // Apply standard material properties for diamonds
+              child.material.metalness = 0.8;
+              child.material.roughness = 0;
+              
+              // Restore original color if it existed
+              if (originalColor) {
+                child.material.color.copy(originalColor);
+              }
+              
+              // Update the material
+              child.material.needsUpdate = true;
+            }
+          }
+        });
+        
+        console.log(`Diamond textures applied successfully to memoir ring model`);
+      },
+      (xhr) => {
+        // Progress callback
+        console.log(`Diamond texture loading: ${(xhr.loaded / xhr.total) * 100}% loaded`);
+      },
+      (error) => {
+        // Error callback
+        console.error('Error loading diamond texture for memoir ring:', error);
+      }
+    );
+  }
+}

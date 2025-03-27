@@ -357,6 +357,10 @@ break;
       this.modelManager.addSecondModel("engagement", selectedRing);
       
     }
+    if(type==undefined && selectedRing.name.toLowerCase().includes("memoir")){
+      this.modelManager.addSecondModel("memoir", selectedRing);
+      
+    }
     if (this.modelManager.currentDisplayedModels.length === 1 && type) {
       this.modelManager.addSecondModel(type, selectedRing); // Function to add the second ring
     } else if (this.modelManager.currentDisplayedModels.length === 1 && selectedRing) {

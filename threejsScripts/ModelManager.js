@@ -919,8 +919,21 @@ catch (error) {
     let model2;
     // console.log("loraaaaa",selectedRing)
     if (type == "engagement") {
-      console.log("loraaaaa", this.EngagementRingsins)
+      console.log("aaaaa", this.EngagementRingsins)
       this.EngagementRingsins.loadEngRingById(selectedRing.id);
+      this.currentDisplayedModels[0].position.x = -0.7;
+      if (this.shadowPlane != undefined) {
+        this.shadowPlane.position.x = -0.7
+      }
+      if (this.shadowClone != undefined) {
+        this.shadowClone.visible = true;
+        this.shadowClone.position.x = 0.7
+      }
+      return;
+    }
+    if (type == "memoir") {
+      console.log("raaaaa memoir", this.MemoirRingsins)
+      this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
       this.currentDisplayedModels[0].position.x = -0.7;
       if (this.shadowPlane != undefined) {
         this.shadowPlane.position.x = -0.7

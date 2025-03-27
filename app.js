@@ -13,6 +13,7 @@ import {EngagementRings} from "./threejsScripts/engagementRings/EngagementRings.
 import { GrooveManager } from './threejsScripts/grooveManager/GrooveManager.js';
 import { StepsManager } from './threejsScripts/grooveManager/StepsManager.js';
 import { StoneManager } from './threejsScripts/stoneManager/stoneManager.js';
+import { MemoirRings } from './threejsScripts/memoirRings/MemoirRings.js';
 
 
 
@@ -43,11 +44,14 @@ class RotatingRingApp {
     
     this.PreciousMetalHelper = new PreciousMetalHelper(this.scene,this.PreciousMetalins,this.modelManager  )
     this.EngagementRings = new EngagementRings(this.scene,this.modelManager);
+    this.MemoirRings = new MemoirRings(this.scene,this.modelManager);
+
     this.GrooveManager = new GrooveManager(this.scene,this.modelManager)
     this.StepsManager = new StepsManager(this.scene,this.modelManager, this.GrooveManager)
     this.StoneManager = new StoneManager(this.scene,this.modelManager)
     this.modelManager.StoneManagerIns = this.StoneManager
     this.modelManager.EngagementRingsins  = this.EngagementRings 
+    this.modelManager.MemoirRingsins  = this.MemoirRings
     this.modelManager.GrooveManagerIns  = this.GrooveManager 
     this.modelManager.StepsManagerIns = this.StepsManager
 

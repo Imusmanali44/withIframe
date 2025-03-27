@@ -387,46 +387,7 @@ export class StoneManager {
       }
     }
     
-    // NEW: Maximum allowable diamond count validation based on distribution type
-    // Define maximum diamond counts for each distribution type to prevent visual overlap
-    // const maxDiamondCounts = {
-    //   'Together': 8,
-    //   'Half stone distance': 12,
-    //   'Whole stone distance': 15,
-    //   'Double stone spacing': 20,
-    //   'A third ring': 30,
-    //   'Half ring': 50,
-    //   'Whole ring': 69
-    // };
-    
-    // Get the maximum allowed for the current distribution type
-    // let maxAllowedDiamonds;
-    // if (config.distribution in maxDiamondCounts) {
-    //   maxAllowedDiamonds = maxDiamondCounts[config.distribution];
-    // } else {
-    //   // Default fallback if the distribution is not in our predefined list
-    //   maxAllowedDiamonds = 4;
-    // }
-    
-    // // Check if the provided diamond count exceeds the maximum allowed
-    // if (config.diamondCount > maxAllowedDiamonds) {
-    //   // Create warning message with helpful information
-    //   const warningMessage = `Too many diamonds (${config.diamondCount}) for "${config.distribution}" distribution.
-    //   Maximum allowed: ${maxAllowedDiamonds}.
-    //   Proceeding with ${maxAllowedDiamonds} diamonds instead.`;
-      
-    //   console.warn(warningMessage);
-      
-    //   // Show alert to user
-    //   if (typeof alert === 'function') {
-    //     alert(warningMessage);
-    //   }
-      
-    //   // Adjust the diamond count to the maximum allowed
-    //   config.diamondCount = maxAllowedDiamonds;
-    // }
-    
-    // Center the distribution around the start angle
+  
     const startAngle = config.startAngle - (totalAngle / 2);
   
     console.log(`Loading diamond model: ${config.modelUrl}`);
