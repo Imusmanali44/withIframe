@@ -10,7 +10,7 @@ import Bender from '/utils/bender.js'
 import { TextureLoader } from 'three';
 // import { CSG } from 'three-bvh-csg';
 // import { Brush, Evaluator, SUBTRACTION }  from 'three-bvh-csg';
-import {  Brush, Evaluator, SUBTRACTION  } from 'three-bvh-csg';
+// import {  Brush, Evaluator, SUBTRACTION  } from 'three-bvh-csg';
 
 
 

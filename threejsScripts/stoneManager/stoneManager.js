@@ -6,9 +6,9 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { Flow } from 'three/examples/jsm/modifiers/CurveModifier.js';
 
 // import  CSG  from '/utils/CSGMesh.js'
-import Bender from '/utils/bender.js'
+// import Bender from '/utils/bender.js'
 import { TextureLoader } from 'three';
-import { Target } from 'lucide-react';
+// import { Target } from 'lucide-react';
 
 export class StoneManager {
   constructor(scene,modelManager) {
@@ -474,14 +474,77 @@ export class StoneManager {
         // diamondsHolder.position.z = 0.15;
       } 
       else if (modelIndex === 1) {
-        diamondsHolder.position.z = 0.14;
+        // diamondsHolder.position.z += 0.02;
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x += 0.042;
+        diamondsHolder.scale.y += 0.042;
+
+
+
       }
-      else if (modelIndex >= 2 && modelIndex <= 5) {
-        diamondsHolder.position.z = 0.13;
+      else if (modelIndex == 2 ) {
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x += 0.042;
+        diamondsHolder.scale.y += 0.042;
       }
-      else if (modelIndex >= 6 && modelIndex <= 10) {
-        diamondsHolder.position.z = 0.12;
+      else if (modelIndex == 4 ) {
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x += 0.035;
+        diamondsHolder.scale.y += 0.035;
       }
+      else if (modelIndex == 5 ) {
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x += 0.005;
+        diamondsHolder.scale.y += 0.005;
+      }
+      else if (modelIndex == 6 ) {
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x -= 0.027;
+        diamondsHolder.scale.y -= 0.027;
+      }
+      else if (modelIndex == 7 ) {
+        // diamondsHolder.scale.z += 0.045;
+        // diamondsHolder.scale.x -= 0.05;
+        // diamondsHolder.scale.y -= 0.05;
+      }
+      else if (modelIndex == 8 ) {
+        // diamondsHolder.scale.z += 0.045;
+        // diamondsHolder.scale.x -= 0.05;
+        // diamondsHolder.scale.y -= 0.05;
+      }
+      else if (modelIndex == 9 ) {
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x += 0.035;
+        diamondsHolder.scale.y += 0.035;
+      }
+      else if (modelIndex == 10 ) {
+        // diamondsHolder.scale.z += 0.045;
+        // diamondsHolder.scale.x += 0.035;
+        // diamondsHolder.scale.y += 0.035;
+      }
+      else if (modelIndex == 11 ) {
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x += 0.023;
+        diamondsHolder.scale.y += 0.023;
+      }
+      else if (modelIndex == 12 ) {
+        // diamondsHolder.scale.z += 0.045;
+        // diamondsHolder.scale.x += 0.035;
+        // diamondsHolder.scale.y += 0.035;
+      }
+      else if (modelIndex == 13 ) {
+        // diamondsHolder.scale.z += 0.045;
+        // diamondsHolder.scale.x += 0.035;
+        // diamondsHolder.scale.y += 0.035;
+      }
+      else if (modelIndex == 14 ) {
+        // diamondsHolder.scale.z += 0.045;
+        diamondsHolder.scale.x -= 0.027;
+        diamondsHolder.scale.y -= 0.027;
+      }
+      // else if (modelIndex >= 6 && modelIndex <= 10) {
+      //   diamondsHolder.position.z = 0.12;
+      // }
       else {
         diamondsHolder.position.z = 0.14; // Default
       }

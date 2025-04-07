@@ -18,7 +18,13 @@ export class MemoirRings {
       { glbPath: 'models/memoir/09.glb' },
       { glbPath: 'models/memoir/10.glb' },
       { glbPath: 'models/memoir/11.glb' },
-      { glbPath: 'models/memoir/12.glb' }
+      { glbPath: 'models/memoir/12.glb' },
+      { glbPath: 'models/memoir/13.glb' },
+      { glbPath: 'models/memoir/14.glb' },
+      { glbPath: 'models/memoir/15.glb' },
+      { glbPath: 'models/memoir/16.glb' },
+      { glbPath: 'models/memoir/17.glb' },
+      { glbPath: 'models/memoir/18.glb' }
     ];
     // this.initLighting();
   }

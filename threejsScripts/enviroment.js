@@ -54,7 +54,7 @@ export class Environment {
 //     // this.scene.backgroundBlurriness = 1;
 //   });
 // }
-loadEnvironment() {
+loadEnvironment(path='./bg/Jewelry-HDRI-Studio-Light-Beel-v5-gray.hdr') {
   return new Promise((resolve, reject) => {
     const loader = new RGBELoader();
     loader.setDataType(THREE.FloatType);
@@ -77,7 +77,8 @@ loadEnvironment() {
         resolve(envMap); // Resolve the promise with the environment map
       },
       undefined, // onProgress (optional)
-      (error) => {
+      async (error) => {
+        await this.loadEnvironment('./bg/brown_photostudio_04_2k.hdr')
         console.error('An error occurred while loading the environment texture', error);
         reject(error); // Reject the promise if an error occurs
       }
