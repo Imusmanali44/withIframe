@@ -64,7 +64,10 @@ export const GrooveAndEdge = ({rings, isPair, setIsPair, activeRing }) => {
   console.log("selectedGrooveOptions", selectedGrooveOptions);
   console.log("selectedLeftStepOptions", selectedLeftStepOptions);
   console.log("selectedRightStepOptions", selectedRightStepOptions);
-
+  // window.parent.postMessage(
+  //   { action: "addGroove", value: selectedGrooveOptions , type: "size" },
+  //   "*"
+  // );
   return (
     <div className="mb-auto">
       {rings &&

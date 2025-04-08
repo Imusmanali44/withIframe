@@ -187,7 +187,7 @@ export class MessageHandler {
         // }
         break;
       case "addGroove":
-        console.log("calss groove", type, value)
+        console.log("calss groove", type, value, selectedRing)
         if(type=="defaultAdd"){
           
           this.modelManager.GrooveManagerIns.addGroove(selectedRing);
@@ -201,6 +201,12 @@ export class MessageHandler {
         if(type=="Without"){
           this.modelManager.GrooveManagerIns.removeMidMeshes();
           this.modelManager.GrooveBool = false; 
+          break;
+        }
+        if(type=="width" || type=="depth"){
+          this.modelManager.GrooveManagerIns.adjustWidthAndDepth(selectedRing,value,type);
+          // this.modelManager.GrooveBool = true; 
+          break;
         }
         else{
 

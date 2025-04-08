@@ -326,7 +326,10 @@ async loadMidMesh(type, isTri) {
       this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,false)
 
     }
- 
+    // this.defaultValueWidth1 = this.midMesh.scale.x
+    // this. defaultValueDepth1 = this.midMesh.scale.y
+    // this. defaultValueWidth2 = this.midMesh2.scale.x
+    // this. defaultValueDepth2 = this.midMesh2.scale.y
 
     console.log("Loaded and stored midMesh");
 

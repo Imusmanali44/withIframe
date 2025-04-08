@@ -5,15 +5,15 @@ const widthOption = [
   { name: "0.30 mm", value: "0.30" },
   { name: "0.40 mm", value: "0.40" },
   { name: "0.50 mm", value: "0.50" },
-  { name: "0.60 mm", value: "0.60" },
+  // { name: "0.60 mm", value: "0.60" },
 ];
 
 const depthOption = [
   { name: "0.20 mm", value: "0.20" },
   { name: "0.30 mm", value: "0.30" },
   { name: "0.40 mm", value: "0.40" },
-  { name: "0.50 mm", value: "0.50" },
-  { name: "0.60 mm", value: "0.60" },
+  // { name: "0.50 mm", value: "0.50" },
+  // { name: "0.60 mm", value: "0.60" },
 ];
 
 const surfaceOption = [
@@ -31,7 +31,13 @@ const WidthDepthSurface = ({ groove, selectedOptions, setSelectedOptions }) => {
         name: selected.name,
         value: selected.value,
       },
+      
     }));
+    console.log(`Groove ${id} changed to:`, id);
+    window.parent.postMessage(
+      { action: "addGroove", value: selected.value , type: id },
+      "*"
+    );
   };
 
   return (

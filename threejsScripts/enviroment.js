@@ -78,7 +78,7 @@ loadEnvironment(path='./bg/Jewelry-HDRI-Studio-Light-Beel-v5-gray.hdr') {
       },
       undefined, // onProgress (optional)
       async (error) => {
-        await this.loadEnvironment('./bg/brown_photostudio_04_2k.hdr')
+        // await this.loadEnvironment('./bg/brown_photostudio_04_2k.hdr')
         console.error('An error occurred while loading the environment texture', error);
         reject(error); // Reject the promise if an error occurs
       }
