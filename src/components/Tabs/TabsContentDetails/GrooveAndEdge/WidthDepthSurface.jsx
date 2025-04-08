@@ -12,8 +12,8 @@ const depthOption = [
   { name: "0.20 mm", value: "0.20" },
   { name: "0.30 mm", value: "0.30" },
   { name: "0.40 mm", value: "0.40" },
-  // { name: "0.50 mm", value: "0.50" },
-  // { name: "0.60 mm", value: "0.60" },
+  { name: "0.50 mm", value: "0.50" },
+  { name: "0.60 mm", value: "0.60" },
 ];
 
 const surfaceOption = [

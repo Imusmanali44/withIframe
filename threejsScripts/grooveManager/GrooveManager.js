@@ -232,8 +232,8 @@ export class GrooveManager {
         console.log("scale chk", scale)
         this.defaultValueWidth1 = scale.x
         this. defaultValueDepth1 = scale.y
-        // this. defaultValueWidth2 = this.midMesh2.scale.x
-        // this. defaultValueDepth2 = this.midMesh2.scale.y
+        // this. defaultValueWidth2 = this.modelManager.midMesh2.scale.x
+        // this. defaultValueDepth2 = this.modelManager.midMesh2.scale.y
         return scale;
     }
     removeMidMeshes() {
@@ -311,122 +311,76 @@ export class GrooveManager {
 
         console.log("Mid meshes removed from scene and set to null.", this.scene);
     }
-    adjustWidthAndDepth(ring=null, value, type){
-      
-        ring = this.modelManager.selectedModel
-        console.log("razi work",ring,   value)
+    adjustWidthAndDepth(ring = null, value, type) {
+        ring = this.modelManager.selectedModel;
+        console.log("razi work", ring, value, type);
+        
         if (ring == 1) {
-            if(type=="width"){
-            if(value==0.20){
-                // this.modelManager.midmeshGroove1Ring1.scale.x = value
-                // this.modelManager.midmeshGroove2Ring1.scale.x = value
-                // this.modelManager.midmeshGroove3Ring1.scale.x = value
-    
-                this.modelManager.midMesh.scale.x =  this.defaultValueWidth1
-
+            // Ring 1 adjustments
+            if (type == "width") {
+                if (value == 0.20) {
+                    this.modelManager.midMesh.scale.x = this.defaultValueWidth1;
+                } else if (value == 0.30) {
+                    this.modelManager.midMesh.scale.x = this.defaultValueWidth1 + 0.16;
+                } else if (value == 0.40) {
+                    this.modelManager.midMesh.scale.x = this.defaultValueWidth1 + 0.32;
+                } else if (value == 0.50) {
+                    this.modelManager.midMesh.scale.x = this.defaultValueWidth1 + 0.48;
+                }
+            } else if (type == "depth") {
+                if (value == 0.20) {
+                    this.modelManager.midMesh.scale.y = this.defaultValueDepth1;
+                    this.modelManager.midMesh.scale.z = this.defaultValueDepth1;
+                } else if (value == 0.30) {
+                    this.modelManager.midMesh.scale.y = this.defaultValueDepth1 - 0.008;
+                    this.modelManager.midMesh.scale.z = this.defaultValueDepth1 - 0.008;
+                } else if (value == 0.40) {
+                    this.modelManager.midMesh.scale.y = this.defaultValueDepth1 - 0.0125
+                    this.modelManager.midMesh.scale.z = this.defaultValueDepth1 - 0.0125
+                } else if (value == 0.50) {
+                    this.modelManager.midMesh.scale.y = this.defaultValueDepth1 - 0.0145 ;
+                    this.modelManager.midMesh.scale.z = this.defaultValueDepth1 - 0.0145 ;
+                }
+                else if (value == 0.60) {
+                    this.modelManager.midMesh.scale.y = this.defaultValueDepth1 - 0.0165  ;
+                    this.modelManager.midMesh.scale.z = this.defaultValueDepth1 - 0.0165  ;
+                }
             }
-            if(value==0.30){
-                this.modelManager.midMesh.scale.x += 0.12
-
-                
+        } else if (ring == 2) {
+            // Ring 2 adjustments - base scale is 0.8 of ring 1
+            const ring2BaseWidthScale = this.defaultValueWidth1 * 0.85;
+            const ring2BaseDepthScale = this.defaultValueDepth1 * 0.85;
+            
+            if (type == "width") {
+                if (value == 0.20) {
+                    this.modelManager.midMesh2.scale.x = ring2BaseWidthScale;
+                } else if (value == 0.30) {
+                    this.modelManager.midMesh2.scale.x = ring2BaseWidthScale + 0.16 
+                } else if (value == 0.40) {
+                    this.modelManager.midMesh2.scale.x = ring2BaseWidthScale + 0.32 
+                } else if (value == 0.50) {
+                    this.modelManager.midMesh2.scale.x = ring2BaseWidthScale + 0.48 
+                }
+            } else if (type == "depth") {
+                if (value == 0.20) {
+                    this.modelManager.midMesh2.scale.y = ring2BaseDepthScale;
+                    this.modelManager.midMesh2.scale.z = ring2BaseDepthScale;
+                } else if (value == 0.30) {
+                    this.modelManager.midMesh2.scale.y = ring2BaseDepthScale - 0.008 
+                    this.modelManager.midMesh2.scale.z = ring2BaseDepthScale - 0.008 
+                } else if (value == 0.40) {
+                    this.modelManager.midMesh2.scale.y = ring2BaseDepthScale - 0.0125
+                    this.modelManager.midMesh2.scale.z = ring2BaseDepthScale - 0.0125 
+                } else if (value == 0.50) {
+                    this.modelManager.midMesh2.scale.y = ring2BaseDepthScale - 0.0145 
+                    this.modelManager.midMesh2.scale.z = ring2BaseDepthScale - 0.0145 
+                }
+             else if (value == 0.60) {
+                this.modelManager.midMesh2.scale.y = ring2BaseDepthScale - 0.0165 
+                this.modelManager.midMesh2.scale.z = ring2BaseDepthScale - 0.0165 
             }
-            if(value==0.40){
-                this.modelManager.midMesh.scale.x += 0.13
-
-                
             }
-            if(value==0.50){
-                this.modelManager.midMesh.scale.x += 0.14
-
-                
-            } }
-            if(value==0.20){
-                // this.modelManager.midmeshGroove1Ring1.scale.x = value
-                // this.modelManager.midmeshGroove2Ring1.scale.x = value
-                // this.modelManager.midmeshGroove3Ring1.scale.x = value
-    
-                this.modelManager.midMesh.scale.y =this. defaultValueDepth1
-                this.modelManager.midMesh.scale.z = this.defaultValueDepth1
-
-
-            }
-            if(type=="depth"){
-            if(value==0.30){
-                this.modelManager.midMesh.scale.y -= 0.008
-                this.modelManager.midMesh.scale.z -= 0.008
-
-
-                
-            }
-            if(value==0.40){
-                this.modelManager.midMesh.scale.y -= 0.0115
-                this.modelManager.midMesh.scale.z -= 0.0115
-
-
-                
-            }
-            if(value==0.50){
-                this.modelManager.midMesh.scale.y -= 0.0117
-                this.modelManager.midMesh.scale.z -= 0.0117
-
-
-                
-            } }
         }
-        else if (ring == 2) {
-            // this.modelManager.midmeshGroove1Ring2.scale.x = value
-            // this.modelManager.midmeshGroove2Ring2.scale.x = value
-            // this.modelManager.midmeshGroove3Ring2.scale.x = value
-
-            if(value.depth.value==0.20){
-                // this.modelManager.midmeshGroove1Ring1.scale.x = value
-                // this.modelManager.midmeshGroove2Ring1.scale.x = value
-                // this.modelManager.midmeshGroove3Ring1.scale.x = value
-    
-                this.modelManager.midMesh.scale.y =this. defaultValueDepth1
-                this.modelManager.midMesh.scale.z = this.defaultValueDepth1
-
-
-            }
-            if(value.depth.value==0.30){
-                this.modelManager.midMesh.scale.y -= 0.008
-                this.modelManager.midMesh.scale.z -= 0.008
-
-
-                
-            }
-            if(value.depth.value==0.40){
-                this.modelManager.midMesh.scale.y -= 0.0115
-                this.modelManager.midMesh.scale.z -= 0.0115
-
-
-                
-            }
-            if(value.depth.value==0.50){
-                this.modelManager.midMesh.scale.y -= 0.0117
-                this.modelManager.midMesh.scale.z -= 0.0117
-
-
-                
-            }
-            if(value.width.value==0.30){
-                this.modelManager.midMesh2.scale.x += 0.12
-
-                
-            }
-            if(value.width.value==0.40){
-                this.modelManager.midMesh2.scale.x += 0.13
-
-                
-            }
-            if(value.width.value==0.50){
-                this.modelManager.midMesh2.scale.x += 0.14
-
-                
-            }
-            // this.modelManager.midMesh2.scale.x = value
-        }
-
     }
 
     addGroove(ring) {
