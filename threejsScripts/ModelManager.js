@@ -55,7 +55,7 @@ export class ModelManager {
     // this.scene.add(this.modelGroupRing1);
     // this.scene.add(this.modelGroupRing2);
 
-    this.loadMatCapTextures();
+    // this.loadMatCapTextures();
   }
   getCurrentDisplayedModels() {
 
@@ -64,90 +64,81 @@ export class ModelManager {
   }
   addShadowPair() {
     if (this.shadowEnable) {
-      const textureLoader = new TextureLoader();
+      const textureLoader = new THREE.TextureLoader();
       // Load the PNG texture for the shadow
       const shadowTexture = textureLoader.load('./models/shadow.png', (texture) => {
         texture.flipY = true; // Correct orientation if needed
       });
-
-      // Create a plane for the shadow
+  
+      // Create materials with renderOrder to prevent z-fighting
+      const shadowMaterial = new THREE.MeshBasicMaterial({
+        map: shadowTexture,
+        transparent: true,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1
+      });
+  
+      // Create a plane for the first shadow
       this.shadowPlane = new THREE.Mesh(
-        new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
-        new THREE.MeshBasicMaterial({
-          map: shadowTexture,
-          transparent: true,
-          // alphaTest: 0.02, // Adjust alpha test for transparency
-       // Ensure the shadow PNG's transparency works
-        })
+        new THREE.PlaneGeometry(2, 2),
+        shadowMaterial.clone()
       );
-
+  
       // Position the plane below the model
-      this.shadowPlane.scale.set(0.7, 1.3, 1)
+      this.shadowPlane.scale.set(0.7, 1.3, 1);
       this.shadowPlane.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-      this.shadowPlane.position.y = -1.22; // Slightly below the model to avoid z-fighting
-      this.shadowPlane.position.x = -0.7; // Slightly below the model to avoid z-fighting
-
-      this.shadowClone = new THREE.Mesh(
-        new THREE.PlaneGeometry(2, 2), // Adjust size to fit your model
-        new THREE.MeshBasicMaterial({
-          map: shadowTexture,
-          transparent: true,
-          // alphaTest: 0.02, // Adjust alpha test for transparency
-
-          polygonOffset: true, // Enable polygon offset
-          polygonOffsetFactor: -1, // Push the shadow further back
-          polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
-        })
-      );
-      this.shadowClone.scale.set(0.7, 1.3, 1)
-
-      this.shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
-      this.shadowClone.position.y = -1.22;
-      this.shadowClone.position.x = 0.7
-
-      this.shadowCloneRing3 = this.shadowClone.clone()
-      this.shadowCloneRing4 = this.shadowClone.clone()
-      this.scene.add(this.shadowCloneRing3)
-      this.scene.add(this.shadowCloneRing4)
-      this.shadowCloneRing3.visible = false
-      this.shadowCloneRing4.visible = false
-      // Add the shadow plane to the scene
+      this.shadowPlane.position.y = -1.22; // Slightly below the model
       this.shadowPlane.renderOrder = 1;
-this.shadowClone.renderOrder = 2;
-this.shadowCloneRing3.renderOrder = 3;
-this.shadowCloneRing4.renderOrder = 4;
-this.shadowPlane.position.y = -1.22;
-this.shadowClone.position.y = -1.221;
-this.shadowCloneRing3.position.y = -1.222;
-this.shadowCloneRing4.position.y = -1.223;
+  
+      // Create second shadow
+      this.shadowClone = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        shadowMaterial.clone()
+      );
+      this.shadowClone.scale.set(0.7, 1.3, 1);
+      this.shadowClone.rotation.x = -Math.PI / 2;
+      this.shadowClone.position.y = -1.221; // Slight offset to prevent z-fighting
+      this.shadowClone.renderOrder = 2;
+  
+      // Create third shadow
+      this.shadowCloneRing3 = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        shadowMaterial.clone()
+      );
+      this.shadowCloneRing3.scale.set(0.7, 1.3, 1);
+      this.shadowCloneRing3.rotation.x = -Math.PI / 2;
+      this.shadowCloneRing3.position.y = -1.222; // Slight offset to prevent z-fighting
+      this.shadowCloneRing3.renderOrder = 3;
+  
+      // Create fourth shadow
+      this.shadowCloneRing4 = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        shadowMaterial.clone()
+      );
+      this.shadowCloneRing4.scale.set(0.7, 1.3, 1);
+      this.shadowCloneRing4.rotation.x = -Math.PI / 2;
+      this.shadowCloneRing4.position.y = -1.223; // Slight offset to prevent z-fighting
+      this.shadowCloneRing4.renderOrder = 4;
+  
+      // Add all shadows to the scene
       this.scene.add(this.shadowPlane);
       this.scene.add(this.shadowClone);
+      this.scene.add(this.shadowCloneRing3);
+      this.scene.add(this.shadowCloneRing4);
+      
+      // Initially hide all shadows
+      this.shadowPlane.visible = false;
+      this.shadowClone.visible = false;
+      this.shadowCloneRing3.visible = false;
+      this.shadowCloneRing4.visible = false;
+      
+      // Update shadow visibility based on ring visibility
+      this.updateShadowPositions();
+      
       this.shadowEnable = false;
+    } }
 
-    }
-  }
-  loadMatCapTextures() {
-    // const textureLoader = new THREE.TextureLoader();
-
-    // // Create promises for matcap and highlight textures
-    // this.matcapPromise = new Promise((resolve, reject) => {
-    //   textureLoader.load('./models/mat/MatCap.jpg', (texture) => {
-    //     this.matcapTexture = texture;
-    //     this.matcapTexture.needsUpdate = true;
-    //     resolve();
-    //   }, undefined, (err) => reject(err));
-    // });
-
-    // this.highlightPromise = new Promise((resolve, reject) => {
-    //   textureLoader.load('./models/mat/MatCap2.jpg', (texture) => {
-    //     this.highlightTexture = texture;
-    //     this.highlightTexture.needsUpdate = true;
-    //     resolve();
-    //   }, undefined, (err) => reject(err));
-    // });
-
-    // console.log("Loading matcaps...");
-  }
   async loadModels(modelData) {
     this.modelLoadQueue = [...modelData]; // Keep track of original order
     this.models = new Array(modelData.length).fill(null); // Pre-allocate array with nulls
@@ -527,36 +518,7 @@ catch (error) {
     // Apply thickness scaling based on normalized thickness
     model.scale.setY(normalizedThickness * thicknessFactor); // Adjust for Y axis
     model.scale.setZ(normalizedThickness * thicknessFactor); // Adjust for Z axis
-    // const applyThicknessScaling = (mesh) => {
-    //   if (mesh.name.includes('Sides')) {
-    //     // Sides mesh: Increase height vertically (Y-axis)
-    //     mesh.scale.y = normalizedThickness;
-    //   } else if ( mesh.name.includes('Outer')) {
-    //     // Inner and outer meshes: Scale X and Z to expand radius proportionally
-    //     // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
-    //     mesh.scale.y = normalizedThickness ;
-    //     // mesh.scale.z = normalizedThickness;
-    //   }
-    //   else if ( mesh.name.includes('Inner')) {
-    //     // Inner and outer meshes: Scale X and Z to expand radius proportionally
-    //     // const radiusScale = 1 + (thicknessValue - minThickness) * radiusScaleFactor;
-    //     mesh.scale.y += 0.1 ;
-    //     // mesh.scale.z = normalizedThickness;
-    //   }
-    // };
-
-    // // Traverse the model and apply scaling
-    // model.traverse((child) => {
-    //   if (child.isMesh) {
-    //     applyThicknessScaling(child);
-    //   }
-    // });
-    // If pairing is enabled, apply the same scaling to the second ring in the pair
-    // if (isPair && this.currentDisplayedModels.length > selectedRingId) {
-    //   const secondRing = this.currentDisplayedModels[selectedRingId]; // Assuming the next ring in the pair
-    //   secondRing.scale.setY(normalizedThickness * thicknessFactor); // Adjust Y axis for second ring
-    //   secondRing.scale.setZ(normalizedThickness * thicknessFactor); // Adjust Z axis for second ring
-    // }
+   
 
     console.log(`Ring ${selectedRingId} thickness changed to: ${thicknessValue}mm`);
   }
@@ -611,272 +573,437 @@ catch (error) {
 
 
 
-
   switchModel(index, selectedRingId = 1, pair1 = true, pair2 = false) {
     this.currentColor = "#D8BC7E";
     // this.GrooveManagerIns.removeMidMeshes();
-
+  
     if (this.PreciousMetal.isEnable == true) {
       // this.PreciousMetal.removeHelperModelAndClipping(1);
       // this.PreciousMetal.removeHelperModelAndClipping(2);
-
     }
     else {
       // this.PreciousMetal.isEnable == false
     }
+    
     if (index < 0 || index >= this.models.length) {
       console.warn('Invalid model index:', index);
       return;
     }
+    
     // this.engraveTextOnModel("GGGGG")
     // Handle pairing logic
-    console.log("chk 0", pair1, selectedRingId, this.pair1)
-
+    console.log("chk 0", pair1, selectedRingId, this.pair1);
+  
+    this.selectedModel = selectedRingId; // Store which ring is selected
+  
     if (selectedRingId == 1 || selectedRingId == 2) {
-
       // Change both 1st and 2nd rings
       this.showCurrentModels(index, this.pair1); // For 1st and 2nd rings
       // this.loadDiamondToRing({
       //   scale: 100
       // });
-      console.log("chk 1")
-      let prevVal = 0
+      console.log("chk 1");
+      let prevVal = 0;
       if (this.PreciousMetal.isEnable == true) {
-        console.log("chk 2")
-
-        let ring1 = this.currentDisplayedModels[0]
-        let ring2 = this.currentDisplayedModels[1]
-        let triBool
+        console.log("chk 2");
+  
+        let ring1 = this.currentDisplayedModels[0];
+        let ring2 = this.currentDisplayedModels[1];
+        let triBool;
         if (this.PreciousMetal.currentVal) {
-          prevVal = this.PreciousMetal.currentVal
+          prevVal = this.PreciousMetal.currentVal;
         }
         else {
-          prevVal = "1:1"
+          prevVal = "1:1";
         }
         if (this.PreciousMetal.triBool) {
-          triBool = this.PreciousMetal.triBool
+          triBool = this.PreciousMetal.triBool;
         }
-        console.log("chk aa", prevVal, triBool)
+        console.log("chk aa", prevVal, triBool);
         if (prevVal == "Segment 1:1") {
-          this.PreciousMetal.biTriPair(prevVal, false)
+          this.PreciousMetal.biTriPair(prevVal, false);
         }
         else {
-          console.log("chk 3", selectedRingId, ring1, ring2)
+          console.log("chk 3", selectedRingId, ring1, ring2);
           if (selectedRingId == 1) {
-
             this.PreciousMetal.removeHelperModelAndClipping(1);
-
           }
           else {
-
             this.PreciousMetal.removeHelperModelAndClipping(2);
-
           }
-
-          this.PreciousMetal.biTriPair(prevVal, triBool)
+          this.PreciousMetal.biTriPair(prevVal, triBool);
         }
-
       }
     } else if (pair2) {
-
       // Change both 3rd and 4th rings
       this.showThirdModel(index, pair2);  // For 3rd ring
       this.showFourthModel(index, pair2); // For 4th ring
     } else {
       // Only change the selected ring
-      if (selectedRingId === 1 || selectedRingId === 2) {
+      if (selectedRingId === 1) {
         this.currentModelIndex = index;
-        this.showCurrentModels(index);
+        this.showCurrentModels(index, false); // Only update first ring
         // this.applyColorToModel(this.currentDisplayedModels[0], "#D8BC7E")
-
+      } else if (selectedRingId === 2) {
+        this.currentModelIndex = index;
+        this.showSecondModel(index); // Use our new function for the second ring
         // this.applyColorToModel(this.currentDisplayedModels[1], "#D8BC7E")
-
       } else if (selectedRingId === 3 && this.currentDisplayedModels[2]) {
         this.currentModelIndex = index;
-
-        this.showThirdModel(index);
+        this.showThirdModel(index, false);
       } else if (selectedRingId === 4 && this.currentDisplayedModels[3]) {
         this.currentModelIndex = index;
-        this.showFourthModel(index);
+        this.showFourthModel(index, false);
       } else {
         console.warn("Invalid ring selection for model switching.");
       }
     }
-  }
-
-  showThirdModel(index, pair2 = false) {
-    const model = this.models[index].clone();
-    const model3 = this.models[index].clone();
-    const model4 = this.models[index].clone();
-
-    // If pairing for 3rd and 4th models is active
-    if (pair2) {
-
-      this.scene.remove(this.currentDisplayedModels[2]);
-      this.scene.remove(this.currentDisplayedModels[3]);
-
-      model3.position.set(1.0, 0, 0); // Position the third model
-      model4.position.set(1.5, 0, 0); // Position the fourth model
-      model4.scale.set(0.85, 0.85, 0.85); // Scale down the fourth model
-
-      this.scene.add(model3);
-      this.scene.add(model4);
-      model3.visible = true;
-      model4.visible = true;
-      this.currentDisplayedModels[2] = model3;
-      this.currentDisplayedModels[3] = model4;
-    } else {
-      // Only switch the third model if no pair is active
-      if (!this.currentDisplayedModels[3]) {
-        // console.log("hello", this.currentDisplayedModels[3])
-        this.scene.remove(this.currentDisplayedModels[2]); // Remove old third model
-        model3.position.set(1.0, 0, 0); // Position new third model 
-        this.scene.add(model3);
-        model3.visible = true;
-        this.currentDisplayedModels[2] = model3;
-      }
-      else {
-        // console.log("hello 2", this.currentDisplayedModels[3])
-
-        this.scene.remove(this.currentDisplayedModels[2]); // Remove old third model
-        model3.position.set(0.5, 0, 0); // Position new third model 
-        this.scene.add(model3);
-        model3.visible = true;
-        this.currentDisplayedModels[2] = model3;
-
-
-
-      }
-
-
-    }
-  }
-
-
-
-
-  showFourthModel(index, pair2 = false) {
-    const model4 = this.models[index].clone();
-    const model3 = this.models[index].clone();  // Also handle third model if pair2 is true
-
-    if (pair2) {
-      // Remove both third and fourth models
-      this.scene.remove(this.currentDisplayedModels[2]);
-      this.scene.remove(this.currentDisplayedModels[3]);
-      // console.log("pair yes 2")
-      // Set positions for third and fourth models
-      model3.position.set(0.5, 0, 0);  // Position third model
-      model4.position.set(1.5, 0, 0);  // Position fourth model
-      model4.scale.set(0.85, 0.85, 0.85);    // Scale down the fourth model
-
-      // Add both models back to the scene
-      this.scene.add(model3);
-      this.scene.add(model4);
-      model3.visible = true;
-      model4.visible = true;
-
-      // Update displayed models array
-      this.currentDisplayedModels[2] = model3;
-      this.currentDisplayedModels[3] = model4;
-    } else {
-      // If no pairing, just switch the fourth model
-      // console.log("pair no 2")
-
-      this.scene.remove(this.currentDisplayedModels[3]);  // Remove the current fourth model
-      model4.position.set(1.5, 0, 0);  // Set position for new fourth model
-      model4.scale.set(1, 1, 1); // Reset scale
-      this.scene.add(model4);
-      model4.visible = true;
-
-      // Update the fourth model in the array
-      this.currentDisplayedModels[3] = model4;
-    }
+    
+    // Ensure proper positions for all rings
+    this.updateRingPositions();
   }
 
   showCurrentModels(index, pair1 = false) {
     const model = this.models[index];
     const model1 = this.cloneModelWithUniqueMaterial(model);
-    const model2 = this.cloneModelWithUniqueMaterial(model);
-
-    if (this.pair1) {
+    
+    if (this.pair1 && pair1) {
+      // Create and set up second model when showing as a pair
+      const model2 = this.cloneModelWithUniqueMaterial(model);
+      
       // Hide both models before showing new ones
-      // console.log("razi 1", this.pair1)
       this.hideFirstTwoModels();
-
-      // Set positions for both models
-      model1.position.set(-0.7, 0, 0); // First model (left)
-      model2.position.set(0.7, -0.15, 0); // Second model (right)
-      model2.scale.set(0.85, 0.85, 0.85); // Scale down the second model
-
+  
       // Add both models back to the scene
       this.scene.add(model1);
       model1.visible = true;
       this.currentDisplayedModels[0] = model1;
-
+  
+      // Set scale to exactly 0.85 for the second model
+      model2.scale.set(0.85, 0.85, 0.85); 
       this.scene.add(model2);
       model2.visible = true;
       this.currentDisplayedModels[1] = model2;
-      this.applyColorToModel(model1, "#D8BC7E")
-      this.applyColorToModel(model2, "#D8BC7E")
-      this.addShadowPair()
-
+      
+      this.applyColorToModel(model1, "#D8BC7E");
+      this.applyColorToModel(model2, "#D8BC7E");
+      this.addShadowPair();
     } else {
-      console.log("razi 2", this.pair1, this.currentDisplayedModels.length, this.PreciousMetal.isEnable)
-      // if(this.currentDisplayedModels.length==1){
-      //       this.hideFirstTwoModels();
-      //       this.currentDisplayedModels[0] = model1;
-
-      //       model1.position.set(0, 0, 0);
-      //       this.scene.add(model1);
-      //       model1.visible = true;
-      //     this.PreciousMetal.removeHelperModelAndClipping(1);
-      //   this.PreciousMetal.removeHelperModelAndClipping(2);
-      //   this.scene.remove(this.currentDisplayedModels[0]); 
-      //   if(this.PreciousMetal.isEnable){
-
-      //   this.PreciousMetal.biColorOneRing("1:1")
-
-
-      // }  
-      // return;
-
-      //   }
-      // Only hide and switch the selected model, keep the other intact
-      if (this.selectedModel === 1) {
-        this.scene.remove(this.currentDisplayedModels[0]); // Remove old first model
-        model1.position.set(-0.7, 0, 0); // Place new model in the left position
-        this.scene.add(model1);
-        this.applyColorToModel(model1, "#D8BC7E")
-
-        model1.visible = true;
-        this.currentDisplayedModels[0] = model1; // Update the first model
-      } else if (this.selectedModel === 2) {
-        this.scene.remove(this.currentDisplayedModels[1]);
-        this.applyColorToModel(model2, "#D8BC7E")
-        // Remove old second model
-
-        // Adjust positioning based on whether third and fourth models exist
-        if (this.currentDisplayedModels.length > 3) {
-          model2.position.set(-0.5, 0, 0); // Shift second model left if third and fourth exist
-          this.currentDisplayedModels[2].position.set(0.5, 0, 0); // Adjust third model
-        } else {
-          model2.position.set(0.7, -0.15, 0); // Keep second model on the right if no third or fourth models
-        }
-
-        model2.scale.set(0.85, 0.85, 0.85); // Scale down the second model
-        this.scene.add(model2);
-        model2.visible = true;
-        this.currentDisplayedModels[1] = model2; // Update the second model
+      // Only replace the first model
+      if (this.currentDisplayedModels[0]) {
+        this.scene.remove(this.currentDisplayedModels[0]);
       }
-
+      
+      this.scene.add(model1);
+      this.applyColorToModel(model1, "#D8BC7E");
+      model1.visible = true;
+      this.currentDisplayedModels[0] = model1;
     }
-
-    // Maintain third and fourth models if they exist
-    if (this.currentDisplayedModels.length > 2) {
-      this.scene.add(this.currentDisplayedModels[2]); // Re-add third model
+  
+    // Update all ring positions based on how many are visible
+    this.updateRingPositions();
+  }
+  showSecondModel(index) {
+    // Remove the old second model if it exists
+    if (this.currentDisplayedModels[1]) {
+      this.scene.remove(this.currentDisplayedModels[1]);
     }
-    if (this.currentDisplayedModels.length > 3) {
-      this.scene.add(this.currentDisplayedModels[3]); // Re-add fourth model
+    
+    // Clone the model and ensure it has a unique material
+    const model2 = this.cloneModelWithUniqueMaterial(this.models[index]);
+    
+    // Set the scale to exactly 0.85
+    model2.scale.set(0.85, 0.85, 0.85);
+    
+    // Make it visible and add to scene
+    model2.visible = true;
+    this.scene.add(model2);
+    
+    // Store in the array and apply color
+    this.currentDisplayedModels[1] = model2;
+    this.applyColorToModel(model2, "#D8BC7E");
+    
+    // Update positions of all rings
+    this.updateRingPositions();
+  }
+  /**
+   * Shows the third model
+   * @param {number} index - The model index to display
+   * @param {boolean} pair2 - Whether to show as a pair with fourth model
+   */
+  showThirdModel(index, pair2 = false) {
+    const model3 = this.models[index].clone();
+    
+    // If pairing for 3rd and 4th models is active
+    if (pair2) {
+      const model4 = this.models[index].clone();
+      
+      if (this.currentDisplayedModels[2]) {
+        this.scene.remove(this.currentDisplayedModels[2]);
+      }
+      if (this.currentDisplayedModels[3]) {
+        this.scene.remove(this.currentDisplayedModels[3]);
+      }
+  
+      // Set the scale to exactly 0.85
+      model3.scale.set(0.85, 0.85, 0.85);
+      model4.scale.set(0.85, 0.85, 0.85);
+      
+      this.scene.add(model3);
+      model3.visible = true;
+      this.currentDisplayedModels[2] = model3;
+  
+      this.scene.add(model4);
+      model4.visible = true;
+      this.currentDisplayedModels[3] = model4;
+      
+      this.applyColorToModel(model3, "#D8BC7E");
+      this.applyColorToModel(model4, "#D8BC7E");
+    } else {
+      // Only switch the third model
+      if (this.currentDisplayedModels[2]) {
+        this.scene.remove(this.currentDisplayedModels[2]);
+      }
+      
+      // Set the scale to exactly 0.85
+      model3.scale.set(0.85, 0.85, 0.85);
+      
+      this.scene.add(model3);
+      model3.visible = true;
+      this.currentDisplayedModels[2] = model3;
+      this.applyColorToModel(model3, "#D8BC7E");
+    }
+    
+    // Update all ring positions based on how many are visible
+    this.updateRingPositions();
+  }
+  
+  /**
+   * Shows the fourth model
+   * @param {number} index - The model index to display
+   * @param {boolean} pair2 - Whether to show as a pair with third model
+   */
+  showFourthModel(index, pair2 = false) {
+    const model4 = this.models[index].clone();
+    
+    if (pair2) {
+      const model3 = this.models[index].clone();
+      
+      // Remove both third and fourth models if they exist
+      if (this.currentDisplayedModels[2]) {
+        this.scene.remove(this.currentDisplayedModels[2]);
+      }
+      if (this.currentDisplayedModels[3]) {
+        this.scene.remove(this.currentDisplayedModels[3]);
+      }
+      
+      // Set the scale to exactly 0.85
+      model3.scale.set(0.85, 0.85, 0.85);
+      model4.scale.set(0.85, 0.85, 0.85);
+      
+      this.scene.add(model3);
+      model3.visible = true;
+      this.currentDisplayedModels[2] = model3;
+      
+      this.scene.add(model4);
+      model4.visible = true;
+      this.currentDisplayedModels[3] = model4;
+      
+      this.applyColorToModel(model3, "#D8BC7E");
+      this.applyColorToModel(model4, "#D8BC7E");
+    } else {
+      // Just switch the fourth model
+      if (this.currentDisplayedModels[3]) {
+        this.scene.remove(this.currentDisplayedModels[3]);
+      }
+      
+      // Set the scale to exactly 0.85
+      model4.scale.set(0.85, 0.85, 0.85);
+      
+      this.scene.add(model4);
+      model4.visible = true;
+      this.currentDisplayedModels[3] = model4;
+      this.applyColorToModel(model4, "#D8BC7E");
+    }
+    
+    // Update all ring positions based on how many are visible
+    this.updateRingPositions();
+  }
+  
+  /**
+   * Helper method to count visible models
+   * @returns {number} - Number of visible models
+   */
+  countVisibleModels() {
+    return this.currentDisplayedModels.filter(m => m && m.visible).length;
+  }
+  
+  /**
+   * Updates positions of all rings based on how many are visible
+   */
+  updateRingPositions() {
+    const numVisible = this.countVisibleModels();
+  
+    // Position rings based on how many are visible
+    switch (numVisible) {
+      case 1:
+        // Single ring centered
+        if (this.currentDisplayedModels[0] && this.currentDisplayedModels[0].visible) {
+          this.currentDisplayedModels[0].position.set(0, 0, 0);
+        } else if (this.currentDisplayedModels[1] && this.currentDisplayedModels[1].visible) {
+          this.currentDisplayedModels[1].position.set(0, -0.15, 0);
+          this.currentDisplayedModels[1].scale.set(0.85, 0.85, 0.85);
+        } else if (this.currentDisplayedModels[2] && this.currentDisplayedModels[2].visible) {
+          this.currentDisplayedModels[2].position.set(0, -0.15, 0);
+          this.currentDisplayedModels[2].scale.set(0.85, 0.85, 0.85);
+        } else if (this.currentDisplayedModels[3] && this.currentDisplayedModels[3].visible) {
+          this.currentDisplayedModels[3].position.set(0, -0.15, 0);
+          this.currentDisplayedModels[3].scale.set(0.85, 0.85, 0.85);
+        }
+        break;
+  
+      case 2:
+        // Two rings positioned left and right
+        let leftIndex = -1, rightIndex = -1;
+        
+        // Find the first two visible models
+        for (let i = 0; i < this.currentDisplayedModels.length; i++) {
+          if (this.currentDisplayedModels[i] && this.currentDisplayedModels[i].visible) {
+            if (leftIndex === -1) {
+              leftIndex = i;
+            } else {
+              rightIndex = i;
+              break;
+            }
+          }
+        }
+        
+        // Position the two visible models
+        if (leftIndex !== -1) {
+          // First ring at y=0, others at y=-0.15
+          this.currentDisplayedModels[leftIndex].position.set(-0.7, leftIndex === 0 ? 0 : -0.15, 0);
+          if (leftIndex > 0) { // Apply scale to non-first rings
+            this.currentDisplayedModels[leftIndex].scale.set(0.85, 0.85, 0.85);
+          }
+        }
+        if (rightIndex !== -1) {
+          // First ring at y=0, others at y=-0.15
+          this.currentDisplayedModels[rightIndex].position.set(0.7, rightIndex === 0 ? 0 : -0.15, 0);
+          if (rightIndex > 0) { // Apply scale to non-first rings
+            this.currentDisplayedModels[rightIndex].scale.set(0.85, 0.85, 0.85);
+          }
+        }
+        break;
+  
+      case 3:
+        // Three rings - special arrangement
+        let first = -1, second = -1, third = -1;
+        
+        // Find the three visible models
+        for (let i = 0; i < this.currentDisplayedModels.length; i++) {
+          if (this.currentDisplayedModels[i] && this.currentDisplayedModels[i].visible) {
+            if (first === -1) {
+              first = i;
+            } else if (second === -1) {
+              second = i;
+            } else {
+              third = i;
+              break;
+            }
+          }
+        }
+        
+        // Position the three visible models
+        if (first !== -1) {
+          // First ring at y=0, others at y=-0.15
+          this.currentDisplayedModels[first].position.set(-1.1, first === 0 ? 0 : -0.15, 0);
+          if (first > 0) { // Apply scale to non-first rings
+            this.currentDisplayedModels[first].scale.set(0.85, 0.85, 0.85);
+          }
+        }
+        if (second !== -1) {
+          // First ring at y=0, others at y=-0.15
+          this.currentDisplayedModels[second].position.set(0, second === 0 ? 0 : -0.15, 0);
+          if (second > 0) { // Apply scale to non-first rings
+            this.currentDisplayedModels[second].scale.set(0.85, 0.85, 0.85);
+          }
+        }
+        if (third !== -1) {
+          // First ring at y=0, others at y=-0.15
+          this.currentDisplayedModels[third].position.set(1.1, third === 0 ? 0 : -0.15, 0);
+          if (third > 0) { // Apply scale to non-first rings
+            this.currentDisplayedModels[third].scale.set(0.85, 0.85, 0.85);
+          }
+        }
+        break;
+  
+      case 4:
+        // Four rings - evenly spaced
+        // Position all four rings with even spacing
+        if (this.currentDisplayedModels[0] && this.currentDisplayedModels[0].visible) {
+          this.currentDisplayedModels[0].position.set(-1.5, 0, 0); // First ring at y=0
+        }
+        if (this.currentDisplayedModels[1] && this.currentDisplayedModels[1].visible) {
+          this.currentDisplayedModels[1].position.set(-0.5, -0.15, 0); // Lower position for scaled ring
+          this.currentDisplayedModels[1].scale.set(0.85, 0.85, 0.85);
+        }
+        if (this.currentDisplayedModels[2] && this.currentDisplayedModels[2].visible) {
+          this.currentDisplayedModels[2].position.set(0.5, -0.15, 0); // Lower position for scaled ring
+          this.currentDisplayedModels[2].scale.set(0.85, 0.85, 0.85);
+        }
+        if (this.currentDisplayedModels[3] && this.currentDisplayedModels[3].visible) {
+          this.currentDisplayedModels[3].position.set(1.5, -0.15, 0); // Lower position for scaled ring
+          this.currentDisplayedModels[3].scale.set(0.85, 0.85, 0.85);
+        }
+        break;
+    }
+    
+    // Update shadow positions to match ring positions
+    this.updateShadowPositions();
+  }
+  
+  /**
+   * Updates shadow positions to match ring positions
+   */
+  updateShadowPositions() {
+    if (!this.shadowPlane) return;
+  
+    const numVisible = this.countVisibleModels();
+    
+    // Hide all shadows first
+    if (this.shadowPlane) this.shadowPlane.visible = false;
+    if (this.shadowClone) this.shadowClone.visible = false;
+    if (this.shadowCloneRing3) this.shadowCloneRing3.visible = false;
+    if (this.shadowCloneRing4) this.shadowCloneRing4.visible = false;
+    
+    // Then show and position only the shadows for visible rings
+    let shadowIndex = 0;
+    
+    for (let i = 0; i < this.currentDisplayedModels.length; i++) {
+      if (this.currentDisplayedModels[i] && this.currentDisplayedModels[i].visible) {
+        const position = this.currentDisplayedModels[i].position.x;
+        
+        // Assign position to the appropriate shadow
+        if (shadowIndex === 0 && this.shadowPlane) {
+          this.shadowPlane.position.x = position;
+          this.shadowPlane.position.y = -1.22;
+          this.shadowPlane.visible = true;
+        } else if (shadowIndex === 1 && this.shadowClone) {
+          this.shadowClone.position.x = position;
+          this.shadowClone.position.y = -1.221;
+          this.shadowClone.visible = true;
+        } else if (shadowIndex === 2 && this.shadowCloneRing3) {
+          this.shadowCloneRing3.position.x = position;
+          this.shadowCloneRing3.position.y = -1.222;
+          this.shadowCloneRing3.visible = true;
+        } else if (shadowIndex === 3 && this.shadowCloneRing4) {
+          this.shadowCloneRing4.position.x = position;
+          this.shadowCloneRing4.position.y = -1.223;
+          this.shadowCloneRing4.visible = true;
+        }
+        
+        shadowIndex++;
+      }
     }
   }
 
@@ -893,17 +1020,6 @@ catch (error) {
 
     return clone;
   };
-
-  // // Clone the model with unique materials
-  // const clonedModel = cloneModelWithUniqueMaterial(selectedModel);
-
-  // // Add the cloned model to the scene
-  // scene.add(clonedModel);
-
-  // console.log("Cloned model with unique materials added to the scene.");
-
-
-
 
   // Hide only the first two models
   hideFirstTwoModels() {
@@ -932,295 +1048,384 @@ catch (error) {
     return clone;
   }
 
-  addSecondModel(type, selectedRing = null) {
-    this.PreciousMetal.removeHelperModelAndClipping(1);
-    this.PreciousMetal.removeHelperModelAndClipping(2);
-    let model2;
-    // console.log("loraaaaa",selectedRing)
-    if (type == "engagement") {
-      console.log("aaaaa", this.EngagementRingsins)
-      this.EngagementRingsins.loadEngRingById(selectedRing.id);
-      this.currentDisplayedModels[0].position.x = -0.7;
-      if (this.shadowPlane != undefined) {
-        this.shadowPlane.position.x = -0.7
-      }
-      if (this.shadowClone != undefined) {
-        this.shadowClone.visible = true;
-        this.shadowClone.position.x = 0.7
-      }
-      return;
-    }
-    if (type == "memoir") {
-      console.log("raaaaa memoir", this.MemoirRingsins)
-      this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
-      this.currentDisplayedModels[0].position.x = -0.7;
-      if (this.shadowPlane != undefined) {
-        this.shadowPlane.position.x = -0.7
-      }
-      if (this.shadowClone != undefined) {
-        this.shadowClone.visible = true;
-        this.shadowClone.position.x = 0.7
-      }
-      return;
-    }
-    // Load the second model based on the selectedRing or type
-    if (type == "Wedding" && selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
-      console.log("aaaaa")
-      model2 = this.cloneModelWithUniqueMaterial(this.models[selectedRing.id]);
-      model2.userData.modelId = selectedRing.id; // Store model ID for tracking
-    } else if (type === "Wedding") {
-      model2 = this.cloneModelWithUniqueMaterial(this.currentDisplayedModels[0]); // Clone the first model
-    } else {
-      console.warn("Invalid type or selectedRing for second model");
-      return;
-    }
-
-    // Position the first and second models correctly
-    this.currentDisplayedModels[0].position.set(-0.7, 0, 0); // First model on the left
-
-    model2.position.set(0.7, -0.15, 0); // Second model on the right
-    model2.scale.set(0.85, 0.85, 0.85); // Scale down the second model
-    if (this.PreciousMetal.helperModel) {
-      this.PreciousMetal.helperModel.position.x = -0.7
-    }
-    //set shadow
-    this.shadowPlane.position.x = -0.7;
-    this.shadowClone.visible = true;
-    // Add the second model to the scene
-    this.scene.add(model2);
-    model2.visible = true;
-
-    // Store the second model in the currentDisplayedModels array
-    this.currentDisplayedModels.push(model2);
-  }
-
-
-  // Add a third model
+  // * Adds a second model to the scene
+  // * @param {string} type - The type of ring to add (Wedding, engagement, memoir)
+  // * @param {Object} selectedRing - The ring selection information
+  // */
+ addSecondModel(type, selectedRing = null) {
+   this.PreciousMetal.removeHelperModelAndClipping(1);
+   this.PreciousMetal.removeHelperModelAndClipping(2);
+   let model2;
+   // console.log("loraaaaa",selectedRing)
+   
+   if (type == "engagement") {
+     console.log("aaaaa", this.EngagementRingsins);
+     this.EngagementRingsins.loadEngRingById(selectedRing.id);
+     this.currentDisplayedModels[0].position.x = -0.7;
+     if (this.shadowPlane != undefined) {
+       this.shadowPlane.position.x = -0.7;
+     }
+     if (this.shadowClone != undefined) {
+       this.shadowClone.visible = true;
+       this.shadowClone.position.x = 0.7;
+     }
+     return;
+   }
+   
+   if (type == "memoir") {
+     console.log("raaaaa memoir", this.MemoirRingsins);
+     this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
+     this.currentDisplayedModels[0].position.x = -0.7;
+     if (this.shadowPlane != undefined) {
+       this.shadowPlane.position.x = -0.7;
+     }
+     if (this.shadowClone != undefined) {
+       this.shadowClone.visible = true;
+       this.shadowClone.position.x = 0.7;
+     }
+     return;
+   }
+   
+   // Load the second model based on the selectedRing or type
+   if (type == "Wedding" && selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
+     console.log("aaaaa");
+     model2 = this.cloneModelWithUniqueMaterial(this.models[selectedRing.id]);
+     model2.userData.modelId = selectedRing.id; // Store model ID for tracking
+   } else if (type === "Wedding") {
+     model2 = this.cloneModelWithUniqueMaterial(this.currentDisplayedModels[0]); // Clone the first model
+   } else {
+     console.warn("Invalid type or selectedRing for second model");
+     return;
+   }
+ 
+   // Position the first and second models correctly
+   this.currentDisplayedModels[0].position.set(-0.7, 0, 0); // First model on the left
+ 
+   model2.position.set(0.7, -0.15, 0); // Second model on the right
+   model2.scale.set(0.85, 0.85, 0.85); // Scale down the second model - Ensure it's exactly 0.85
+   
+   if (this.PreciousMetal.helperModel) {
+     this.PreciousMetal.helperModel.position.x = -0.7;
+   }
+   
+   //set shadow
+   this.shadowPlane.position.x = -0.7;
+   this.shadowClone.visible = true;
+   
+   // Add the second model to the scene
+   this.scene.add(model2);
+   model2.visible = true;
+ 
+   // Store the second model in the currentDisplayedModels array
+   this.currentDisplayedModels.push(model2);
+ }
+ 
+ /**
+  * Adds a third model to the scene
+  * @param {string} type - The type of ring to add
+  * @param {Object} selectedRing - The ring selection information
+  */
  async addThirdModel(type, selectedRing = null) {
-    let model3;
-    console.log("type 15", type,selectedRing)
-
-    if (type.toLowerCase().includes("engage")) {
-      console.log("aaaaa", this.EngagementRingsins)
-     await this.EngagementRingsins.loadEngRingById(selectedRing.id)
-      // this.currentDisplayedModels[0].position.x = -0.7;
-    this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
-    this.currentDisplayedModels[1].position.set(0, -0.15, 0); 
-    this.currentDisplayedModels[2].position.set(1.0, 0, 0); 
-    this.shadowPlane.position.x = -1.0
-    this.shadowClone.position.x = 0
-    this.shadowCloneRing3.position.x = 1.0
-    this.shadowCloneRing3.visible = true;
-
-      // if (this.shadowPlane != undefined) {
-      //   this.shadowPlane.position.x = -0.1
-      // }
-      // if (this.shadowClone != undefined) {
-      //   this.shadowClone.visible = true;
-      //   this.shadowClone.position.x = 0.7
-      // }
-      return;
-    }
-    if (type.toLowerCase().includes("memoir")){
-      console.log("raaaaa memoir", this.MemoirRingsins)
-    await  this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
-      // this.currentDisplayedModels[0].position.x = -0.7;
-      this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
-      this.currentDisplayedModels[1].position.set(0, -0.15, 0); 
-      this.currentDisplayedModels[2].position.set(1.0, 0, 0); 
-      this.shadowPlane.position.x = -1.0
-      this.shadowClone.position.x = 0
-      this.shadowCloneRing3.position.x = 1.0
-      this.shadowCloneRing3.visible = true;
-      return;
-    }
-    else{
-    if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
-      model3 = this.models[selectedRing.id].clone();
-      model3.userData.modelId = selectedRing.id;  // Store model ID for tracking
-    } else if (type === "Wedding") {
-      model3 = this.currentDisplayedModels[0].clone();
-    } else {
-      console.warn('Invalid type or selectedRing for third ring');
-      return;
-    }
-    console.warn('daasdasdassdInvalid tdasdasdsaype or selectedRing for third ring');
-
-    // Position the models
-    this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
-    this.currentDisplayedModels[1].position.set(0, -0.15, 0);    // Second model in center
-    model3.position.set(1.0, 0, 0);                          // Third model on the right
-    model3.scale.set(1, 1, 1);
-    this.shadowPlane.position.x = -1.0
-    this.shadowClone.position.x = 0
-    this.shadowCloneRing3.position.x = 1.0
-    this.shadowCloneRing3.visible = true;
-    // Add the third model to the scene
-    this.scene.add(model3);
-    model3.visible = true;
-
-    // Store the third model
-    this.currentDisplayedModels.push(model3);
-  }}
-
-  // Add a fourth model
-  async addFourthModel(type, selectedRing = null) {
-    try {
-      console.log("Adding fourth model - type:", type, "selectedRing:", selectedRing);
-      
-      if (type && type.toLowerCase().includes("engage") || 
-          (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("engage"))) {
-        console.log("Adding fourth model as Engagement ring");
-        await this.EngagementRingsins.loadEngRingById(selectedRing.id);
-        
-        // Position all models
-        this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model left
-        this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
-        this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
-        this.currentDisplayedModels[3].position.set(1.5, 0, 0);   // Fourth model far right
-        
-        // Position shadows
-        this.shadowPlane.position.x = -1.5;
-        this.shadowClone.position.x = -0.5;
-        this.shadowCloneRing3.position.x = 0.5;
-        this.shadowCloneRing3.visible = true;
-        this.shadowCloneRing4.position.x = 1.5;
-        this.shadowCloneRing4.visible = true;
-        
-        return;
-      } 
-      else if (type && type.toLowerCase().includes("memoir") || 
-              (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("memoir"))) {
-        console.log("Adding fourth model as Memoir ring");
-        await this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
-        
-        // Position all models
-        this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model left
-        this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
-        this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
-        this.currentDisplayedModels[3].position.set(1.5, 0, 0);   // Fourth model far right
-        
-        // Position shadows
-        this.shadowPlane.position.x = -1.5;
-        this.shadowClone.position.x = -0.5;
-        this.shadowCloneRing3.position.x = 0.5;
-        this.shadowCloneRing3.visible = true;
-        this.shadowCloneRing4.position.x = 1.5;
-        this.shadowCloneRing4.visible = true;
-        
-        return;
-      }
-      else {
-        // Original logic for standard models
-        let model4;
-  
-        if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
-          model4 = this.models[selectedRing.id].clone();
-          model4.userData.modelId = selectedRing.id;  // Store model ID for tracking
-        } else if (type === "Wedding") {
-          model4 = this.currentDisplayedModels[0].clone();
-        } else {
-          console.warn('Invalid type or selectedRing for fourth ring');
-          return;
-        }
-  
-        // Position the models
-        this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model left
-        this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
-        this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
-        model4.position.set(1.5, 0, 0);                           // Fourth model far right
-        model4.scale.set(1, 1, 1);
-        
-        // Position shadows
-        this.shadowPlane.position.x = -1.5;
-        this.shadowClone.position.x = -0.5;
-        this.shadowCloneRing3.position.x = 0.5;
-        this.shadowCloneRing3.visible = true;
-        this.shadowCloneRing4.position.x = 1.5;
-        this.shadowCloneRing4.visible = true;
-  
-        // Add the fourth model to the scene
-        this.scene.add(model4);
-        model4.visible = true;
-  
-        // Store the fourth model
-        this.currentDisplayedModels.push(model4);
-      }
-    } catch (error) {
-      console.error("Error adding fourth model:", error);
-    }
-  }
+   let model3;
+   console.log("type 15", type, selectedRing);
+ 
+   if (type.toLowerCase().includes("engage")) {
+     console.log("aaaaa", this.EngagementRingsins);
+     await this.EngagementRingsins.loadEngRingById(selectedRing.id);
+     
+     // Position all models for 3 rings
+     this.currentDisplayedModels[0].position.set(-1.1, 0, 0); // First model left
+     this.currentDisplayedModels[1].position.set(0, -0.15, 0); // Second model center, with lower y
+     
+     // Ensure third model is properly scaled if it exists
+     if (this.currentDisplayedModels[2]) {
+       this.currentDisplayedModels[2].position.set(1.1, -0.15, 0); // Third model right
+       this.currentDisplayedModels[2].scale.set(0.85, 0.85, 0.85); // Ensure proper scale
+     }
+     
+     // Position shadows
+     this.shadowPlane.position.x = -1.1;
+     this.shadowClone.position.x = 0;
+     this.shadowCloneRing3.position.x = 1.1;
+     this.shadowCloneRing3.visible = true;
+     
+     return;
+   }
+   
+   if (type.toLowerCase().includes("memoir")) {
+     console.log("raaaaa memoir", this.MemoirRingsins);
+     await this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
+     
+     // Position all models for 3 rings
+     this.currentDisplayedModels[0].position.set(-1.1, 0, 0); // First model left
+     this.currentDisplayedModels[1].position.set(0, -0.15, 0); // Second model center, with lower y
+     
+     // Ensure third model is properly scaled if it exists
+     if (this.currentDisplayedModels[2]) {
+       this.currentDisplayedModels[2].position.set(1.1, -0.15, 0); // Third model right
+       this.currentDisplayedModels[2].scale.set(0.85, 0.85, 0.85); // Ensure proper scale
+     }
+     
+     // Position shadows
+     this.shadowPlane.position.x = -1.1;
+     this.shadowClone.position.x = 0;
+     this.shadowCloneRing3.position.x = 1.1;
+     this.shadowCloneRing3.visible = true;
+     
+     return;
+   }
+   else {
+     if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
+       model3 = this.models[selectedRing.id].clone();
+       model3.userData.modelId = selectedRing.id;  // Store model ID for tracking
+     } else if (type === "Wedding") {
+       model3 = this.currentDisplayedModels[0].clone();
+     } else {
+       console.warn('Invalid type or selectedRing for third ring');
+       return;
+     }
+     console.warn('daasdasdassdInvalid tdasdasdsaype or selectedRing for third ring');
+ 
+     // Position the models for 3 rings
+     this.currentDisplayedModels[0].position.set(-1.1, 0, 0); // First model left
+     this.currentDisplayedModels[1].position.set(0, -0.15, 0); // Second model center, with lower y
+     
+     // Position and scale third model
+     model3.position.set(1.1, -0.15, 0); // Third model right, with lower y
+     model3.scale.set(0.85, 0.85, 0.85); // Ensure proper scale of 0.85
+     
+     // Position shadows
+     this.shadowPlane.position.x = -1.1;
+     this.shadowClone.position.x = 0;
+     this.shadowCloneRing3.position.x = 1.1;
+     this.shadowCloneRing3.visible = true;
+     
+     // Add the third model to the scene
+     this.scene.add(model3);
+     model3.visible = true;
+ 
+     // Store the third model
+     this.currentDisplayedModels.push(model3);
+   }
+ }
+ 
+ /**
+  * Adds a fourth model to the scene
+  * @param {string} type - The type of ring to add
+  * @param {Object} selectedRing - The ring selection information
+  */
+ async addFourthModel(type, selectedRing = null) {
+   try {
+     console.log("Adding fourth model - type:", type, "selectedRing:", selectedRing);
+     
+     if (type && type.toLowerCase().includes("engage") || 
+         (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("engage"))) {
+       console.log("Adding fourth model as Engagement ring");
+       await this.EngagementRingsins.loadEngRingById(selectedRing.id);
+       
+       // Position all models for 4 rings
+       this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model far left
+       this.currentDisplayedModels[1].position.set(-0.5, -0.15, 0);  // Second model left-mid, with lower y
+       this.currentDisplayedModels[2].position.set(0.5, -0.15, 0);   // Third model right-mid, with lower y
+       
+       // Ensure fourth model is properly scaled if it exists
+       if (this.currentDisplayedModels[3]) {
+         this.currentDisplayedModels[3].position.set(1.5, -0.15, 0);   // Fourth model far right, with lower y
+         this.currentDisplayedModels[3].scale.set(0.85, 0.85, 0.85); // Ensure proper scale
+       }
+       
+       // Position shadows
+       this.shadowPlane.position.x = -1.5;
+       this.shadowClone.position.x = -0.5;
+       this.shadowCloneRing3.position.x = 0.5;
+       this.shadowCloneRing3.visible = true;
+       this.shadowCloneRing4.position.x = 1.5;
+       this.shadowCloneRing4.visible = true;
+       
+       return;
+     } 
+     else if (type && type.toLowerCase().includes("memoir") || 
+             (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("memoir"))) {
+       console.log("Adding fourth model as Memoir ring");
+       await this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
+       
+       // Position all models for 4 rings
+       this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model far left
+       this.currentDisplayedModels[1].position.set(-0.5, -0.15, 0);  // Second model left-mid, with lower y
+       this.currentDisplayedModels[2].position.set(0.5, -0.15, 0);   // Third model right-mid, with lower y
+       
+       // Ensure fourth model is properly scaled if it exists
+       if (this.currentDisplayedModels[3]) {
+         this.currentDisplayedModels[3].position.set(1.5, -0.15, 0);   // Fourth model far right, with lower y
+         this.currentDisplayedModels[3].scale.set(0.85, 0.85, 0.85); // Ensure proper scale
+       }
+       
+       // Position shadows
+       this.shadowPlane.position.x = -1.5;
+       this.shadowClone.position.x = -0.5;
+       this.shadowCloneRing3.position.x = 0.5;
+       this.shadowCloneRing3.visible = true;
+       this.shadowCloneRing4.position.x = 1.5;
+       this.shadowCloneRing4.visible = true;
+       
+       return;
+     }
+     else {
+       // Original logic for standard models
+       let model4;
+ 
+       if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
+         model4 = this.models[selectedRing.id].clone();
+         model4.userData.modelId = selectedRing.id;  // Store model ID for tracking
+       } else if (type === "Wedding") {
+         model4 = this.currentDisplayedModels[0].clone();
+       } else {
+         console.warn('Invalid type or selectedRing for fourth ring');
+         return;
+       }
+ 
+       // Position the models for 4 rings
+       this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model far left
+       this.currentDisplayedModels[1].position.set(-0.5, -0.15, 0);  // Second model left-mid, with lower y
+       this.currentDisplayedModels[2].position.set(0.5, -0.15, 0);   // Third model right-mid, with lower y
+       
+       // Position and scale fourth model
+       model4.position.set(1.5, -0.15, 0);  // Fourth model far right, with lower y
+       model4.scale.set(0.85, 0.85, 0.85);  // Ensure proper scale of 0.85
+       
+       // Position shadows
+       this.shadowPlane.position.x = -1.5;
+       this.shadowClone.position.x = -0.5;
+       this.shadowCloneRing3.position.x = 0.5;
+       this.shadowCloneRing3.visible = true;
+       this.shadowCloneRing4.position.x = 1.5;
+       this.shadowCloneRing4.visible = true;
+ 
+       // Add the fourth model to the scene
+       this.scene.add(model4);
+       model4.visible = true;
+ 
+       // Store the fourth model
+       this.currentDisplayedModels.push(model4);
+     }
+   } catch (error) {
+     console.error("Error adding fourth model:", error);
+   }
+ }
   // Remove the third model
-  removeThirdModel() {
-    if (this.currentDisplayedModels.length < 3) {
-      console.warn('No third model to remove');
-      return;
-    }
-
-    // Remove the third model from the scene
-    const model3 = this.currentDisplayedModels.pop();
-    this.scene.remove(model3);
-
-    // Re-position the first two models as needed
-    this.currentDisplayedModels[0].position.set(-0.7, 0, 0);  // First model to the left
-    this.currentDisplayedModels[1].position.set(0.7, 0, 0);   // Second model to the right
-  }
-  setCurrentModelName(model) {
-    this.currentModel = model;
-    console.log("current model name", model)
-
-  }
-  // Remove the fourth model and adjust the positions
-  removeFourthModel() {
-    if (this.currentDisplayedModels.length < 4) {
-      console.warn('No fourth model to remove');
-      return;
-    }
-
-    // Remove the fourth model from the scene
-    const model4 = this.currentDisplayedModels.pop();
-    this.scene.remove(model4);
-
-    // If only the third model remains, adjust its position
-    if (this.currentDisplayedModels.length === 3) {
-      this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
-      this.currentDisplayedModels[1].position.set(0, 0, 0);
-      this.currentDisplayedModels[2].position.set(1.0, 0, 0); // Re-position third model to the far right
-    }
-    console.log("removeFourth", this.currentDisplayedModels, this.models)
-  }
-  removeSecondModel() {
-    this.pair1 = false;
-    this.PreciousMetal.removeHelperModelAndClipping(1);
-    this.PreciousMetal.removeHelperModelAndClipping(2);
-    this.PreciousMetal.removeClippingTriOneRing();
-    this.PreciousMetal.isEnable = false
-    window.parent.postMessage(
-      {
-        action: "removeSecondModel",
-        payload: {
-          pair1: this.pair1,
-        },
-      },
-      "*"
-    );
-    if (this.currentDisplayedModels.length < 2) {
-      console.warn('No second model to remove');
-      return;
-    }
-
-    // Remove the second model from the scene
-    const model2 = this.currentDisplayedModels[1];
-    this.scene.remove(model2);
-
-    // Remove the second model from the array
-    this.currentDisplayedModels.splice(1, 1);
-
-    // Re-position the first model to the center
-    this.currentDisplayedModels[0].position.set(0, 0, 0);
-    this.shadowPlane.position.x = 0;
-    this.shadowClone.visible = false;
-  }
+  // * Removes the third model and repositions the remaining rings
+  // */
+ removeThirdModel() {
+   if (this.currentDisplayedModels.length < 3) {
+     console.warn('No third model to remove');
+     return;
+   }
+ 
+   // Remove the third model from the scene
+   const model3 = this.currentDisplayedModels.pop();
+   this.scene.remove(model3);
+ 
+   // Re-position the first two models
+   this.currentDisplayedModels[0].position.set(-0.7, 0, 0);  // First model to the left
+   this.currentDisplayedModels[1].position.set(0.7, -0.15, 0);   // Second model to the right, at y=-0.15
+   
+   // Ensure second model has correct scale
+   this.currentDisplayedModels[1].scale.set(0.85, 0.85, 0.85);
+   
+   // Update shadows
+   if (this.shadowPlane) this.shadowPlane.position.x = -0.7;
+   if (this.shadowClone) {
+     this.shadowClone.position.x = 0.7;
+     this.shadowClone.visible = true;
+   }
+   if (this.shadowCloneRing3) this.shadowCloneRing3.visible = false;
+ }
+ 
+ /**
+  * Sets the current model name
+  * @param {string} model - The model name
+  */
+ setCurrentModelName(model) {
+   this.currentModel = model;
+   console.log("current model name", model);
+ }
+ 
+ /**
+  * Removes the fourth model and adjusts positions
+  */
+ removeFourthModel() {
+   if (this.currentDisplayedModels.length < 4) {
+     console.warn('No fourth model to remove');
+     return;
+   }
+ 
+   // Remove the fourth model from the scene
+   const model4 = this.currentDisplayedModels.pop();
+   this.scene.remove(model4);
+ 
+   // Adjust positions for three models
+   this.currentDisplayedModels[0].position.set(-1.1, 0, 0); // First model
+   this.currentDisplayedModels[1].position.set(0, -0.15, 0); // Second model with y offset
+   this.currentDisplayedModels[2].position.set(1.1, -0.15, 0); // Third model with y offset
+   
+   // Ensure proper scale for second and third models
+   this.currentDisplayedModels[1].scale.set(0.85, 0.85, 0.85);
+   this.currentDisplayedModels[2].scale.set(0.85, 0.85, 0.85);
+   
+   // Update shadows
+   if (this.shadowPlane) this.shadowPlane.position.x = -1.1;
+   if (this.shadowClone) {
+     this.shadowClone.position.x = 0;
+     this.shadowClone.visible = true;
+   }
+   if (this.shadowCloneRing3) {
+     this.shadowCloneRing3.position.x = 1.1;
+     this.shadowCloneRing3.visible = true;
+   }
+   if (this.shadowCloneRing4) this.shadowCloneRing4.visible = false;
+   
+   console.log("removeFourth", this.currentDisplayedModels, this.models);
+ }
+ 
+ /**
+  * Removes the second model and resets to a single model
+  */
+ removeSecondModel() {
+   this.pair1 = false;
+   this.PreciousMetal.removeHelperModelAndClipping(1);
+   this.PreciousMetal.removeHelperModelAndClipping(2);
+   this.PreciousMetal.removeClippingTriOneRing();
+   this.PreciousMetal.isEnable = false;
+   
+   window.parent.postMessage(
+     {
+       action: "removeSecondModel",
+       payload: {
+         pair1: this.pair1,
+       },
+     },
+     "*"
+   );
+   
+   if (this.currentDisplayedModels.length < 2) {
+     console.warn('No second model to remove');
+     return;
+   }
+ 
+   // Remove the second model from the scene
+   const model2 = this.currentDisplayedModels[1];
+   this.scene.remove(model2);
+ 
+   // Remove the second model from the array
+   this.currentDisplayedModels.splice(1, 1);
+ 
+   // Re-position the first model to the center
+   this.currentDisplayedModels[0].position.set(0, 0, 0);
+   
+   // Update shadows
+   if (this.shadowPlane) this.shadowPlane.position.x = 0;
+   if (this.shadowClone) this.shadowClone.visible = false;
+ }
   applyColorToModel(model, color) {
     model.traverse((child) => {
       if (child.isMesh) {

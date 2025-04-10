@@ -103,6 +103,19 @@ const ringImages = {
     { id: 16, name: "Memoir 16", src: Ring1 },
     { id: 17, name: "Memoir 17", src: Ring1 },
     { id: 18, name: "Memoir 18", src: Ring1 },
+    { id: 19, name: "Memoir 19", src: Ring1 },
+    { id: 20, name: "Memoir 20", src: Ring1 },
+    { id: 21, name: "Memoir 21", src: Ring1 },
+    { id: 22, name: "Memoir 22", src: Ring1 },
+    { id: 23, name: "Memoir 23", src: Ring1 },
+    { id: 24, name: "Memoir 24", src: Ring1 },
+    { id: 25, name: "Memoir 25", src: Ring1 },
+    { id: 26, name: "Memoir 26", src: Ring1 },
+    { id: 27, name: "Memoir 27", src: Ring1 },
+    { id: 28, name: "Memoir 28", src: Ring1 },
+    { id: 29, name: "Memoir 29", src: Ring1 }
+
+
 
 
 
