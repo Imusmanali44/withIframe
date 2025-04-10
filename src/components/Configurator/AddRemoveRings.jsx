@@ -118,14 +118,22 @@ const AddRemoveRings = ({ rings, setRings }) => {
   useEffect(() => {
     console.log("test", selectedRing)
     if (selectedRing && (selectedRing.name.toLowerCase().includes("engage") || selectedRing.name.toLowerCase().includes("memoir")) ) {
-      if(window.ringsLength ==2){
-        alert("Delete a wedding ring to add an engagement ring")
-        return;
+      // if(window.ringsLength ==2){
+      //   alert("Delete a wedding ring to add an engagement ring")
+      //   return;
+      // }
+      let type;
+      if(selectedRing.name.toLowerCase().includes("engage")){
+        type = "Engagement";
       }
-      else{
-        window.parent.postMessage({ action: 'addRing', selectedRing }, "*");
+      else if(selectedRing.name.toLowerCase().includes("memoir")){    
+        type = "Memoir";
+
+      }
+      // else{
+        window.parent.postMessage({ action: 'addRing', selectedRing, type }, "*");
         window.ringsLength++;
-      }
+      // }
       
 
     }
@@ -134,10 +142,10 @@ const AddRemoveRings = ({ rings, setRings }) => {
 
   const addRing = (type) => {
     if (rings.length < 4) {
-      if(window.ringsLength ==2){
-        alert("only two rings for now")
-        return;
-      }
+      // if(window.ringsLength ==2){
+      //   alert("only two rings for now")
+      //   return;
+      // }
       // Find the lowest available ID that's not in use
       const usedIds = rings.map(ring => ring.id);
       let newId = 1;
@@ -281,10 +289,10 @@ const AddRemoveRings = ({ rings, setRings }) => {
             <div
   className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
   onClick={() => {
-    if (window.ringsLength == 2) {
-      alert("Delete a wedding ring to add an engagement ring");
-      return;
-    }
+    // if (window.ringsLength == 2) {
+    //   alert("Delete a wedding ring to add an engagement ring");
+    //   return;
+    // }
     setSelectedType("Engagement");
   }}
 >
@@ -297,10 +305,10 @@ const AddRemoveRings = ({ rings, setRings }) => {
               className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
              
               onClick={() => {
-                if (window.ringsLength == 2) {
-                  alert("Delete a wedding ring to add an engagement ring");
-                  return;
-                }
+                // if (window.ringsLength == 2) {
+                //   alert("Delete a wedding ring to add an engagement ring");
+                //   return;
+                // }
                 setSelectedType("Memoir");
               }}
             

@@ -13,7 +13,7 @@ export class MessageHandler {
   }
 
   handleMessage(event) {
-    const { action, modelId, type, id, selectedRing, value, pair, isEngraving,isBiCol,isTriCol,isMetal,field,grooveId,stoneDist } = event.data;
+    const { action, modelId, type, id, selectedRing, value, pair, isEngraving, isBiCol, isTriCol, isMetal, field, grooveId, stoneDist } = event.data;
     // console.log('Message received from parent:', event.data, action);
 
     switch (action) {
@@ -32,64 +32,67 @@ export class MessageHandler {
         this.currentSelectedRing(modelId)
         // console.log("current selected model",modelId)
         break;
-        case "addStone":
-          if(type=="Number" ){
-            console.log("add stone aa", value, stoneDist)
-              this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
-              this.modelManager.StoneManagerIns.addDiamondsToRingFront({
-          // this.modelManager.StoneManagerIns.loadDiamondToRing({
+      case "addStone":
+        if (type == "Number") {
+          console.log("add stone aa", value, stoneDist)
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+          this.modelManager.StoneManagerIns.addDiamondsToRingFront({
+            // this.modelManager.StoneManagerIns.loadDiamondToRing({
 
-                diamondCount: value,
-                ringIndex: this.modelManager.selectedModel,
-                distribution: stoneDist
-                // modelUrl: "diamondm/d2.glb"
-                // scale: { x: 19.70, y: 19.70, z: 37.00 }
-                 } );
+            diamondCount: value,
+            ringIndex: this.modelManager.selectedModel,
+            distribution: stoneDist
+            // modelUrl: "diamondm/d2.glb"
+            // scale: { x: 19.70, y: 19.70, z: 37.00 }
+          });
 
-          }
-          if(value=="Smooth conversion"){
-            this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+        }
+        if (value == "Smooth conversion") {
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
           this.modelManager.StoneManagerIns.loadDiamondToRing({
             ringIndex: this.modelManager.selectedModel,
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
-             },value);}
-             if(value=="Pavé"){
-              this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
-              // this.modelManager.StoneManagerIns.addDiamondsToRingFront({
+          }, value);
+        }
+        if (value == "Pavé") {
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+          // this.modelManager.StoneManagerIns.addDiamondsToRingFront({
           this.modelManager.StoneManagerIns.loadDiamondToRing({
 
-                // diamondCount: 10,
-                ringIndex: this.modelManager.selectedModel,
-                modelUrl: "diamondm/d2.glb"
-                // scale: { x: 19.70, y: 19.70, z: 37.00 }
-                 },value);}
-                 if(value=="Rail setting"){
-                  this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
-                  this.modelManager.StoneManagerIns.loadDiamondToRing({
-                    ringIndex: this.modelManager.selectedModel,
-                    modelUrl: "diamondm/d1.glb",
-      rotation: { x: -0.13, y: 0.00, z: 0.25 }, // Default rotations from Image 1
+            // diamondCount: 10,
+            ringIndex: this.modelManager.selectedModel,
+            modelUrl: "diamondm/d2.glb"
+            // scale: { x: 19.70, y: 19.70, z: 37.00 }
+          }, value);
+        }
+        if (value == "Rail setting") {
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+          this.modelManager.StoneManagerIns.loadDiamondToRing({
+            ringIndex: this.modelManager.selectedModel,
+            modelUrl: "diamondm/d1.glb",
+            rotation: { x: -0.13, y: 0.00, z: 0.25 }, // Default rotations from Image 1
 
-                    // scale: { x: 19.70, y: 19.70, z: 37.00 }
-                     },value);}
-          if(value=="Without"){
-            console.log("remove diamond", this.modelManager.selectedModel)
-            this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
-          
-          }   
-             break;
-             case "stoneSize":
-              this.modelManager.StoneManagerIns.changeStoneSize(value)
-              break;
-              case "stonePosition":
-                if (typeof value === 'string' || value instanceof String) {
-                this.modelManager.StoneManagerIns.changeStonePosition(value)
-              }
-              else{
-                this.modelManager.StoneManagerIns.handleStonePositionSlider(value)
+            // scale: { x: 19.70, y: 19.70, z: 37.00 }
+          }, value);
+        }
+        if (value == "Without") {
+          console.log("remove diamond", this.modelManager.selectedModel)
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
 
-              }
-                break;         
+        }
+        break;
+      case "stoneSize":
+        this.modelManager.StoneManagerIns.changeStoneSize(value)
+        break;
+      case "stonePosition":
+        if (typeof value === 'string' || value instanceof String) {
+          this.modelManager.StoneManagerIns.changeStonePosition(value)
+        }
+        else {
+          this.modelManager.StoneManagerIns.handleStonePositionSlider(value)
+
+        }
+        break;
 
       case 'updatePairStatus':
         console.log("ipair", value)
@@ -114,34 +117,35 @@ export class MessageHandler {
         break;
       case 'changeColor':
         // console.log("value aaaaaaa",isBiCol.name, value.colorCode, field)
-        if(isBiCol==null && isTriCol==null){
-        this.modelManager.changeModelColor(value.colorCode)
-        console.log("value", value.colorCode, value.value)
-      return;}
-        if(isBiCol.name=="Two tone" && field=="single"){ 
-          this.pMetalManager.colorChangeBi(value.colorCode,1)
+        if (isBiCol == null && isTriCol == null) {
+          this.modelManager.changeModelColor(value.colorCode)
+          console.log("value", value.colorCode, value.value)
+          return;
         }
-        else  if(isBiCol.name=="Two tone" && field=="twoTone"){
-          this.pMetalManager.colorChangeBi(value.colorCode,2)
-          
+        if (isBiCol.name == "Two tone" && field == "single") {
+          this.pMetalManager.colorChangeBi(value.colorCode, 1)
         }
-        else  if(isBiCol.name=="Two tone" && field=="triColored"){
-          this.pMetalManager.colorChangeBi(value.colorCode,3)
-          
+        else if (isBiCol.name == "Two tone" && field == "twoTone") {
+          this.pMetalManager.colorChangeBi(value.colorCode, 2)
+
+        }
+        else if (isBiCol.name == "Two tone" && field == "triColored") {
+          this.pMetalManager.colorChangeBi(value.colorCode, 3)
+
         }
 
-        if(isBiCol.name=="Tri Colored"){
-          if(field=="single"){
-            this.pMetalManager.colorChangeBi(value.colorCode,1)
+        if (isBiCol.name == "Tri Colored") {
+          if (field == "single") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 1)
 
           }
-          else if(field=="twoTone"){
-          this.pMetalManager.colorChangeBi(value.colorCode,3)
-            
+          else if (field == "twoTone") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 3)
+
           }
-          else if(field=="triColored"){
-          this.pMetalManager.colorChangeBi(value.colorCode,2)
-            
+          else if (field == "triColored") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 2)
+
           }
 
         }
@@ -163,7 +167,7 @@ export class MessageHandler {
         this.modelManager.changeFont(-1);
         if (value.value == "double-heart") {
           this.modelManager.engraveTextOnModel("GG")
-          
+
         }
         else if (value.value == "heart") {
           this.modelManager.engraveTextOnModel("G")
@@ -179,87 +183,88 @@ export class MessageHandler {
         console.log("hello frm text", isEngraving)
         // if (isEngraving == "") {
 
-          this.modelManager.removeEngraving()
+        this.modelManager.removeEngraving()
         // }
         // else {
-          // this.modelManager.changeFont(2);
-          this.modelManager.engraveTextOnModel(isEngraving)
+        // this.modelManager.changeFont(2);
+        this.modelManager.engraveTextOnModel(isEngraving)
         // }
         break;
       case "addGroove":
         console.log("calss groove", type, value, selectedRing)
-        if(type=="defaultAdd"){
-          
+        if (type == "defaultAdd") {
+
           this.modelManager.GrooveManagerIns.addGroove(selectedRing);
           break;
         }
-        if(type=="defaultDelete"){
-          
+        if (type == "defaultDelete") {
+
           this.modelManager.GrooveManagerIns.removeGroove(selectedRing);
           break;
         }
-        if(type=="Without"){
+        if (type == "Without") {
           this.modelManager.GrooveManagerIns.removeMidMeshes();
-          this.modelManager.GrooveBool = false; 
+          this.modelManager.GrooveBool = false;
           break;
         }
-        if(type=="width" || type=="depth"){
-          this.modelManager.GrooveManagerIns.adjustWidthAndDepth(selectedRing,value,type);
+        if (type == "width" || type == "depth") {
+          this.modelManager.GrooveManagerIns.adjustWidthAndDepth(selectedRing, value, type);
           // this.modelManager.GrooveBool = true; 
           break;
         }
-        else{
+        else {
 
-          this.modelManager.loadMidMesh(type,false);
+          this.modelManager.loadMidMesh(type, false);
 
         }
-        break;  
-        case "addStep":
-          console.log("calss groove step", value,type)
-          
-          if(value=="left"){
-            if(type=="Without"){
-              this.modelManager.StepsManagerIns.removeLeftSteps();
-              break;
-            }
-            else{
-              if(type=="Milgrain"){
-            this.modelManager.StepsManagerIns.addLeftStep(true)
-               }
-              else{
-                this.modelManager.StepsManagerIns.addLeftStep(false)
+        break;
+      case "addStep":
+        console.log("calss groove step", value, type)
 
-              } }
+        if (value == "left") {
+          if (type == "Without") {
+            this.modelManager.StepsManagerIns.removeLeftSteps();
+            break;
           }
-          if(value=="right"){
-            if(type=="Without"){
-              this.modelManager.StepsManagerIns.removeRightSteps();
-              break;
+          else {
+            if (type == "Milgrain") {
+              this.modelManager.StepsManagerIns.addLeftStep(true)
             }
-            else{
+            else {
+              this.modelManager.StepsManagerIns.addLeftStep(false)
 
-              if(type=="Milgrain"){
-                this.modelManager.StepsManagerIns.addRightStep(true)
-                   }
-                  else{
-                    this.modelManager.StepsManagerIns.addRightStep(false)
-    
-                  }
+            }
+          }
+        }
+        if (value == "right") {
+          if (type == "Without") {
+            this.modelManager.StepsManagerIns.removeRightSteps();
+            break;
+          }
+          else {
+
+            if (type == "Milgrain") {
+              this.modelManager.StepsManagerIns.addRightStep(true)
+            }
+            else {
+              this.modelManager.StepsManagerIns.addRightStep(false)
 
             }
 
           }
-          break;
+
+        }
+        break;
       case "changeGrooveSlider":
         console.log("calss groove f", value, selectedRing, grooveId)
         if (type == "initial") {
           // this.modelManager.GrooveManagerIns.setInitialOffsetGroove(value, selectedRing, grooveId);
-          
+
         }
-        else{
+        else {
           this.modelManager.GrooveManagerIns.setoffsetValueGroove(value, selectedRing);
           // break;
-        
+
         }
         break;
       case "changeSlider":
@@ -267,70 +272,70 @@ export class MessageHandler {
         this.pMetalManager.setoffsetValue(value, selectedRing)
         break;
       case "changeMultiSlider":
-        console.log("calss tri", value, this.pMetalManager.isEnable,selectedRing)
-        
-        this.pMetalManager.setoffsetValueTri(value.left,value.right,selectedRing)
-        
+        console.log("calss tri", value, this.pMetalManager.isEnable, selectedRing)
+
+        this.pMetalManager.setoffsetValueTri(value.left, value.right, selectedRing)
+
         break;
-      
+
       case "PreciousMetal":
-        console.log("cal", value,isBiCol,isTriCol)
-     let  lengthModels= this.modelManager.currentDisplayedModels.length
-        if(value==0){
+        console.log("cal", value, isBiCol, isTriCol)
+        let lengthModels = this.modelManager.currentDisplayedModels.length
+        if (value == 0) {
           this.pMetalManager.removeHelperModelAndClipping(1)
           this.pMetalManager.removeHelperModelAndClipping(2)
           this.pMetalManager.removeClippingTriOneRing()
           this.modelManager.GrooveManagerIns.removeMidMeshes();
-          
+
           this.pMetalManager.isEnable = false
           return;
 
         }
-          if(lengthModels==1 && isBiCol){
-            this.pMetalManager.biColorOneRing(value);
+        if (lengthModels == 1 && isBiCol) {
+          this.pMetalManager.biColorOneRing(value);
         }
-        else if(lengthModels==1 && (!isBiCol || isBiCol == null)){
+        else if (lengthModels == 1 && (!isBiCol || isBiCol == null)) {
           this.pMetalManager.triColorOneRing(value);
 
         }
-        else if(lengthModels==2 && isBiCol){
+        else if (lengthModels == 2 && isBiCol) {
           this.pMetalManager.biTriPair(value);
-        console.log("cal 1", value,isBiCol,isTriCol)
+          console.log("cal 1", value, isBiCol, isTriCol)
 
         }
-        else if(lengthModels==2 && (!isBiCol || isBiCol == null)){
-        console.log("cal 2", value,isBiCol,isTriCol)
-          
-          this.pMetalManager.biTriPair(value,true);
+        else if (lengthModels == 2 && (!isBiCol || isBiCol == null)) {
+          console.log("cal 2", value, isBiCol, isTriCol)
+
+          this.pMetalManager.biTriPair(value, true);
         }
         break;
       case "FontChange":
-        if(value=="svnfont00"){
-          this.modelManager.changeFont(1); 
+        if (value == "svnfont00") {
+          this.modelManager.changeFont(1);
 
         }
-        else  if(value=="svnfont01"){
-          this.modelManager.changeFont(2); 
+        else if (value == "svnfont01") {
+          this.modelManager.changeFont(2);
 
         }
-        else  if(value=="svnfont02"){
-          this.modelManager.changeFont(5); 
+        else if (value == "svnfont02") {
+          this.modelManager.changeFont(5);
 
         }
-        else  if(value=="svnfont03"){
-          this.modelManager.changeFont(4); 
+        else if (value == "svnfont03") {
+          this.modelManager.changeFont(4);
 
         }
-        else  if(value=="svnfont04"){
-          this.modelManager.changeFont(5); 
+        else if (value == "svnfont04") {
+          this.modelManager.changeFont(5);
 
         }
-        else{
+        else {
           console.log("unknown font value", value)
         }
         this.modelManager.removeEngraving()
 
-break;
+        break;
 
       default:
         console.warn('Unknown action:', action);
@@ -356,39 +361,62 @@ break;
   }
 
 
-  addRing(type, selectedRing) {
-    console.log("type", type,selectedRing)
+ async addRing(type, selectedRing) {
+  console.log("Adding ring - type:", type, "selectedRing:", selectedRing);
+  
+  try {
     // Check if only one model is displayed and add the second model
-    if(type==undefined && selectedRing.name.toLowerCase().includes("engage")){
-      this.modelManager.addSecondModel("engagement", selectedRing);
-      
+    if (this.modelManager.currentDisplayedModels.length === 1) {
+      if (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("engage")) {
+        await this.modelManager.addSecondModel("engagement", selectedRing);
+      }
+      else if (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("memoir")) {
+        await this.modelManager.addSecondModel("memoir", selectedRing);
+      }
+      else if (type) {
+        await this.modelManager.addSecondModel(type, selectedRing);
+      }
+      else if (selectedRing) {
+        await this.modelManager.addSecondModel(null, selectedRing);
+      }
     }
-    if(type==undefined && selectedRing.name.toLowerCase().includes("memoir")){
-      this.modelManager.addSecondModel("memoir", selectedRing);
-      
-    }
-    if (this.modelManager.currentDisplayedModels.length === 1 && type) {
-      this.modelManager.addSecondModel(type, selectedRing); // Function to add the second ring
-    } else if (this.modelManager.currentDisplayedModels.length === 1 && selectedRing) {
-      this.modelManager.addSecondModel(null, selectedRing); // Use selectedRing if no type provided
-    }
-
     // If two models are displayed, add the third model
-    else if (this.modelManager.currentDisplayedModels.length === 2 && type) {
-      this.modelManager.addThirdModel(type, selectedRing);
-    } else if (this.modelManager.currentDisplayedModels.length === 2 && selectedRing) {
-      this.modelManager.addThirdModel(null, selectedRing);
+    else if (this.modelManager.currentDisplayedModels.length === 2) {
+      if (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("engage")) {
+        await this.modelManager.addThirdModel("engagement", selectedRing);
+      }
+      else if (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("memoir")) {
+        await this.modelManager.addThirdModel("memoir", selectedRing);
+      }
+      else if (type) {
+        await this.modelManager.addThirdModel(type, selectedRing);
+      }
+      else if (selectedRing) {
+        await this.modelManager.addThirdModel(null, selectedRing);
+      }
     }
-
     // If three models are displayed, add the fourth model
-    else if (this.modelManager.currentDisplayedModels.length === 3 && type) {
-      this.modelManager.addFourthModel(type, selectedRing);
-    } else if (this.modelManager.currentDisplayedModels.length === 3 && selectedRing) {
-      this.modelManager.addFourthModel(null, selectedRing);
-    } else {
+    else if (this.modelManager.currentDisplayedModels.length === 3) {
+      if (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("engage")) {
+        await this.modelManager.addFourthModel("engagement", selectedRing);
+      }
+      else if (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("memoir")) {
+        await this.modelManager.addFourthModel("memoir", selectedRing);
+      }
+      else if (type) {
+        await this.modelManager.addFourthModel(type, selectedRing);
+      }
+      else if (selectedRing) {
+        await this.modelManager.addFourthModel(null, selectedRing);
+      }
+    } 
+    else {
       console.warn('Cannot add a ring at this stage');
     }
+  } catch (error) {
+    console.error("Error adding ring:", error);
   }
+}
 
 
   removeRing() {
@@ -463,7 +491,7 @@ break;
         break;
     }
     this.modelManager.setCurrentModelName(modelId)
-    if(this.modelManager.GrooveBool==true ){
+    if (this.modelManager.GrooveBool == true) {
       // this.modelManager.loadMidMesh();
     }
   }

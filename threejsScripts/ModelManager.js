@@ -76,9 +76,8 @@ export class ModelManager {
         new THREE.MeshBasicMaterial({
           map: shadowTexture,
           transparent: true,
-          polygonOffset: true, // Enable polygon offset
-          polygonOffsetFactor: -1, // Push the shadow further back
-          polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
+          // alphaTest: 0.02, // Adjust alpha test for transparency
+       // Ensure the shadow PNG's transparency works
         })
       );
 
@@ -93,6 +92,8 @@ export class ModelManager {
         new THREE.MeshBasicMaterial({
           map: shadowTexture,
           transparent: true,
+          // alphaTest: 0.02, // Adjust alpha test for transparency
+
           polygonOffset: true, // Enable polygon offset
           polygonOffsetFactor: -1, // Push the shadow further back
           polygonOffsetUnits: -1  // Ensure the shadow PNG's transparency works
@@ -103,7 +104,22 @@ export class ModelManager {
       this.shadowClone.rotation.x = -Math.PI / 2; // Rotate to lie flat on the ground
       this.shadowClone.position.y = -1.22;
       this.shadowClone.position.x = 0.7
+
+      this.shadowCloneRing3 = this.shadowClone.clone()
+      this.shadowCloneRing4 = this.shadowClone.clone()
+      this.scene.add(this.shadowCloneRing3)
+      this.scene.add(this.shadowCloneRing4)
+      this.shadowCloneRing3.visible = false
+      this.shadowCloneRing4.visible = false
       // Add the shadow plane to the scene
+      this.shadowPlane.renderOrder = 1;
+this.shadowClone.renderOrder = 2;
+this.shadowCloneRing3.renderOrder = 3;
+this.shadowCloneRing4.renderOrder = 4;
+this.shadowPlane.position.y = -1.22;
+this.shadowClone.position.y = -1.221;
+this.shadowCloneRing3.position.y = -1.222;
+this.shadowCloneRing4.position.y = -1.223;
       this.scene.add(this.shadowPlane);
       this.scene.add(this.shadowClone);
       this.shadowEnable = false;
@@ -980,9 +996,45 @@ catch (error) {
 
 
   // Add a third model
-  addThirdModel(type, selectedRing = null) {
+ async addThirdModel(type, selectedRing = null) {
     let model3;
+    console.log("type 15", type,selectedRing)
 
+    if (type.toLowerCase().includes("engage")) {
+      console.log("aaaaa", this.EngagementRingsins)
+     await this.EngagementRingsins.loadEngRingById(selectedRing.id)
+      // this.currentDisplayedModels[0].position.x = -0.7;
+    this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
+    this.currentDisplayedModels[1].position.set(0, -0.15, 0); 
+    this.currentDisplayedModels[2].position.set(1.0, 0, 0); 
+    this.shadowPlane.position.x = -1.0
+    this.shadowClone.position.x = 0
+    this.shadowCloneRing3.position.x = 1.0
+    this.shadowCloneRing3.visible = true;
+
+      // if (this.shadowPlane != undefined) {
+      //   this.shadowPlane.position.x = -0.1
+      // }
+      // if (this.shadowClone != undefined) {
+      //   this.shadowClone.visible = true;
+      //   this.shadowClone.position.x = 0.7
+      // }
+      return;
+    }
+    if (type.toLowerCase().includes("memoir")){
+      console.log("raaaaa memoir", this.MemoirRingsins)
+    await  this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
+      // this.currentDisplayedModels[0].position.x = -0.7;
+      this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
+      this.currentDisplayedModels[1].position.set(0, -0.15, 0); 
+      this.currentDisplayedModels[2].position.set(1.0, 0, 0); 
+      this.shadowPlane.position.x = -1.0
+      this.shadowClone.position.x = 0
+      this.shadowCloneRing3.position.x = 1.0
+      this.shadowCloneRing3.visible = true;
+      return;
+    }
+    else{
     if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
       model3 = this.models[selectedRing.id].clone();
       model3.userData.modelId = selectedRing.id;  // Store model ID for tracking
@@ -992,50 +1044,112 @@ catch (error) {
       console.warn('Invalid type or selectedRing for third ring');
       return;
     }
+    console.warn('daasdasdassdInvalid tdasdasdsaype or selectedRing for third ring');
 
     // Position the models
     this.currentDisplayedModels[0].position.set(-1.0, 0, 0); // First model
-    this.currentDisplayedModels[1].position.set(0, 0, 0);    // Second model in center
+    this.currentDisplayedModels[1].position.set(0, -0.15, 0);    // Second model in center
     model3.position.set(1.0, 0, 0);                          // Third model on the right
     model3.scale.set(1, 1, 1);
-
+    this.shadowPlane.position.x = -1.0
+    this.shadowClone.position.x = 0
+    this.shadowCloneRing3.position.x = 1.0
+    this.shadowCloneRing3.visible = true;
     // Add the third model to the scene
     this.scene.add(model3);
     model3.visible = true;
 
     // Store the third model
     this.currentDisplayedModels.push(model3);
-  }
+  }}
 
   // Add a fourth model
-  addFourthModel(type, selectedRing = null) {
-    let model4;
-
-    if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
-      model4 = this.models[selectedRing.id].clone();
-      model4.userData.modelId = selectedRing.id;  // Store model ID for tracking
-    } else if (type === "Wedding") {
-      model4 = this.currentDisplayedModels[0].clone();
-    } else {
-      console.warn('Invalid type or selectedRing for fourth ring');
-      return;
+  async addFourthModel(type, selectedRing = null) {
+    try {
+      console.log("Adding fourth model - type:", type, "selectedRing:", selectedRing);
+      
+      if (type && type.toLowerCase().includes("engage") || 
+          (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("engage"))) {
+        console.log("Adding fourth model as Engagement ring");
+        await this.EngagementRingsins.loadEngRingById(selectedRing.id);
+        
+        // Position all models
+        this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model left
+        this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
+        this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
+        this.currentDisplayedModels[3].position.set(1.5, 0, 0);   // Fourth model far right
+        
+        // Position shadows
+        this.shadowPlane.position.x = -1.5;
+        this.shadowClone.position.x = -0.5;
+        this.shadowCloneRing3.position.x = 0.5;
+        this.shadowCloneRing3.visible = true;
+        this.shadowCloneRing4.position.x = 1.5;
+        this.shadowCloneRing4.visible = true;
+        
+        return;
+      } 
+      else if (type && type.toLowerCase().includes("memoir") || 
+              (selectedRing && selectedRing.name && selectedRing.name.toLowerCase().includes("memoir"))) {
+        console.log("Adding fourth model as Memoir ring");
+        await this.MemoirRingsins.loadMemoirRingById(selectedRing.id);
+        
+        // Position all models
+        this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model left
+        this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
+        this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
+        this.currentDisplayedModels[3].position.set(1.5, 0, 0);   // Fourth model far right
+        
+        // Position shadows
+        this.shadowPlane.position.x = -1.5;
+        this.shadowClone.position.x = -0.5;
+        this.shadowCloneRing3.position.x = 0.5;
+        this.shadowCloneRing3.visible = true;
+        this.shadowCloneRing4.position.x = 1.5;
+        this.shadowCloneRing4.visible = true;
+        
+        return;
+      }
+      else {
+        // Original logic for standard models
+        let model4;
+  
+        if (selectedRing && selectedRing.id >= 0 && selectedRing.id < this.models.length) {
+          model4 = this.models[selectedRing.id].clone();
+          model4.userData.modelId = selectedRing.id;  // Store model ID for tracking
+        } else if (type === "Wedding") {
+          model4 = this.currentDisplayedModels[0].clone();
+        } else {
+          console.warn('Invalid type or selectedRing for fourth ring');
+          return;
+        }
+  
+        // Position the models
+        this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model left
+        this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
+        this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
+        model4.position.set(1.5, 0, 0);                           // Fourth model far right
+        model4.scale.set(1, 1, 1);
+        
+        // Position shadows
+        this.shadowPlane.position.x = -1.5;
+        this.shadowClone.position.x = -0.5;
+        this.shadowCloneRing3.position.x = 0.5;
+        this.shadowCloneRing3.visible = true;
+        this.shadowCloneRing4.position.x = 1.5;
+        this.shadowCloneRing4.visible = true;
+  
+        // Add the fourth model to the scene
+        this.scene.add(model4);
+        model4.visible = true;
+  
+        // Store the fourth model
+        this.currentDisplayedModels.push(model4);
+      }
+    } catch (error) {
+      console.error("Error adding fourth model:", error);
     }
-
-    // Position the models
-    this.currentDisplayedModels[0].position.set(-1.5, 0, 0);  // First model left
-    this.currentDisplayedModels[1].position.set(-0.5, 0, 0);  // Second model left-mid
-    this.currentDisplayedModels[2].position.set(0.5, 0, 0);   // Third model right-mid
-    model4.position.set(1.5, 0, 0);                           // Fourth model far right
-    model4.scale.set(1, 1, 1);
-
-    // Add the fourth model to the scene
-    this.scene.add(model4);
-    model4.visible = true;
-
-    // Store the fourth model
-    this.currentDisplayedModels.push(model4);
   }
-
   // Remove the third model
   removeThirdModel() {
     if (this.currentDisplayedModels.length < 3) {
@@ -1511,129 +1625,7 @@ console.log("model 3")
     });
   }
 
-  // engraveTextOnModelss(text, options = {}) {
-  //   console.log("Engraving text on the inner mesh...", text);
-  //   let sValue = 0.0005
-  //   this.tempPos = -0.85
-
-  //   // if(this.currentModel=="P1"){
-  //   //     sValue = 0.0005
-  //   // }
-  //   // if( this.currentModel=="P2" || this.currentModel=="P3" ){
-  //   //   sValue = 0.0003
-
-  //   // }
-  //   // if( this.currentModel=="P4"){
-  //   //   sValue = 0.0004
-  //   //   this.tempPos = -0.0087
-  //   // }
-  //   // if( this.currentModel=="P5"){
-  //   //   sValue = 0.0004
-
-  //   // }
-  //   // Default configurations
-  //   const fontConfigurations = {
-  //     1: { size: 0.5, height: sValue, rotation: { x: 0, y: 0, z: 0 } },
-  //     2: { size: 0.5, height: sValue },
-  //     3: { size: 0.5, height: sValue },
-  //     4: { size: 0.5, height: sValue },
-  //     5: { size: 0.5, height: sValue },
-  //   };
-
-  //   const config = { ...fontConfigurations[this.fontIndex || 1], ...options };
-
-  //   console.log("hello 22", this.fontIndex, this.currentFont)
-
-  //   // Load font
-  //   this.fontLoader.load(this.currentFont, (font) => {
-  //     const createEngraving = (model) => {
-  //       let innerMesh = null;
-
-  //       // Locate the Inner mesh
-  //       model.traverse((child) => {
-  //         if (child.isMesh && child.name.includes("Inner")) {
-  //           innerMesh = child;
-  //         }
-  //       });
-
-  //       if (!innerMesh) {
-  //         console.error("Inner mesh not found.");
-  //         return;
-  //       }
-
-  //       // Compute bounding box of the Inner mesh
-  //       innerMesh.geometry.computeBoundingBox();
-  //       const boundingBox = innerMesh.geometry.boundingBox;
-
-  //       const innerRadius = (boundingBox.max.x - boundingBox.min.x) / 2; // Approximate radius
-  //       const depthOffset = 0.0002; // Slight offset to make it visible on top of the surface
-
-  //       // Create the text geometry
-  //       const textGeometry = new TextGeometry(text, {
-  //         font: font,
-  //         size: config.size,
-  //         depth: 0.3,
-  //         curveSegments: 12,
-  //         bevelEnabled: false,
-  //       });
-
-  //       textGeometry.center();
-
-  //       const bender = new Bender();
-  //       // Apply bending if needed
-  //       bender.bend(textGeometry, "y", Math.PI/9 );
-  //       console.log("bender")
-  //       // Create text mesh
-  //       const textMaterial = new THREE.MeshStandardMaterial({
-  //         color: this.currentColor,
-  //         metalness: 0.8,
-  //         roughness: 0.5,
-  //       });
-  //       const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-  //       textMesh.name = "test"
-  //       // Position text slightly above the inner surface
-  //       textMesh.position.set(0, -0.005, -0.005);
-  //       // x: 0, y: -0.005, z: -0.005 
-  //       textMesh.rotation.set(-0.6,  0.2,  1.5 ); // Align text along the ring's curvature
-  //       textMesh.scale.set(0.03, 0.03, 0.03); // Scale the text
-  //       // Add the text mesh to the inner mesh
-  //       innerMesh.add(textMesh);
-  //       // console.log("innerMesh", model,innerMesh)
-  //       // this.scene.add(textMesh);
-
-  //       console.log("Engraving applied to the inner mesh.", boundingBox.min.y);
-  //     };
-
-  //     const engraveOnModels = (models) => {
-  //       models.forEach((model) => {
-  //         if (model) {
-  //           createEngraving(model);
-  //         } else {
-  //           console.warn("Model not found for engraving.");
-  //         }
-  //       });
-  //     };
-
-  //     // Check if pair1 is active and engrave on both rings
-  //     if (this.pair1 && this.currentDisplayedModels.length > 1) {
-  //       const ring1 = this.currentDisplayedModels[0];
-  //       const ring2 = this.currentDisplayedModels[1];
-  //       engraveOnModels([ring1, ring2]);
-  //       console.log(`Engraved text "${text}" on both pair1 rings.`);
-  //     } else {
-  //       // Engrave only on the selected model
-  //       const model = this.currentDisplayedModels[this.selectedModel - 1];
-  //       engraveOnModels([model]);
-  //       console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
-  //     }
-  //   });
-  // }
-
-
-
-
-
-
+  
   removeEngraving() {
     console.log("Removing engraving...");
 
