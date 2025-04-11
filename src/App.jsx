@@ -12,17 +12,22 @@ function App() {
 
   return (
     <div className="max-w-[1450px] mx-auto lg:px-9 pt-5">
-      <div className="mb-5 flex items-center">
-        <label htmlFor="expertToggle" className="mr-2">
-          Expert Mode:
-        </label>
-        <input
-          id="expertToggle"
-          type="checkbox"
-          checked={isExpertMode}
-          onChange={handleToggle}
-          className="form-checkbox h-5 w-5 text-indigo-600"
-        />
+      <div className="flex justify-between items-center mb-5">
+        <div className="logo">
+          <img src="./public/logo.png" alt="Company Logo" className="h-16" />
+        </div>
+        <div className="flex items-center">
+          <label htmlFor="expertToggle" className="mr-2">
+            Expert Mode:
+          </label>
+          <input
+            id="expertToggle"
+            type="checkbox"
+            checked={isExpertMode}
+            onChange={handleToggle}
+            className="form-checkbox h-5 w-5 text-indigo-600"
+          />
+        </div>
       </div>
       <Configurator
         activeStep={activeStep}

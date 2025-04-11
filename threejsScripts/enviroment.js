@@ -54,14 +54,20 @@ export class Environment {
 //     // this.scene.backgroundBlurriness = 1;
 //   });
 // }
-loadEnvironment(path='./bg/Jewelry-HDRI-Studio-Light-Beel-v5-gray.hdr') {
+loadEnvironment(path='./bg/test.jpg') {
   return new Promise((resolve, reject) => {
-    const loader = new RGBELoader();
-    loader.setDataType(THREE.FloatType);
+    const loader = new THREE.TextureLoader();
 
     loader.load(
-      './bg/Jewelry-HDRI-Studio-Light-Beel-v5-gray.hdr',
+      path,
       (texture) => {
+        // Enable HDR-like rendering for the JPGHDR
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        texture.encoding = THREE.sRGBEncoding;
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.flipY = true;
+        
         const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
         pmremGenerator.compileEquirectangularShader();
 
@@ -71,16 +77,15 @@ loadEnvironment(path='./bg/Jewelry-HDRI-Studio-Light-Beel-v5-gray.hdr') {
         pmremGenerator.dispose(); // Dispose of the PMREMGenerator
 
         this.scene.env = envMap;
-        // this.scene.environment = this.scene.env;
+        // Uncomment if you want to set it as background too
         // this.scene.background = envMap;
 
-        resolve(envMap); // Resolve the promise with the environment map
+        resolve(envMap);
       },
       undefined, // onProgress (optional)
-      async (error) => {
-        // await this.loadEnvironment('./bg/brown_photostudio_04_2k.hdr')
-        console.error('An error occurred while loading the environment texture', error);
-        reject(error); // Reject the promise if an error occurs
+      (error) => {
+        console.error('An error occurred while loading the JPGHDR texture', error);
+        reject(error);
       }
     );
   });
