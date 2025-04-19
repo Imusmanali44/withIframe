@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DistributionImg1 from "../../../../../public/profile/none.svg";
 import DistributionImg2 from "../../../../../public/profile/two-color.svg";
 import DistributionImg3 from "../../../../../public/profile/three-color.svg";
@@ -6,7 +6,7 @@ import { Dropdown } from "./Dropdown";
 import { RangeSlider } from "../../../shared/RangeSlider";
 // import { MultiRangeSlider } from "../../../shared/MultiRangeSlider";
 import MultiRangeMaskSlider0 from "../../../shared/SimpleCRangeSlider0";
-import  MultiRangeMaskSlider  from "../../../shared/SimpleCRangeSlider"
+import MultiRangeMaskSlider from "../../../shared/SimpleCRangeSlider";
 import MultiRangeMaskSlider2 from "../../../shared/SimpleCRangeSlider2";
 import { ColorSurface } from "./ColorSurface";
 import IsPair from "../../../shared/IsPair";
@@ -112,13 +112,11 @@ const options = [
     label: "Golf 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-1.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: "Diagonaal 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-1.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: "Segment 1:1",
@@ -129,13 +127,11 @@ const options = [
     label: "Axiaal 1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/horizontal-1-1.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: " Vrij ",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-free-2.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: " Golf vrij ",
@@ -146,7 +142,6 @@ const options = [
     label: " Diagonaal vrij ",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-free-2.svg",
     opacity: 0.3, // Added opacity
-
   },
 ];
 
@@ -191,13 +186,11 @@ const options2 = [
     label: "Golf 1:1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-1-1.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: "Golf 1:2:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/wave-1-2-1.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: "Golf 2:1:2",
@@ -208,13 +201,11 @@ const options2 = [
     label: "Diagonaal 1:1:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-1-1.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: "Diagonaal 1:2:1",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/diagonal-1-2-1.svg",
     opacity: 0.3, // Added opacity
-
   },
   {
     label: "Diagonaal 2:1:2",
@@ -225,7 +216,6 @@ const options2 = [
     label: "Vrij",
     img: "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/auronia/division/proto/simple/vertical-free-3.svg",
     opacity: 0.3,
-
   },
   {
     label: "Golf Vrij",
@@ -246,25 +236,12 @@ export const PreciousMetal = ({
   isExpert,
   activeRing,
 }) => {
-  useEffect(() => {
-    // Reset partition to Single whenever rings array changes
-    setPartition({
-      name: "Single",
-      img: DistributionImg1
-    });
-    // Reset selected partition images
-    setSelectedPartitionTwotoneImg(null);
-    setSelectedPartitionTriColoredImg(null);
-    // Notify parent about the reset
-    // window.parent.postMessage(
-    //   { action: "PreciousMetal", value: 0 },
-    //   "*"
-    // );
-  }, [rings?.length]);
+  // const prevRingsRef = useRef([]);
+
   const getTwoToneOptions = () => {
-    return options.map(option => {
+    return options.map((option) => {
       // Add opacity 0.3 for specific patterns
-      if ([ "Golf vrij"].includes(option.label.trim())) {
+      if (["Golf vrij"].includes(option.label.trim())) {
         return { ...option, opacity: 0.3 };
       }
       return option;
@@ -272,21 +249,22 @@ export const PreciousMetal = ({
   };
 
   const getTriColorOptions = () => {
-    return options2.map(option => {
+    return options2.map((option) => {
       // Add opacity 0.3 for specific patterns
-      if ([
-        "4:1:1",
-        "Golf 2:1:2",
-        "Diagonaal 2:1:2",
-        "Golf Vrij",
-        "Diagonaal vrij"
-      ].includes(option.label.trim())) {
+      if (
+        [
+          "4:1:1",
+          "Golf 2:1:2",
+          "Diagonaal 2:1:2",
+          "Golf Vrij",
+          "Diagonaal vrij",
+        ].includes(option.label.trim())
+      ) {
         return { ...option, opacity: 0.3 };
       }
       return option;
     });
   };
-
 
   const isWeddingRing = Array.isArray(activeRing)
     ? activeRing[0]?.type === "Wedding"
@@ -331,8 +309,9 @@ export const PreciousMetal = ({
     useState(null);
 
   const togglePartitionDropdown = (item) => {
-    console.log(item)
+    console.log(item);
     setPartition(item);
+    localStorage.setItem("partition", JSON.stringify(item));
     setIsPartitionDropdownOpen(!isPartitionDropdownOpen);
   };
 
@@ -352,15 +331,21 @@ export const PreciousMetal = ({
       },
       "*"
     );
-  
-    // Update state after sending the message
-    setSelections((prevSelections) => ({
-      ...prevSelections,
-      [partition]: {
-        ...prevSelections[partition],
-        [field]: value,
-      },
-    }));
+
+    setSelections((prevSelections) => {
+      const updatedSelections = {
+        ...prevSelections,
+        [partition]: {
+          ...prevSelections[partition],
+          [field]: value,
+        },
+      };
+    
+      localStorage.setItem("selections", JSON.stringify(updatedSelections));
+      return updatedSelections;
+    });
+    
+
   };
 
   // Function to handle selection from the dropdown
@@ -369,12 +354,27 @@ export const PreciousMetal = ({
     let isTwoTone = null;
     if (option.name === "Two tone") {
       setSelectedPartitionTwotoneImg(option);
+      localStorage.setItem(
+        "selectedPartitionTwotoneImg",
+        JSON.stringify(option)
+      );
       setSelectedPartitionTriColoredImg(null);
+      localStorage.setItem(
+        "selectedPartitionTriColoredImg",
+        JSON.stringify(null)
+      );
       isTwoTone = true;
     } else {
       setSelectedPartitionTriColoredImg(option);
-      setSelectedPartitionTwotoneImg(option);
-
+      localStorage.setItem(
+        "selectedPartitionTriColoredImg",
+        JSON.stringify(option)
+      );
+      setSelectedPartitionTwotoneImg(null);
+      localStorage.setItem(
+        "selectedPartitionTwotoneImg",
+        JSON.stringify(option)
+      );
       isTwoTone = false;
     }
     setSelectedOption(option);
@@ -388,11 +388,74 @@ export const PreciousMetal = ({
     );
   };
 
+  // useEffect(() => {
+  //   const current = JSON.stringify(rings);
+  //   const previous = prevRingsRef.current;
+  
+  //   if (current !== previous) {
+  //   console.log(current, previous)
+
+  //     prevRingsRef.current = rings;
+
+  //     const defaultPartition = {
+  //       name: "Single",
+  //       img: DistributionImg1,
+  //     };
+  //     setPartition(defaultPartition);
+  //     setSelectedPartitionTwotoneImg(null);
+  //     setSelectedPartitionTriColoredImg(null);
+
+  //     localStorage.removeItem("partition");
+  //     localStorage.removeItem("selectedPartitionTwotoneImg");
+  //     localStorage.removeItem("selectedPartitionTriColoredImg");
+
+  //     // optionally reset selections as well
+  //     const defaultSelections = {
+  //       single: {
+  //         metal: { value: "Silver", colorCode: "#E3E3E2" },
+  //         surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+  //         purity: null,
+  //       },
+  //       twoTone: {
+  //         metal: { value: "Gold", colorCode: "#D8BC7E" },
+  //         surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+  //         purity: null,
+  //       },
+  //       triColored: {
+  //         metal: { value: "Silver", colorCode: "#E3E3E2" },
+  //         surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+  //         purity: null,
+  //       },
+  //     };
+  //     setSelections(defaultSelections);
+  //     localStorage.removeItem("selections");
+  //   }
+  // }, [rings]);
+
+  useEffect(() => {
+    const savedPartition = localStorage.getItem("partition");
+    const savedSelections = localStorage.getItem("selections");
+    const savedTwoToneImg = localStorage.getItem("selectedPartitionTwotoneImg");
+    const savedTriColorImg = localStorage.getItem(
+      "selectedPartitionTriColoredImg"
+    );
+
+    console.log(savedPartition);
+
+    if (savedPartition) setPartition(JSON.parse(savedPartition));
+    if (savedSelections) setSelections(JSON.parse(savedSelections));
+    if (savedTwoToneImg)
+      setSelectedPartitionTwotoneImg(JSON.parse(savedTwoToneImg));
+    if (savedTriColorImg)
+      setSelectedPartitionTriColoredImg(JSON.parse(savedTriColorImg));
+  }, []);
+
+
   // console.log("purity", purity);
   // console.log("partition", partition);
   // console.log("activeRing:", activeRing);
   // console.log("selectedOption", selectedOption);
-  console.log("selectedPartitionImg", selectedPartitionTwotoneImg);
+  // console.log("selectedPartitionImg", selectedPartitionTwotoneImg);
   return (
     <div className="mb-auto">
       {rings &&
@@ -415,7 +478,6 @@ export const PreciousMetal = ({
                   <div key={index} className="w-1/3">
                     <button
                       onClick={
-                        
                         index !== 0
                           ? () => togglePartitionDropdown(item)
                           : () => {
@@ -423,7 +485,7 @@ export const PreciousMetal = ({
                               setIsPartitionDropdownOpen(false);
                               setSelectedPartitionTwotoneImg(null);
                               setSelectedPartitionTriColoredImg(null);
-                              console.log(index, DistributionOptions)
+                              // console.log(index, DistributionOptions)
                               window.parent.postMessage(
                                 { action: "PreciousMetal", value: index },
                                 "*"
@@ -458,15 +520,19 @@ export const PreciousMetal = ({
                 ))}
               </div>
               {isPartitionDropdownOpen && (
-        <Dropdown
-          title={partition.name}
-          options={partition.name === "Two tone" ? getTwoToneOptions() : getTriColorOptions()}
-          setIsOpen={setIsPartitionDropdownOpen}
-          selectedOption={selectedOption}
-          setSelectedOption={handleOptionSelect}
-        />
-      )}
-    </div>
+                <Dropdown
+                  title={partition.name}
+                  options={
+                    partition.name === "Two tone"
+                      ? getTwoToneOptions()
+                      : getTriColorOptions()
+                  }
+                  setIsOpen={setIsPartitionDropdownOpen}
+                  selectedOption={selectedOption}
+                  setSelectedOption={handleOptionSelect}
+                />
+              )}
+            </div>
           </>
         )}
         {/* Dropdowns for Metal and Surface */}
@@ -524,51 +590,54 @@ export const PreciousMetal = ({
               )}
             </div>
           )}
-           {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg &&  (window.ringsLength==1) &&(
-          <RangeSlider
-            title={"Ring"}
-            min={-0.159}
-            max={0.159}
-            step={0.001}
-            defaultValue={0}
-          />
-        )}
-        {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (window.ringsLength==2)  && (
-          <RangeSlider
-            title={"Ring 1"}
-            min={-0.85}
-            max={-0.55}
-            step={0.001}
-            defaultValue={-0.7}
-          />
-        )}
-         {isWeddingRing && selectedPartitionTwotoneImg && !selectedPartitionTriColoredImg && (window.ringsLength==2)  &&(
-          <RangeSlider
-            title={"Ring 2"}
-            min={0.55}
-            max={0.85}
-            step={0.001}
-            defaultValue={0.7}
-          />
-        )}
+        {isWeddingRing &&
+          selectedPartitionTwotoneImg &&
+          !selectedPartitionTriColoredImg &&
+          window.ringsLength == 1 && (
+            <RangeSlider
+              title={"Ring"}
+              min={-0.159}
+              max={0.159}
+              step={0.001}
+              defaultValue={0}
+            />
+          )}
+        {isWeddingRing &&
+          selectedPartitionTwotoneImg &&
+          !selectedPartitionTriColoredImg &&
+          window.ringsLength == 2 && (
+            <RangeSlider
+              title={"Ring 1"}
+              min={-0.85}
+              max={-0.55}
+              step={0.001}
+              defaultValue={-0.7}
+            />
+          )}
+        {isWeddingRing &&
+          selectedPartitionTwotoneImg &&
+          !selectedPartitionTriColoredImg &&
+          window.ringsLength == 2 && (
+            <RangeSlider
+              title={"Ring 2"}
+              min={0.55}
+              max={0.85}
+              step={0.001}
+              defaultValue={0.7}
+            />
+          )}
         {/* {isWeddingRing && selectedPartitionTriColoredImg && (
         <MultiRangeSlider />
         )} */}
-          {isWeddingRing && selectedPartitionTriColoredImg && (window.ringsLength==1)  &&(
-       <MultiRangeMaskSlider0 
-    
-     />
-        )}
-        {isWeddingRing && selectedPartitionTriColoredImg &&  (window.ringsLength==2)  &&(
-       <MultiRangeMaskSlider 
-    
-     />
-        )}
-            {isWeddingRing && selectedPartitionTriColoredImg && (window.ringsLength==2)  &&(
-       <MultiRangeMaskSlider2 
-    
-     />
-        )}
+        {isWeddingRing &&
+          selectedPartitionTriColoredImg &&
+          window.ringsLength == 1 && <MultiRangeMaskSlider0 />}
+        {isWeddingRing &&
+          selectedPartitionTriColoredImg &&
+          window.ringsLength == 2 && <MultiRangeMaskSlider />}
+        {isWeddingRing &&
+          selectedPartitionTriColoredImg &&
+          window.ringsLength == 2 && <MultiRangeMaskSlider2 />}
       </div>
     </div>
   );
