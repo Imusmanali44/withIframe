@@ -16,8 +16,9 @@ import { TextureLoader } from 'three';
 
 
 export class ModelManager {
-  constructor(scene, PreciousMetal) {
+  constructor(scene, PreciousMetal,renderer) {
     this.scene = scene;
+    this.renderer = renderer;
     this.PreciousMetal = PreciousMetal
     this.models = [];
     this.currentDisplayedModels = [];
@@ -226,7 +227,7 @@ async loadMidMesh(type, isTri) {
   // Check if the midMesh is already loaded, reuse it instead of loading again
   if (this.midMesh) {
     console.log("Using cached midMesh");
-    
+    // this.midMesh.renderOrder = -1000;
     // Reset transformations before adding to the scene
     this.midMesh.scale.set(1, 1, 1);
     this.midMesh.position.set(0, 0, 0);
@@ -237,7 +238,9 @@ async loadMidMesh(type, isTri) {
     this.midMesh.position.x = -0.7;
     
     this.scene.add(this.midMesh);
-
+    // const targetRing = this.currentDisplayedModels[0];
+    // targetRing.add(this.midMesh);
+        this.midMesh.userData = "midMeshRing1";
     // Clone midMesh for the second ring
     if (!this.midMesh2) {
       this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
@@ -275,6 +278,8 @@ async loadMidMesh(type, isTri) {
     });
 
     this.midMesh = gltf.scene;
+    this.midMesh.renderOrder = 1;
+
 
     // Traverse and update material
     this.midMesh.traverse((child) => {
@@ -296,9 +301,10 @@ async loadMidMesh(type, isTri) {
           stencilZPass: THREE.KeepStencilOp,
           depthWrite: true,
           polygonOffset: true,
-          polygonOffsetFactor: -14,
-          polygonOffsetUnits: -14,
+          polygonOffsetFactor: -1,
+          polygonOffsetUnits: -1,
         });
+        child.renderOrder = 1;
       }
     });
 
@@ -309,6 +315,8 @@ async loadMidMesh(type, isTri) {
 
     // Add the first mesh to the scene
     this.scene.add(this.midMesh);
+    // const targetRing = this.currentDisplayedModels[0];
+// targetRing.add(this.midMesh);
     this.midMesh.userData = "midMeshRing1";
 
     // Clone the model with unique material
@@ -316,6 +324,8 @@ async loadMidMesh(type, isTri) {
     this.midMesh2.userData = "midMeshRing2";
     this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
     this.midMesh2.position.set(0.7, -0.15, 0);
+    this.midMesh2.renderOrder = 1
+
 
     // Add the second mesh to the scene
     this.scene.add(this.midMesh2);
@@ -1933,7 +1943,49 @@ console.log("model 3")
         });
     });
   }
-
+  fixRenderingOrder() {
+    // First, set proper render order on scene level
+    this.scene.traverse((object) => {
+      // Get all diamonds (assuming they have "diamond" in their name)
+      if (object.name && (object.name.includes("diamond") || object.name.includes("diamondHolder"))) {
+        object.renderOrder = 4;
+        
+        // Also traverse the diamond meshes to set individual renderers
+        object.traverse((child) => {
+          if (child.isMesh) {
+            child.renderOrder = 4;
+            
+            // Ensure diamond materials have proper settings
+            if (child.material) {
+              child.material.depthWrite = true;
+              child.material.depthTest = true;
+              child.material.transparent = false;
+              child.material.polygonOffset = false;
+              child.material.needsUpdate = true;
+            }
+          }
+        });
+      }
+      
+      // Set midMesh render order
+      if (object.userData === "midMeshRing1" || object.userData === "midMeshRing2") {
+        object.renderOrder = 1;
+        
+        // Also traverse the midMesh to set individual renderers
+        object.traverse((child) => {
+          if (child.isMesh) {
+            child.renderOrder = 1;
+          }
+        });
+      }
+    });
+    
+    // Force a render update
+    if (this.renderer) {
+      this.renderer.clearDepth();
+      this.renderer.render(this.scene, this.camera);
+    }
+  }
 
 
 }

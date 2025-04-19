@@ -25,13 +25,16 @@ export class Renderer {
       Custom: THREE.CustomToneMapping,
     };
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true,stencil:true });
+    this.renderer = new THREE.WebGLRenderer({ antialias: true,stencil:true ,alpha: true,
+      
+      preserveDrawingBuffer: true});
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.toneMapping = toneMappingOptions[params.toneMapping];
     this.renderer.toneMappingExposure = params.exposure;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.localClippingEnabled = true;
-
+    // this.renderer.preserveDrawingBuffer = true;
+    // this.renderer.sortObjects = true;
     this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace; // Use LinearSRGBColorSpace if working with modern Three.js
 
 

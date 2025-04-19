@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import Configurator from "./components/Configurator";
 
 function App() {
@@ -9,7 +10,23 @@ function App() {
     setIsExpertMode((prev) => !prev);
     setActiveStep(1);
   };
+  useEffect(() => {
+    // Clear all localStorage items
+    localStorage.clear();
+    
+    // Alternatively, you can selectively clear only your app's specific items:
+    // Object.keys(localStorage).forEach(key => {
+    //   // Only clear keys related to your application 
+    //   // For example, if all your keys start with a specific prefix
+    //   if (key.startsWith('activeProfile_') || 
+    //       key.startsWith('groove_') || 
+    //       key.startsWith('stoneSize_')) {
+    //     localStorage.removeItem(key);
+    //   }
+    // });
 
+    console.log("localStorage cleared for new session");
+  }, []);
   return (
     <div className="max-w-[1450px] mx-auto lg:px-9 pt-5">
       <div className="flex justify-between items-center mb-5">

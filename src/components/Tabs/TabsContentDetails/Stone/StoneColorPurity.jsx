@@ -1,4 +1,17 @@
-const StoneColorPurity = ({ selectedOption, handleChange }) => {
+import { useEffect } from "react";
+
+const StoneColorPurity = ({ selectedOption, handleChange, activeRing }) => {
+  // Save selected option to localStorage when it changes
+  useEffect(() => {
+    if (selectedOption && activeRing) {
+      const storageKey = Array.isArray(activeRing) 
+        ? `stoneColorPurity_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+        : `stoneColorPurity_${activeRing?.name}`;
+      
+      localStorage.setItem(storageKey, selectedOption);
+    }
+  }, [selectedOption, activeRing]);
+
   return (
     <div>
       <h3 className="m-0 font-semibold text-sm text-black">
@@ -21,7 +34,14 @@ const StoneColorPurity = ({ selectedOption, handleChange }) => {
               name="radio"
               value={option}
               checked={selectedOption === option}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                // Also send message to parent window when changed
+                window.parent.postMessage(
+                  { action: "stoneColorPurity", value: e.target.value },
+                  "*"
+                );
+              }}
               className="absolute opacity-0 cursor-pointer"
             />
             <span

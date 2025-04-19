@@ -3,7 +3,7 @@ import * as THREE from "three";
 export class PreciousMetal {
   constructor(scene, modelManager,pMetalHelper, renderer) {
     this.scene = scene;
-    // this.modelManager = modelManager;
+    this.modelManager = modelManager;
     // this.volumeVisualization = new THREE.Group();
     // this.volumeVisualization.visible = true; // Initially hidden
     // this.scene.add(this.volumeVisualization);
@@ -117,6 +117,8 @@ export class PreciousMetal {
   }
 
   handlePair(ring1, ring2, val, triBool) {
+
+    console.log("modelmanager", this.modelManager.currentDisplayedModels.length, this.modelManager.selectedModel, this.modelManager.pair1)
     this.currentVal = val;
     this.triBool = triBool
     let selectedModel = 0
@@ -175,7 +177,7 @@ export class PreciousMetal {
     this.helperModel.position.set(helperModelPosXring1, helperModelPosY, 0)
     this.scene.add(this.helperModel);
     this.applyColorToModel(this.helperModel, "#E3E3E2");
-
+  
     // Create clipping planes
     this.clippingPlaneRing1 = new THREE.Plane(new THREE.Vector3(1, 0, 0), offsetRing1);
     this.clippingPlaneRing1helper = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -offsetRing1);

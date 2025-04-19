@@ -1,6 +1,4 @@
-window.distribution = "Together";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AddSvg, TrashSvg } from "../../../../static/SvgImages";
 import StoneColorPurity from "./StoneColorPurity";
 // stone style image
@@ -29,6 +27,11 @@ import StoneSettingPositionRight from "../../../../assets/images/StoneSetting/po
 import StoneSettingPositionFree from "../../../../assets/images/StoneSetting/position/free.svg";
 
 import {StoneRangeSlider} from "../../../shared/StoneRangeSlider";
+
+// Initialize global distribution variable if it doesn't exist
+if (typeof window !== 'undefined' && window.distribution === undefined) {
+  window.distribution = "Together";
+}
 
 const maxStonesPerDistribution = {
   'Together': 8,
@@ -189,15 +192,134 @@ const TabContent = ({
   setStoneSize,
   selectedOption,
   handleChange,
+  activeRing
 }) => {
-  const [currentTab, setCurrentTab] = useState("Settings");
-  const [stoneStyle, setStoneStyle] = useState("Without");
-  const [stoneType, setStoneType] = useState("Without");
-  const [stoneNumber, setStoneNumber] = useState("1");
-  const [distribution, setDistribution] = useState("Together");
-  const [isGrouped, setIsGrouped] = useState(false);
-  const [stonesPerGroup, setStonesPerGroup] = useState("");
-  const [groupDivision, setGroupDivision] = useState("");
+  // Create storage key prefix based on activeRing and activeTab
+  const getStorageKeyPrefix = () => {
+    const ringKey = Array.isArray(activeRing) 
+      ? `${activeRing[0]?.name}_${activeRing[1]?.name}`
+      : `${activeRing?.name}`;
+    
+    return `stone_${ringKey}_tab${activeTab}`;
+  };
+
+  // Initialize currentTab from localStorage or default
+  const [currentTab, setCurrentTab] = useState(() => {
+    if (!activeRing || !activeTab) return "Settings";
+    const key = `${getStorageKeyPrefix()}_currentTab`;
+    return localStorage.getItem(key) || "Settings";
+  });
+
+  // Initialize stoneStyle from localStorage or default
+  const [stoneStyle, setStoneStyle] = useState(() => {
+    if (!activeRing || !activeTab) return "Without";
+    const key = `${getStorageKeyPrefix()}_stoneStyle`;
+    return localStorage.getItem(key) || "Without";
+  });
+
+  // Initialize stoneType from localStorage or default
+  const [stoneType, setStoneType] = useState(() => {
+    if (!activeRing || !activeTab) return "Without";
+    const key = `${getStorageKeyPrefix()}_stoneType`;
+    return localStorage.getItem(key) || "Without";
+  });
+
+  // Initialize stoneNumber from localStorage or default
+  const [stoneNumber, setStoneNumber] = useState(() => {
+    if (!activeRing || !activeTab) return "1";
+    const key = `${getStorageKeyPrefix()}_stoneNumber`;
+    return localStorage.getItem(key) || "1";
+  });
+
+  // Initialize distribution from localStorage or default
+  const [distribution, setDistribution] = useState(() => {
+    if (!activeRing || !activeTab) return "Together";
+    const key = `${getStorageKeyPrefix()}_distribution`;
+    const savedDistribution = localStorage.getItem(key);
+    if (savedDistribution) {
+      window.distribution = savedDistribution; // Set global distribution
+      return savedDistribution;
+    }
+    return "Together";
+  });
+
+  // Initialize isGrouped from localStorage or default
+  const [isGrouped, setIsGrouped] = useState(() => {
+    if (!activeRing || !activeTab) return false;
+    const key = `${getStorageKeyPrefix()}_isGrouped`;
+    return localStorage.getItem(key) === "true";
+  });
+
+  // Initialize stonesPerGroup from localStorage or default
+  const [stonesPerGroup, setStonesPerGroup] = useState(() => {
+    if (!activeRing || !activeTab) return "";
+    const key = `${getStorageKeyPrefix()}_stonesPerGroup`;
+    return localStorage.getItem(key) || "";
+  });
+
+  // Initialize groupDivision from localStorage or default
+  const [groupDivision, setGroupDivision] = useState(() => {
+    if (!activeRing || !activeTab) return "";
+    const key = `${getStorageKeyPrefix()}_groupDivision`;
+    return localStorage.getItem(key) || "";
+  });
+
+  // Save currentTab to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_currentTab`;
+    localStorage.setItem(key, currentTab);
+  }, [currentTab, activeRing, activeTab]);
+
+  // Save stoneStyle to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_stoneStyle`;
+    localStorage.setItem(key, stoneStyle);
+  }, [stoneStyle, activeRing, activeTab]);
+
+  // Save stoneType to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_stoneType`;
+    localStorage.setItem(key, stoneType);
+  }, [stoneType, activeRing, activeTab]);
+
+  // Save stoneNumber to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_stoneNumber`;
+    localStorage.setItem(key, stoneNumber);
+  }, [stoneNumber, activeRing, activeTab]);
+
+  // Save distribution to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_distribution`;
+    localStorage.setItem(key, distribution);
+    window.distribution = distribution; // Update global distribution
+  }, [distribution, activeRing, activeTab]);
+
+  // Save isGrouped to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_isGrouped`;
+    localStorage.setItem(key, isGrouped.toString());
+  }, [isGrouped, activeRing, activeTab]);
+
+  // Save stonesPerGroup to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_stonesPerGroup`;
+    localStorage.setItem(key, stonesPerGroup);
+  }, [stonesPerGroup, activeRing, activeTab]);
+
+  // Save groupDivision to localStorage when it changes
+  useEffect(() => {
+    if (!activeRing || !activeTab) return;
+    const key = `${getStorageKeyPrefix()}_groupDivision`;
+    localStorage.setItem(key, groupDivision);
+  }, [groupDivision, activeRing, activeTab]);
 
   const handleCheckboxChange = (e) => {
     setIsGrouped(e.target.checked);
@@ -282,11 +404,23 @@ const TabContent = ({
               </h3>
               <select
                 value={stoneSize}
-                onChange={(e) => {setStoneSize(e.target.value), console.log(`Clicked size ${e.target.value}`),
-                window.parent.postMessage(
-                  { action: "stoneSize", value: e.target.value },
-                  "*"
-                );}}
+                onChange={(e) => {
+                  setStoneSize(e.target.value);
+                  console.log(`Clicked size ${e.target.value}`);
+                  window.parent.postMessage(
+                    { action: "stoneSize", value: e.target.value },
+                    "*"
+                  );
+                  
+                  // Save to localStorage directly
+                  if (activeRing) {
+                    const storageKey = Array.isArray(activeRing) 
+                      ? `stoneSize_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+                      : `stoneSize_${activeRing?.name}`;
+                    
+                    localStorage.setItem(storageKey, e.target.value);
+                  }
+                }}
                 className="border border-[#e1e1e1] p-2 rounded w-full"
               >
                 {StoneSizeOptions.map((size, index) => (
@@ -299,6 +433,7 @@ const TabContent = ({
             <StoneColorPurity
               selectedOption={selectedOption}
               handleChange={handleChange}
+              activeRing={activeRing}
             />
           </div>
         );
@@ -313,7 +448,7 @@ const TabContent = ({
                   <select
                     value={stoneNumber}
                     onChange={(e) => {
-                      setStoneNumber(e.target.value),
+                      setStoneNumber(e.target.value);
                       window.parent.postMessage(
                         { action: "addStone", value: e.target.value, type: "Number", stoneDist: window.distribution },
                         "*")
@@ -353,8 +488,8 @@ const TabContent = ({
                     <select
                       value={distribution}
                       onChange={(e) => {
-                        setDistribution(e.target.value),
-                        window.distribution = e.target.value,
+                        setDistribution(e.target.value);
+                        window.distribution = e.target.value;
                         console.log(`Clicked distribution ${window.distribution}`);
                         
                         // If current stone number exceeds max for new distribution, adjust it
@@ -423,41 +558,41 @@ const TabContent = ({
                 <label className="mb-2 block font-semibold text-sm text-black">
                   Position
                 </label>
-  <div className="flex flex-wrap gap-2.5">
-    {PositionTypeOptions.map((item, index) => (
-      <button
-        key={index}
-        onClick={() => {
-          setStoneStyle(item.name);
-          console.log(`Clicked position ${item.name}`);
-          window.parent.postMessage(
-            { action: "stonePosition", value: item.name },
-            "*"
+                <div className="flex flex-wrap gap-2.5">
+                  {PositionTypeOptions.map((item, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setStoneStyle(item.name);
+                        console.log(`Clicked position ${item.name}`);
+                        window.parent.postMessage(
+                          { action: "stonePosition", value: item.name },
+                          "*"
+                        );
+                      }}
+                      className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 hover:border-[#205fa8] ${
+                        stoneStyle === item.name
+                          ? "border-[#205fa8]"
+                          : "border-[#e1e1e1]"
+                      }`}
+                    >
+                      <span className="mx-2 text-sm leading-none">
+                        {item.name}
+                      </span>
+                      <img
+                        src={item.img}
+                        className="mx-auto mt-3"
+                        alt={item.name}
+                      />
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Render the FreePositionComponent when "Free" position is selected */}
+                {stoneStyle === "Free" && <StoneRangeSlider activeRing={activeRing} activeTab={activeTab} />}
+              </div>
+            </div>
           );
-        }}
-        className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 hover:border-[#205fa8] ${
-          stoneStyle === item.name
-            ? "border-[#205fa8]"
-            : "border-[#e1e1e1]"
-        }`}
-      >
-        <span className="mx-2 text-sm leading-none">
-          {item.name}
-        </span>
-        <img
-          src={item.img}
-          className="mx-auto mt-3"
-          alt={item.name}
-        />
-      </button>
-    ))}
-  </div>
-  
-  {/* Render the FreePositionComponent when "Free" position is selected */}
-  {stoneStyle === "Free" && <StoneRangeSlider />}
-</div>
-          </div>
-        );
       default:
         return null;
     }

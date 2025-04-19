@@ -53,6 +53,9 @@ export class MessageHandler {
             ringIndex: this.modelManager.selectedModel,
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           }, value);
+          console.log("smooth conversion", this.modelManager.selectedModel)
+    this.modelManager.fixRenderingOrder();
+
         }
         if (value == "Pavé") {
           this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
@@ -174,6 +177,9 @@ export class MessageHandler {
         }
         else if (value.value == "double-ring") {
           this.modelManager.engraveTextOnModel("MGN")
+        }
+        else if (value.value == "infinity") {
+          this.modelManager.engraveTextOnModel("gSg")
         }
         this.modelManager.changeFont(1);
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WidthDepthSurface from "./WidthDepthSurface";
 import { TrashSvg, AddSvg } from "../../../../static/SvgImages";
 import { GrooveRangeSlider } from "../../../shared/GrooveRangeSlider";
@@ -31,15 +31,83 @@ const StepGroove = ({
   selectedGrooveOptions,
   setSelectedGrooveOptions,
 }) => {
-  const [groove, setGroove] = useState("Without");
-  const [subActiveTab, setSubActiveTab] = useState("choice_of_groove");
+  // Initialize groove from localStorage or default to "Without"
+  const [groove, setGroove] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `groove_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `groove_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || "Without";
+  });
 
-  const [ring1Grooves, setRing1Grooves] = useState([
-    { id: 1, name: "Free Groove" },
-  ]);
-  const [ring2Grooves, setRing2Grooves] = useState([
-    { id: 1, name: "Free Groove" },
-  ]);
+  // Initialize subActiveTab from localStorage or default to "choice_of_groove"
+  const [subActiveTab, setSubActiveTab] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `grooveSubTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `grooveSubTab_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || "choice_of_groove";
+  });
+
+  // Initialize ring1Grooves from localStorage or default
+  const [ring1Grooves, setRing1Grooves] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `ring1Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `ring1Grooves_${activeRing?.name}`;
+    
+    const savedGrooves = localStorage.getItem(storageKey);
+    return savedGrooves ? JSON.parse(savedGrooves) : [
+      { id: 1, name: "Free Groove" },
+    ];
+  });
+
+  // Initialize ring2Grooves from localStorage or default
+  const [ring2Grooves, setRing2Grooves] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `ring2Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `ring2Grooves_${activeRing?.name}`;
+    
+    const savedGrooves = localStorage.getItem(storageKey);
+    return savedGrooves ? JSON.parse(savedGrooves) : [
+      { id: 1, name: "Free Groove" },
+    ];
+  });
+
+  // Save groove to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `groove_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `groove_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, groove);
+  }, [groove, activeRing]);
+
+  // Save subActiveTab to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `grooveSubTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `grooveSubTab_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, subActiveTab);
+  }, [subActiveTab, activeRing]);
+
+  // Save ring1Grooves to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `ring1Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `ring1Grooves_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, JSON.stringify(ring1Grooves));
+  }, [ring1Grooves, activeRing]);
+
+  // Save ring2Grooves to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `ring2Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `ring2Grooves_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, JSON.stringify(ring2Grooves));
+  }, [ring2Grooves, activeRing]);
 
   const handleGrooveSelection = (item) => {
     setGroove(item.name);
@@ -203,26 +271,28 @@ const StepGroove = ({
 
           {/* Sliders */}
           <div className="mt-4">
-  <GrooveRangeSlider
-    title="Ring 1"
-    grooves={ring1Grooves}
-    min={-0.85}
-    max={-0.55}
-    step={0.001}
-    defaultValue={-0.7}
-  />
-</div>
-{activeRing.type === "Wedding" && window.ringsLength === 2 && (
-  <div className="mt-4">
-    <GrooveRangeSlider
-      title="Ring 2"
-      grooves={ring2Grooves}
-      min={0.55}
-      max={0.85}
-      step={0.001}
-      defaultValue={0.7}
-    />
-  </div>
+            <GrooveRangeSlider
+              title="Ring 1"
+              grooves={ring1Grooves}
+              min={-0.85}
+              max={-0.55}
+              step={0.001}
+              defaultValue={-0.7}
+              activeRing={activeRing}
+            />
+          </div>
+          {activeRing.type === "Wedding" && window.ringsLength === 2 && (
+            <div className="mt-4">
+              <GrooveRangeSlider
+                title="Ring 2"
+                grooves={ring2Grooves}
+                min={0.55}
+                max={0.85}
+                step={0.001}
+                defaultValue={0.7}
+                activeRing={activeRing}
+              />
+            </div>
           )}
         </div>
       )}

@@ -118,6 +118,24 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
           </div>
         </div>
       )}
+          {(window.ringsLength == 3) && (
+        <div>
+          <label className="block py-1 font-semibold text-sm">
+            Engraving text Ring 3
+          </label>
+          <Input
+            type="text"
+            placeholder=""
+            value={engravingText}
+            onChange={(e) => handleInputChange(e.target.value)}
+            maxLength={15}
+          />
+          <div className="text-right text-[#bdbdbd] text-sm">
+            {35 - engravingText.length}
+          </div>
+        </div>
+        
+      )}
 
       <ButtonGroup
         options={symbols}

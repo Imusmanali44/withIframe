@@ -11,9 +11,10 @@ import { TextureLoader } from 'three';
 // import { Target } from 'lucide-react';
 
 export class StoneManager {
-  constructor(scene,modelManager) {
+  constructor(scene,modelManager,renderer) {
     this.scene = scene;
     this.modelManager  = modelManager;
+    this.renderer = renderer;
 
 
    
@@ -109,6 +110,7 @@ export class StoneManager {
     const diamondHolder = new THREE.Object3D();
     diamondHolder.name = "diamondHolder";
     targetRing.userData.StoneType = value;
+    diamondHolder.renderOrder = 1000;
     targetRing.add(diamondHolder);
     console.log("diamondHolder",diamondHolder)
   
@@ -125,7 +127,7 @@ export class StoneManager {
   
       const diamondModel = gltf.scene;
       diamondModel.name = "diamond";
-      
+      diamondModel.renderOrder = 1000; // Ensure diamond is rendered on top of the ring
       // Apply the different scale values for x, y and z
       diamondModel.scale.set(
         config.scale.x,
@@ -168,7 +170,19 @@ export class StoneManager {
               config.effects
             );
           }
+          child.material.depthWrite = true;
+          child.material.depthTest = true;
+          child.material.transparent = false; // Make sure it's not transparent
+          child.material.polygonOffset = false; // Disable polygon offset for diamonds
+          child.material.stencilWrite = true,
+          child.material.stencilRef =  2,  // Use a different value than both main model and midMesh
+          child.material.stencilFunc= THREE.AlwaysStencilFunc,  // Always pass the stencil test
+          child.material.stencilZPass= THREE.ReplaceStencilOp,
           
+          // Set renderOrder at the mesh level (higher than midMesh)
+          child.renderOrder = 4; // Increase to 4 from 3
+          
+          // child.material.needsUpdate = true;
           child.material.needsUpdate = true;
         }
       });
@@ -183,6 +197,8 @@ export class StoneManager {
       }
       return Promise.reject(error);
     }
+
+
   }
 
   async addDiamondsToRingFront(options = {}) {
@@ -284,6 +300,7 @@ export class StoneManager {
     // Create a holder for all diamonds
     const diamondsHolder = new THREE.Object3D();
     diamondsHolder.name = "diamondsHolder";
+    diamondsHolder.renderOrder = 1000; // Ensure diamonds are rendered on top
     targetRing.add(diamondsHolder);
   
     // Process distribution option
@@ -410,14 +427,14 @@ export class StoneManager {
         // Clone the original diamond model
         const diamondModel = gltf.scene.clone();
         diamondModel.name = `diamond_${i}`;
-        
+        diamondModel.renderOrder = 3; // Ensure diamond is rendered on top of the ring
         // Calculate the angle for this diamond
         const angle = startAngle + (i * angleStep);
         
         // Create individual holder for each diamond to manage its position
         const diamondHolder = new THREE.Object3D();
         diamondHolder.name = `diamondHolder_${i}`;
-        
+        diamondHolder.renderOrder = 3; // Ensure diamond is rendered on top of the ring
         // Position around the ring properly based on angle
         diamondHolder.position.set(
           Math.sin(angle) * config.baseRadius,  // X position around the circle
@@ -450,11 +467,21 @@ export class StoneManager {
                 config.effects
               );
             }
-            
+            child.material.depthWrite = true;
+            child.material.depthTest = true;
+            child.material.polygonOffset = false;
+            child.material.stencilWrite = true;
+            child.material.stencilRef = 2;
+            child.material.stencilFunc = THREE.AlwaysStencilFunc;
+            child.material.stencilZPass = THREE.ReplaceStencilOp;
+          // Set renderOrder at the mesh level (higher than midMesh)
+          child.renderOrder = 3;
             child.material.needsUpdate = true;
           }
         });
-        
+        diamondsHolder.renderOrder = 3;
+        diamondHolder.renderOrder = 3 
+        diamondModels.renderOrder = 3// Ensure diamond is rendered on top of the ring
         // Add diamond to its holder, then add holder to the main holder
         diamondHolder.add(diamondModel);
         diamondsHolder.add(diamondHolder);
@@ -471,7 +498,9 @@ export class StoneManager {
       // Apply model-specific Z position adjustments
       const modelIndex = targetRing.userData?.modelIndex;
       if (modelIndex === 0) {
-        // diamondsHolder.position.z = 0.15;
+        // diamondsHolder.position.z += 0.011;
+        diamondsHolder.scale.x += 0.013;
+        diamondsHolder.scale.y += 0.013;
       } 
       else if (modelIndex === 1) {
         // diamondsHolder.position.z += 0.02;
@@ -566,7 +595,9 @@ export class StoneManager {
           diamond.rotateY(angle); // This makes diamonds follow the ring
         }
       });
-  
+      // this.applyStencilSettingsToAllDiamonds();
+
+
       console.log(`Added ${config.diamondCount} diamonds to the front of ring ${config.ringIndex}`);
       return diamondModels;
     } catch (error) {
@@ -576,13 +607,37 @@ export class StoneManager {
         targetRing.remove(diamondsHolder);
       }
       return Promise.reject(error);
+      
     }
+    
   }
   /**
    * Change the rotation of the diamond on a specific ring
    * @param {Object} rotation The rotation values { x, y, z }
    * @param {Number} ringIndex Which ring to modify (1 or 2, default: currently selected model)
    */
+  applyStencilSettingsToAllDiamonds() {
+    this.scene.traverse((object) => {
+      if (object.name && (object.name.includes("diamond") || object.name.includes("diamondHolder"))) {
+        object.renderOrder = 1000;
+        
+        object.traverse((child) => {
+          if (child.isMesh && child.material) {
+            // Apply stencil settings
+            child.material.stencilWrite = true;
+            child.material.stencilRef = 2;
+            child.material.stencilFunc = THREE.AlwaysStencilFunc;
+            child.material.stencilZPass = THREE.ReplaceStencilOp;
+            
+            child.material.depthTest = true;
+            child.material.depthWrite = true;
+            child.material.needsUpdate = true;
+          }
+        });
+      }
+    });
+  }
+
   changeDiamondRotation(rotation, ringIndex = null) {
     // If no ringIndex is provided, use the currently selected model
     const targetRingIndex = ringIndex || this.modelManager.selectedModel;
@@ -765,6 +820,15 @@ export class StoneManager {
           }
           
           // Update the material
+          child.material.depthWrite = true;
+          child.material.depthTest = true;
+          child.material.transparent = false; // Make sure it's not transparent
+          child.material.polygonOffset = false; // Disable polygon offset for diamonds
+          
+          // Set renderOrder at the mesh level (higher than midMesh)
+          child.renderOrder = 1000; // Increase to 4 from 3
+          
+          child.material.needsUpdate = true;
           child.material.needsUpdate = true;
         }
       });

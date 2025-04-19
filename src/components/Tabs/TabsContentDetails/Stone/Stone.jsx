@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   WithStoneSvg,
   WithoutStoneSvg,
@@ -16,11 +16,94 @@ export const Stone = ({
   setIsPair,
   isExpertMode,
 }) => {
-  const [selectedOption, setSelectedOption] = useState();
-  const [option, setOption] = useState(2);
-  const [stones, setStones] = useState([]);
-  const [activeTab, setActiveTab] = useState(1);
-  const [stoneSize, setStoneSize] = useState("0.005 ct. (Ø 1.0 mm)");
+  // Initialize states from localStorage or use defaults
+  const [selectedOption, setSelectedOption] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stoneColorPurity_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stoneColorPurity_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || undefined;
+  });
+
+  const [option, setOption] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stoneOption_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stoneOption_${activeRing?.name}`;
+    
+    return parseInt(localStorage.getItem(storageKey) || "2");
+  });
+
+  const [stones, setStones] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stones_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stones_${activeRing?.name}`;
+    
+    const savedStones = localStorage.getItem(storageKey);
+    return savedStones ? JSON.parse(savedStones) : [];
+  });
+
+  const [activeTab, setActiveTab] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stoneActiveTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stoneActiveTab_${activeRing?.name}`;
+    
+    return parseInt(localStorage.getItem(storageKey) || "1");
+  });
+
+  const [stoneSize, setStoneSize] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stoneSize_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stoneSize_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || "0.005 ct. (Ø 1.0 mm)";
+  });
+
+  // Save selectedOption to localStorage when it changes
+  useEffect(() => {
+    if (selectedOption) {
+      const storageKey = Array.isArray(activeRing) 
+        ? `stoneColorPurity_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+        : `stoneColorPurity_${activeRing?.name}`;
+      
+      localStorage.setItem(storageKey, selectedOption);
+    }
+  }, [selectedOption, activeRing]);
+
+  // Save option to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stoneOption_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stoneOption_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, option.toString());
+  }, [option, activeRing]);
+
+  // Save stones to localStorage when they change
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stones_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stones_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, JSON.stringify(stones));
+  }, [stones, activeRing]);
+
+  // Save activeTab to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stoneActiveTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stoneActiveTab_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, activeTab?.toString() || "");
+  }, [activeTab, activeRing]);
+
+  // Save stoneSize to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `stoneSize_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `stoneSize_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, stoneSize);
+  }, [stoneSize, activeRing]);
 
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
@@ -73,6 +156,7 @@ export const Stone = ({
           setStoneSize={setStoneSize}
           selectedOption={selectedOption}
           handleChange={handleChange}
+          activeRing={activeRing}
         />
       )}
       <div className="max-w-lg mx-auto">
@@ -127,6 +211,7 @@ export const Stone = ({
                   stoneSize={stoneSize}
                   selectedOption={selectedOption}
                   handleChange={handleChange}
+                  activeRing={activeRing}
                 />
               </div>
             )}

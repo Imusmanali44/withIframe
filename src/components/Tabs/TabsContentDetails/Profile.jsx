@@ -1,15 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { profileOptions } from "../../../utils";
 import IsPair from "../../shared/IsPair";
 
 export const Profile = ({ rings, activeRing, isPair, setIsPair }) => {
   const [activeProfile, setActiveProfile] = useState(null); // State to store the active profile
 
+  // Load activeProfile from localStorage on component mount
+  useEffect(() => {
+    // Create a storage key based on the active ring to store different profiles for different rings
+    const storageKey = Array.isArray(activeRing) 
+      ? `activeProfile_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `activeProfile_${activeRing?.name}`;
+    
+    const savedProfile = localStorage.getItem(storageKey);
+    if (savedProfile) {
+      setActiveProfile(savedProfile);
+      
+      // Optionally send a message to update the model on initial load
+      // window.parent.postMessage({ 
+      //   action: "changeModel", 
+      //   modelId: savedProfile,
+      //   selectedRing: activeRing, 
+      //   pair: isPair 
+      // }, "*");
+    }
+  }, [activeRing, isPair]);
+
   const activeDesign = (id) => {
     setActiveProfile(id); // Set the clicked profile as active
 
+    // Save to localStorage
+    const storageKey = Array.isArray(activeRing) 
+      ? `activeProfile_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `activeProfile_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, id);
+
     // Send a message to the parent window
-    window.parent.postMessage({ action: "changeModel", modelId: id,selectedRing: activeRing, pair:isPair }, "*"); // Send message to Configurator
+    window.parent.postMessage({ 
+      action: "changeModel", 
+      modelId: id,
+      selectedRing: activeRing, 
+      pair: isPair 
+    }, "*"); // Send message to Configurator
   };
 
   return (
@@ -37,7 +70,7 @@ export const Profile = ({ rings, activeRing, isPair, setIsPair }) => {
                 }`}
                 onClick={() => activeDesign(profile.title)}
               >
-                <img src={profile.src} className="w-full" alt={profile.title} />
+                <img src={profile.src || "/placeholder.svg"} className="w-full" alt={profile.title} />
               </li>
             ))}
           </ul>

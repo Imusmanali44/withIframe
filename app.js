@@ -37,7 +37,7 @@ class RotatingRingApp {
     this.PreciousMetalins = new PreciousMetal(this.scene, null,null, this.renderer);
 
     // Create ModelManager and pass PreciousMetal instance
-    this.modelManager = new ModelManager(this.scene, this.PreciousMetalins);
+    this.modelManager = new ModelManager(this.scene, this.PreciousMetalins,this.renderer);
 
     // Update PreciousMetal with ModelManager instance
     this.PreciousMetalins.modelManager = this.modelManager;
@@ -48,7 +48,7 @@ class RotatingRingApp {
 
     this.GrooveManager = new GrooveManager(this.scene,this.modelManager)
     this.StepsManager = new StepsManager(this.scene,this.modelManager, this.GrooveManager)
-    this.StoneManager = new StoneManager(this.scene,this.modelManager)
+    this.StoneManager = new StoneManager(this.scene,this.modelManager,this.renderer)
     this.modelManager.StoneManagerIns = this.StoneManager
     this.modelManager.EngagementRingsins  = this.EngagementRings 
     this.modelManager.MemoirRingsins  = this.MemoirRings

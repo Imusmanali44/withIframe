@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WidthDepthSurface from "./WidthDepthSurface";
 
 const stepLeftOptions = [
@@ -32,13 +32,47 @@ const stepRightOptions = [
 ];
 
 const StepTab = ({
+  activeRing,
   selectedLeftStepOptions,
   setSelectedLeftStepOptions,
   selectedRightStepOptions,
   setSelectedRightStepOptions,
 }) => {
-  const [optionStepLeft, setOptionStepLeft] = useState("Without");
-  const [optionStepRight, setOptionStepRight] = useState("Without");
+  // Initialize optionStepLeft from localStorage or default to "Without"
+  const [optionStepLeft, setOptionStepLeft] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `optionStepLeft_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `optionStepLeft_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || "Without";
+  });
+
+  // Initialize optionStepRight from localStorage or default to "Without"
+  const [optionStepRight, setOptionStepRight] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `optionStepRight_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `optionStepRight_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || "Without";
+  });
+
+  // Save optionStepLeft to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `optionStepLeft_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `optionStepLeft_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, optionStepLeft);
+  }, [optionStepLeft, activeRing]);
+
+  // Save optionStepRight to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `optionStepRight_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `optionStepRight_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, optionStepRight);
+  }, [optionStepRight, activeRing]);
 
   return (
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">

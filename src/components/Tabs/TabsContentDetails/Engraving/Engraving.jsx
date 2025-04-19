@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import IsPair from "../../../shared/IsPair";
 import TabContent from "./TabContent";
 
@@ -50,13 +50,64 @@ export const Toggle = ({ label, checked, onChange }) => (
 );
 
 const EngravingOptions = ({ rings, isPair, setIsPair, activeRing }) => {
-  const [activeTab, setActiveTab] = useState("laser");
-  const [engravingText, setEngravingText] = useState("");
-  const [selectedOptions, setSelectedOptions] = useState({
-    handwritten: false,
-    fingerprint: false,
-    graphic: false,
+  // Initialize activeTab from localStorage or default to "laser"
+  const [activeTab, setActiveTab] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `engravingTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `engravingTab_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || "laser";
   });
+
+  // Initialize separate engravingText values for Ring 1, Ring 2, and Ring 3
+  const [engravingText, setEngravingText] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `engravingText_Ring1_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `engravingText_Ring1_${activeRing?.name}`;
+    
+    return localStorage.getItem(storageKey) || "";
+  });
+
+  // Initialize selectedOptions from localStorage or default values
+  const [selectedOptions, setSelectedOptions] = useState(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `engravingOptions_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `engravingOptions_${activeRing?.name}`;
+    
+    const savedOptions = localStorage.getItem(storageKey);
+    return savedOptions ? JSON.parse(savedOptions) : {
+      handwritten: false,
+      fingerprint: false,
+      graphic: false,
+    };
+  });
+
+  // Save activeTab to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `engravingTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `engravingTab_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, activeTab);
+  }, [activeTab, activeRing]);
+
+  // Save engravingText to localStorage when it changes
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `engravingText_Ring1_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `engravingText_Ring1_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, engravingText);
+  }, [engravingText, activeRing]);
+
+  // Save selectedOptions to localStorage when they change
+  useEffect(() => {
+    const storageKey = Array.isArray(activeRing) 
+      ? `engravingOptions_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `engravingOptions_${activeRing?.name}`;
+    
+    localStorage.setItem(storageKey, JSON.stringify(selectedOptions));
+  }, [selectedOptions, activeRing]);
 
   const handleToggleChange = (optionValue, checked) => {
     setSelectedOptions((prev) => ({
@@ -102,6 +153,8 @@ const EngravingOptions = ({ rings, isPair, setIsPair, activeRing }) => {
           engravingText={engravingText}
           setEngravingText={setEngravingText}
           fonts={fontLaser}
+          activeRing={activeRing}
+          engravingType="laser"
         />
       )}
       {activeTab === "diamond" && (
@@ -110,6 +163,8 @@ const EngravingOptions = ({ rings, isPair, setIsPair, activeRing }) => {
           engravingText={engravingText}
           setEngravingText={setEngravingText}
           fonts={fontDiamond}
+          activeRing={activeRing}
+          engravingType="diamond"
         />
       )}
 
