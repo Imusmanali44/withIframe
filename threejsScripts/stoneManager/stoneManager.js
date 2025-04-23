@@ -606,14 +606,14 @@ export class StoneManager {
             // Keep diamonds horizontal (like in first image)
             diamond.rotateX(-Math.PI / 2);
             diamond.rotateY(angle); // This makes diamonds follow the ring curvature
-            diamond.rotateZ(Math.PI / 2); // This keeps them horizontally aligned
+            diamond.rotateZ(-Math.PI / 2); // This keeps them horizontally aligned
           }
-          if(this.stoneTypeNumber == "Smooth setting Across") { 
+          // if(this.stoneTypeNumber == "Smooth setting Across") { 
 
-            diamond.rotateX(-Math.PI / 2);
-            diamond.rotateY(angle); // This makes diamonds follow the ring curvature
-            diamond.rotateZ(Math.PI / 2); 
-          }
+          //   diamond.rotateX(-Math.PI / 2);
+          //   diamond.rotateY(angle); // This makes diamonds follow the ring curvature
+          //   diamond.rotateZ(Math.PI / 2); 
+          // }
           else {
             // Standard rotation for other stone types
             diamond.rotateX(-Math.PI / 2);
