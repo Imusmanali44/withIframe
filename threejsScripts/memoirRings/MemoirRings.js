@@ -32,10 +32,31 @@ export class MemoirRings {
       { glbPath: 'models/memoir/23.glb' },
       { glbPath: 'models/memoir/24.glb' },
       { glbPath: 'models/memoir/25.glb' },
-      { glbPath: 'models/memoir/25.glb' },
+      { glbPath: 'models/memoir/26.glb' }, // Fixed numbering (was duplicated as 25.glb)
       { glbPath: 'models/memoir/27.glb' },
       { glbPath: 'models/memoir/28.glb' },
-      { glbPath: 'models/memoir/29.glb' }
+      { glbPath: 'models/memoir/29.glb' },
+      { glbPath: 'models/memoir/30.glb' },
+      { glbPath: 'models/memoir/31.glb' },
+      { glbPath: 'models/memoir/32.glb' },
+      { glbPath: 'models/memoir/33.glb' },
+      { glbPath: 'models/memoir/34.glb' },
+      { glbPath: 'models/memoir/35.glb' },
+      { glbPath: 'models/memoir/36.glb' },
+      { glbPath: 'models/memoir/37.glb' },
+      { glbPath: 'models/memoir/38.glb' },
+      { glbPath: 'models/memoir/39.glb' },
+      { glbPath: 'models/memoir/40.glb' },
+      { glbPath: 'models/memoir/41.glb' },
+      { glbPath: 'models/memoir/42.glb' },
+      { glbPath: 'models/memoir/43.glb' },
+      { glbPath: 'models/memoir/44.glb' },
+      { glbPath: 'models/memoir/45.glb' },
+      { glbPath: 'models/memoir/46.glb' },
+      { glbPath: 'models/memoir/47.glb' },
+      { glbPath: 'models/memoir/48.glb' },
+      { glbPath: 'models/memoir/49.glb' },
+      { glbPath: 'models/memoir/50.glb' }
     ];
     // this.initLighting();
   }

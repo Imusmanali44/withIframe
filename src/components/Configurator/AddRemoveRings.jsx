@@ -113,13 +113,29 @@ const ringImages = {
     { id: 26, name: "Memoir 26", src: Ring1 },
     { id: 27, name: "Memoir 27", src: Ring1 },
     { id: 28, name: "Memoir 28", src: Ring1 },
-    { id: 29, name: "Memoir 29", src: Ring1 }
-
-
-
-
-
-  ],
+    { id: 29, name: "Memoir 29", src: Ring1 },
+    { id: 30, name: "Memoir 30", src: Ring1 },
+    { id: 31, name: "Memoir 31", src: Ring1 },
+    { id: 32, name: "Memoir 32", src: Ring1 },
+    { id: 33, name: "Memoir 33", src: Ring1 },
+    { id: 34, name: "Memoir 34", src: Ring1 },
+    { id: 35, name: "Memoir 35", src: Ring1 },
+    { id: 36, name: "Memoir 36", src: Ring1 },
+    { id: 37, name: "Memoir 37", src: Ring1 },
+    { id: 38, name: "Memoir 38", src: Ring1 },
+    { id: 39, name: "Memoir 39", src: Ring1 },
+    { id: 40, name: "Memoir 40", src: Ring1 },
+    { id: 41, name: "Memoir 41", src: Ring1 },
+    { id: 42, name: "Memoir 42", src: Ring1 },
+    { id: 43, name: "Memoir 43", src: Ring1 },
+    { id: 44, name: "Memoir 44", src: Ring1 },
+    { id: 45, name: "Memoir 45", src: Ring1 },
+    { id: 46, name: "Memoir 46", src: Ring1 },
+    { id: 47, name: "Memoir 47", src: Ring1 },
+    { id: 48, name: "Memoir 48", src: Ring1 },
+    { id: 49, name: "Memoir 49", src: Ring1 },
+    { id: 50, name: "Memoir 50", src: Ring1 },
+],
 };
 
 const AddRemoveRings = ({ rings, setRings }) => {

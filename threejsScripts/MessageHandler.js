@@ -41,7 +41,8 @@ export class MessageHandler {
 
             diamondCount: value,
             ringIndex: this.modelManager.selectedModel,
-            distribution: stoneDist
+            distribution: stoneDist,
+            // rotation: { x: -0.13, y: 0.00, z: 0.25 }, 
             // modelUrl: "diamondm/d2.glb"
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           });
@@ -69,6 +70,7 @@ export class MessageHandler {
           }, value);
         }
         if (value == "Rail setting") {
+          console.log("rail setting", this.modelManager.selectedModel)
           this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
           this.modelManager.StoneManagerIns.loadDiamondToRing({
             ringIndex: this.modelManager.selectedModel,
@@ -86,6 +88,34 @@ export class MessageHandler {
             // diamondCount: 10,
             ringIndex: this.modelManager.selectedModel,
             modelUrl: "diamondm/d3.glb"
+            // scale: { x: 19.70, y: 19.70, z: 37.00 }
+          }, value);
+
+        }
+        if (value == "Rail setting Across") { 
+          console.log("rail setting across", this.modelManager.selectedModel)
+
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+          // this.modelManager.StoneManagerIns.addDiamondsToRingFront({
+          this.modelManager.StoneManagerIns.loadDiamondToRing({
+
+            // diamondCount: 10,
+            ringIndex: this.modelManager.selectedModel,
+            modelUrl: "diamondm/d1a.glb"
+            // scale: { x: 19.70, y: 19.70, z: 37.00 }
+          }, value);
+
+        }
+        if (value == "Smooth setting Across") { 
+          console.log("Smooth setting Across", this.modelManager.selectedModel)
+
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+          // this.modelManager.StoneManagerIns.addDiamondsToRingFront({
+          this.modelManager.StoneManagerIns.loadDiamondToRing({
+
+            // diamondCount: 10,
+            ringIndex: this.modelManager.selectedModel,
+            modelUrl: "diamondm/d2a.glb"
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           }, value);
 
