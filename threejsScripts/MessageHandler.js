@@ -78,6 +78,20 @@ export class MessageHandler {
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           }, value);
         }
+        if (value == "Smooth Stone") { 
+          this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
+          // this.modelManager.StoneManagerIns.addDiamondsToRingFront({
+          this.modelManager.StoneManagerIns.loadDiamondToRing({
+
+            // diamondCount: 10,
+            ringIndex: this.modelManager.selectedModel,
+            modelUrl: "diamondm/d3.glb"
+            // scale: { x: 19.70, y: 19.70, z: 37.00 }
+          }, value);
+
+        }
+
+
         if (value == "Without") {
           console.log("remove diamond", this.modelManager.selectedModel)
           this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export const RangeSlider = ({
   title = "Ring",
@@ -6,42 +6,49 @@ export const RangeSlider = ({
   max = 1,
   step = 0.001,
   defaultValue = 0,
-  thumbImage = "./src/assets/arrows.png", // Replace with your image URL
-  dividerIcon = "./src/assets/drop.png", // Replace with your icon URL
+  thumbImage = "./src/assets/arrows.png",
+  dividerIcon = "./src/assets/drop.png",
 }) => {
-  const [value, setValue] = useState(defaultValue);
+  // Get localStorage key for this slider based on title and ring config
+  const getStorageKey = useCallback(() => {
+    return `rangeSlider_${title}_Ring${window.selectedRing}_of_${window.ringsLength}`;
+  }, [title]);
+
+  // Initialize state from localStorage or defaults
+  const [value, setValue] = useState(() => {
+    const storageKey = getStorageKey();
+    const savedValue = localStorage.getItem(storageKey);
+    return savedValue !== null ? parseFloat(savedValue) : defaultValue;
+  });
+  
   const [currentTitle, setCurrentTitle] = useState(title);
   const [currentMin, setCurrentMin] = useState(min);
   const [currentMax, setCurrentMax] = useState(max);
   const [currentStep, setCurrentStep] = useState(step);
   const [currentDefaultValue, setCurrentDefaultValue] = useState(defaultValue);
 
+  // Save value to localStorage when it changes
+  useEffect(() => {
+    const storageKey = getStorageKey();
+    localStorage.setItem(storageKey, value.toString());
+  }, [value, getStorageKey]);
+
   // Update settings based on the selected ring
   useEffect(() => {
-    if (window.selectedRing === 1 && window.ringsLength === 2) {
-      // setCurrentTitle("Ring 1 (4.50 mm)");
-      // setCurrentMin(-0.85);
-      // setCurrentMax(-0.55);
-      // setCurrentStep(0.001);
-      // setCurrentDefaultValue(-0.7);
-      // setValue(-0.7);
-    } else if (window.selectedRing === 2 && window.ringsLength === 2) {
-      // setCurrentTitle("Ring 2 (4.50 mm)");
-      // setCurrentMin(0.55);
-      // setCurrentMax(0.85);
-      // setCurrentStep(0.001);
-      // setCurrentDefaultValue(0.7);
-      // setValue(0.7);
+    // Initialize or update based on ring configuration
+    // We're keeping this effect for future ring-specific configurations
+    // but not using the commented-out code from the original component
+    
+    // Access localStorage to get stored value for current ring
+    const storageKey = getStorageKey();
+    const savedValue = localStorage.getItem(storageKey);
+    
+    // Only update if we have a saved value
+    if (savedValue !== null) {
+      setValue(parseFloat(savedValue));
     }
-       if (window.ringsLength === 1) {
-      // setCurrentTitle("Ring 1 (4.50 mm)");
-      // setCurrentMin(-1);
-      // setCurrentMax(1);
-      // setCurrentStep(0.001);
-      // setCurrentDefaultValue(0);
-      // setValue(0);
-    }
-  }, [window.selectedRing, window.ringsLength]);
+    
+  }, [window.selectedRing, window.ringsLength, getStorageKey]);
 
   const mapToUIValue = (internalValue) => {
     const minUI = 0.8;
@@ -60,24 +67,7 @@ export const RangeSlider = ({
     if (uiValue < 1.20 || uiValue > 3.20) {
       return; // Prevent further movement
     }
-//     if(title=="Ring 1"){
-//       setCurrentTitle("Ring 1");
-//       setCurrentMin(-0.85);
-//       setCurrentMax(-0.55);
-//       setCurrentStep(0.001);
-//       setCurrentDefaultValue(-0.7);
-//       // setValue(-0.7);
-
-//     }
-//     else if(title=="Ring 2"){
-//  setCurrentTitle("Ring 2");
-//       setCurrentMin(0.55);
-//       setCurrentMax(0.85);
-//       setCurrentStep(0.001);
-//       setCurrentDefaultValue(0.7);
-//       // setValue(0.7);
-
-//     }
+    
     setValue(newValue);
     window.parent.postMessage(
       { action: "changeSlider", value: newValue, selectedRing: title },

@@ -10,7 +10,14 @@ export const GrooveRangeSlider = ({
   totalWidth = 4.0,
   dividerIcon = "./src/assets/drop.png",
 }) => {
-  const [values, setValues] = useState({});
+  // Use localStorage for values
+  const [values, setValues] = useState(() => {
+    // Try to get from localStorage or initialize as empty object
+    const storageKey = `grooveSliders_${title}`;
+    const savedValues = localStorage.getItem(storageKey);
+    return savedValues ? JSON.parse(savedValues) : {};
+  });
+  
   const [activeHandle, setActiveHandle] = useState(null);
 
   // Calculate initial position for a new groove
@@ -25,10 +32,13 @@ export const GrooveRangeSlider = ({
   // Initialize or update values when grooves change
   useEffect(() => {
     const newValues = { ...values };
+    let valueChanged = false;
+    
     grooves.forEach((groove, index) => {
       if (!(groove.id in newValues)) {
         const initialPosition = calculateInitialPosition(groove.id, grooves.length);
         newValues[groove.id] = initialPosition;
+        valueChanged = true;
         console.log(`Groove ${groove.id} initial position:`, initialPosition);
         window.parent.postMessage(
           {
@@ -42,8 +52,17 @@ export const GrooveRangeSlider = ({
         );
       }
     });
-    setValues(newValues);
+    
+    if (valueChanged) {
+      setValues(newValues);
+    }
   }, [grooves.length]);
+
+  // Save values to localStorage when they change
+  useEffect(() => {
+    const storageKey = `grooveSliders_${title}`;
+    localStorage.setItem(storageKey, JSON.stringify(values));
+  }, [values, title]);
 
   const mapToUIValue = (internalValue) => {
     const minUI = 0.8;

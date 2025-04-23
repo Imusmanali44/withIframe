@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 
-// window.newValue = 0;
-// window.newValue2 = 0.65
-
 const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
-
-  
   const MIN_UI_DISTANCE = 0.80; // Minimum 0.80mm distance in UI values
 
   const initializeValues = () => {
@@ -22,21 +17,6 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
         uiMax: 3.7
       };
     }
-   
-    if (window.selectedRing === 1 && window.ringsLength === 2) {
-    //   return {
-    //     title: "Ring 1",
-    //     leftMin: -0.9,
-    //     leftMax: -0.71,
-    //     rightMin: 0.56,
-    //     rightMax: 0.71,
-    //     leftValue: -0.67,
-    //     rightValue: 0.71,
-    //     leftValueTemp: 0,
-    //     uiMin: 1.1,
-    //     uiMax: 2.86
-    //   };
-    }
     
     return {
       title: "Ring",
@@ -51,10 +31,32 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
     };
   };
 
+  // Get localStorage keys based on selected ring
+  const getStorageKeys = useCallback(() => {
+    const baseKey = `multiRangeSlider0_Ring${window.selectedRing}_of_${window.ringsLength}`;
+    
+    return {
+      leftValue: `${baseKey}_leftValue`,
+      rightValue: `${baseKey}_rightValue`
+    };
+  }, []);
+
   const initialValues = initializeValues();
   const [title, setTitle] = useState(initialValues.title);
-  const [leftValue, setLeftValue] = useState(null);
-  const [rightValue, setRightValue] = useState(null);
+  
+  // Initialize left and right values from localStorage or defaults
+  const [leftValue, setLeftValue] = useState(() => {
+    const keys = getStorageKeys();
+    const saved = localStorage.getItem(keys.leftValue);
+    return saved !== null ? parseFloat(saved) : initialValues.leftValue;
+  });
+
+  const [rightValue, setRightValue] = useState(() => {
+    const keys = getStorageKeys();
+    const saved = localStorage.getItem(keys.rightValue);
+    return saved !== null ? parseFloat(saved) : initialValues.rightValue;
+  });
+
   const [ranges, setRanges] = useState({
     left: {
       min: initialValues.leftMin,
@@ -70,6 +72,17 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
     }
   });
   const [isDragging, setIsDragging] = useState({ left: false, right: false });
+
+  // Save values to localStorage when they change
+  useEffect(() => {
+    const keys = getStorageKeys();
+    localStorage.setItem(keys.leftValue, leftValue.toString());
+  }, [leftValue, getStorageKeys]);
+
+  useEffect(() => {
+    const keys = getStorageKeys();
+    localStorage.setItem(keys.rightValue, rightValue.toString());
+  }, [rightValue, getStorageKeys]);
 
   // Map internal values to UI display values
   const mapToUIValue = useCallback((value) => {
@@ -91,8 +104,16 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
       if (event.data.action === "updateRingConfig") {
         const values = initializeValues();
         setTitle(values.title);
-        setLeftValue(values.leftValue);
-        setRightValue(values.rightValue);
+        
+        // When receiving new configuration, check localStorage first before applying defaults
+        const keys = getStorageKeys();
+        
+        const savedLeftValue = localStorage.getItem(keys.leftValue);
+        const savedRightValue = localStorage.getItem(keys.rightValue);
+        
+        setLeftValue(savedLeftValue !== null ? parseFloat(savedLeftValue) : values.leftValue);
+        setRightValue(savedRightValue !== null ? parseFloat(savedRightValue) : values.rightValue);
+        
         setRanges({
           left: {
             min: values.leftMin,
@@ -112,13 +133,22 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+  }, [getStorageKeys]);
 
+  // Update when selectedRing or ringsLength changes
   useEffect(() => {
     const values = initializeValues();
     setTitle(values.title);
-    setLeftValue(values.leftValue);
-    setRightValue(values.rightValue);
+    
+    // Access localStorage based on new ring selection
+    const keys = getStorageKeys();
+    const savedLeftValue = localStorage.getItem(keys.leftValue);
+    const savedRightValue = localStorage.getItem(keys.rightValue);
+    
+    // Use localStorage values if available, otherwise use defaults
+    setLeftValue(savedLeftValue !== null ? parseFloat(savedLeftValue) : values.leftValue);
+    setRightValue(savedRightValue !== null ? parseFloat(savedRightValue) : values.rightValue);
+    
     setRanges({
       left: {
         min: values.leftMin,
@@ -133,7 +163,7 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
         max: values.uiMax
       }
     });
-  }, [window.selectedRing, window.ringsLength]);
+  }, [window.selectedRing, window.ringsLength, getStorageKeys]);
 
   const sendMessageToParent = (left, right) => {
     window.parent.postMessage(
@@ -179,13 +209,6 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
         let newValue = Math.max(ranges.left.min, Math.min(newRawValue, maxAllowedValue));
         setLeftValue(newValue);
 
-        // if (window.selectedRing === 2) {
-        //   newValue = -0.55 - (newValue - (-0.69));
-        //   window.newValue = newValue;
-        //   sendMessageToParent(newValue, rightValue);
-        // } else if (window.selectedRing === 1 && window.ringsLength === 2) {
-        //   sendMessageToParent(newValue, window.newValue2);
-        // } else 
         if (window.ringsLength === 1) {
           sendMessageToParent(newValue, rightValue);
         }
@@ -199,14 +222,7 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
 
         if (window.ringsLength === 1) {
           sendMessageToParent(leftValue, newValue);
-        } 
-        // else if (window.selectedRing === 1 && window.ringsLength === 2) {
-        //   newValue = 0.58 - (newValue - 0.68);
-        //   window.newValue2 = newValue;
-        //   sendMessageToParent(leftValue, newValue);
-        // } else if (window.selectedRing === 2 && window.ringsLength === 2) {
-        //   sendMessageToParent(window.newValue, newValue);
-        // }
+        }
       }
     },
     [isDragging, ranges, leftValue, rightValue, step, mapFromUIValue]
@@ -222,11 +238,28 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
       const uiValue = position * (ranges.ui.max - ranges.ui.min) + ranges.ui.min;
       const newRawValue = mapFromUIValue(uiValue);
 
-      // Reuse the same logic as handleMouseMove
       if (isDragging.left) {
-        // ... (same as in handleMouseMove)
+        const maxAllowedValue = Math.min(
+          ranges.left.max,
+          rightValue - step
+        );
+        let newValue = Math.max(ranges.left.min, Math.min(newRawValue, maxAllowedValue));
+        setLeftValue(newValue);
+
+        if (window.ringsLength === 1) {
+          sendMessageToParent(newValue, rightValue);
+        }
       } else {
-        // ... (same as in handleMouseMove)
+        const minAllowedValue = Math.max(
+          ranges.right.min,
+          leftValue + step
+        );
+        let newValue = Math.min(ranges.right.max, Math.max(newRawValue, minAllowedValue));
+        setRightValue(newValue);
+
+        if (window.ringsLength === 1) {
+          sendMessageToParent(leftValue, newValue);
+        }
       }
     },
     [isDragging, ranges, leftValue, rightValue, step, mapFromUIValue]
@@ -362,6 +395,8 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
             height: "20px",
             marginLeft: "1px",
           }}
+          onMouseDown={handleMouseDown("left")}
+          onTouchStart={handleTouchStart("left")}
         />
         <img
           src="./src/assets/drop.png"
@@ -376,6 +411,8 @@ const MultiRangeMaskSlider0 = ({ step = 0.0001 }) => {
             height: "20px",
             marginLeft: "1px",
           }}
+          onMouseDown={handleMouseDown("right")}
+          onTouchStart={handleTouchStart("right")}
         />
 
         {/* Draggable divider lines */}

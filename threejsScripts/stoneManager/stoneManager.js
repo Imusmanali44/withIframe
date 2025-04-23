@@ -265,6 +265,9 @@ export class StoneManager {
         case "Rail setting":
           config.modelUrl = "diamondm/d1.glb";
           break;
+        case "Smooth Stone":
+          config.modelUrl = "diamondm/d3.glb"; 
+          break; 
         default:
           // Keep the default model url if stone type doesn't match
           console.log(`Using default diamond model for unknown stone type: ${stoneType}`);

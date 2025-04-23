@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
 
-// Initialize global variables to store slider values
-if (typeof window !== "undefined") {
-  window.stoneSliderVal1 = 0;
-  window.stoneSliderVal2 = 0;
-}
-
 export const StoneRangeSlider = ({
   title = "Stone Position",
   min = -0.11,
@@ -15,62 +9,56 @@ export const StoneRangeSlider = ({
   totalWidth = 4.0,
   handleIcon = "./src/assets/drop.png",
 }) => {
-  const [position, setPosition] = useState(defaultValue);
-  const ringNumber = window.selectedRing
+  const ringNumber = window.selectedRing;
+  
+  // Initialize position from localStorage or default value
+  const [position, setPosition] = useState(() => {
+    // Create a storage key based on the ring number
+    const storageKey = `stonePosition_Ring${ringNumber}`;
+    
+    // Try to get from localStorage or default to provided defaultValue
+    const savedPosition = localStorage.getItem(storageKey);
+    return savedPosition !== null ? parseFloat(savedPosition) : defaultValue;
+  });
 
   // Initialize position on component mount and handle selectedRing changes
   useEffect(() => {
-    // Set initial global variable value
-    if (ringNumber === 1) {
-      window.stoneSliderVal1 = defaultValue;
-      
-    } else {
-      window.stoneSliderVal2 = defaultValue;
-    }
-
-    // Set initial position
-    setPosition(defaultValue);
-
-    // Function to sync slider position with global variable when selected ring changes
+    // Function to sync slider position with localStorage when selected ring changes
     const handleSelectedRingChange = () => {
-      const currentVal = ringNumber === 1 ? window.stoneSliderVal1 : window.stoneSliderVal2;
       if (window.selectedRing === ringNumber) {
-        setPosition(currentVal);
+        // Update position from stored value when this ring becomes selected
+        const storageKey = `stonePosition_Ring${ringNumber}`;
+        const savedPosition = localStorage.getItem(storageKey);
+        
+        if (savedPosition !== null) {
+          setPosition(parseFloat(savedPosition));
+        } else {
+          // If no saved position, use default and save it
+          setPosition(defaultValue);
+          localStorage.setItem(storageKey, defaultValue.toString());
+        }
       }
     };
 
-    // Set up event listener for selectedRing changes
-    if (typeof window !== "undefined") {
-      // Create a MutationObserver to watch for changes to window.selectedRing
-      const checkSelectedRing = () => {
-        if (window.selectedRing === ringNumber) {
-          // Update position from stored value when this ring becomes selected
-          const storedValue = ringNumber === 1 ? window.stoneSliderVal1 : window.stoneSliderVal2;
-          setPosition(storedValue);
-        }
-      };
+    // Initial check
+    handleSelectedRingChange();
 
-      // Initial check
-      checkSelectedRing();
+    // Setup interval to check for window.selectedRing changes
+    const intervalId = setInterval(handleSelectedRingChange, 300);
 
-      // Setup interval to check for window.selectedRing changes
-      const intervalId = setInterval(checkSelectedRing, 300);
-
-      // Clean up interval on component unmount
-      return () => clearInterval(intervalId);
-    }
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
   }, [ringNumber, defaultValue]);
+
+  // Save position to localStorage when it changes
+  useEffect(() => {
+    const storageKey = `stonePosition_Ring${ringNumber}`;
+    localStorage.setItem(storageKey, position.toString());
+  }, [position, ringNumber]);
 
   const handleChange = (event) => {
     const newValue = parseFloat(event.target.value);
     setPosition(newValue);
-
-    // Update the global variable
-    if (ringNumber === 1) {
-      window.stoneSliderVal1 = newValue;
-    } else {
-      window.stoneSliderVal2 = newValue;
-    }
 
     console.log(`Stone position changed to:`, newValue);
     window.parent.postMessage(
