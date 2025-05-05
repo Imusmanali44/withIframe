@@ -148,6 +148,7 @@ export class MemoirRings {
         // Skip meshes whose names contain "_1"
         if (child.name.includes("diamond") && !reverse) {
           // Do nothing
+          
         }
         // Apply the color to the mesh material
         // if (Array.isArray(child.material)) {

@@ -30,15 +30,17 @@ export class StoneManager {
       position: { x: 0, y: 0.50, z: 1.05 }, // Default positions from Image 1 & 2
       rotation: { x: -0.13, y: 0.00, z: 0.00 }, // Default rotations from Image 1
       textureUrl: 'diamondm/dtext.jpg',
+      textureUrlfire: 'diamondm/diamond_fire.jpg',
+
       modelUrl: 'diamondm/d1.glb',
       effects: {
-        map: false, // Base Color is unchecked
+        map: true, // Base Color is unchecked
         normalMap: true, // Normal Map is checked
         roughnessMap: true, // Roughness is checked
-        metalnessMap: false, // Metallic is unchecked
-        emissiveMap: false,
+        metalnessMap: true, // Metallic is unchecked
+        emissiveMap: true,
         aoMap: false,
-        envMap: false,
+        envMap: true,
         displacementMap: false
       }
     };
@@ -218,14 +220,15 @@ export class StoneManager {
       // Default diamond model - will be overridden based on stone type
       modelUrl: 'diamondm/d1.glb',
       textureUrl: 'diamondm/dtext.jpg', // Texture for diamonds
+      textureUrlfire: 'diamondm/diamond_fire.jpg',
       effects: {
-        map: false,
+        map: true,
         normalMap: true,
         roughnessMap: true,
-        metalnessMap: false,
-        emissiveMap: false,
+        metalnessMap: true,
+        emissiveMap: true,
         aoMap: false,
-        envMap: false,
+        envMap: true,
         displacementMap: false
       }
     };
@@ -789,84 +792,157 @@ export class StoneManager {
     // Create a texture loader for the new texture
     const textureLoader = new THREE.TextureLoader();
 
-    try {
-      // Load the new texture
-      const texture = await new Promise((resolve, reject) => {
-        textureLoader.load(
-          textureUrl,
-          (texture) => resolve(texture),
-          undefined,
-          (error) => reject(error)
-        );
-      });
+  try {
+    // Load the first texture (diamond texture)
+    const texture = await new Promise((resolve, reject) => {
+      textureLoader.load(
+        textureUrl,
+        (texture) => resolve(texture),
+        undefined,
+        (error) => reject(error)
+      );
+    });
+  
+    // Load the fire texture
+    let textureUrlFire = 'diamondMap/diamond_fire.jpg';
+    const textureFire = await new Promise((resolve, reject) => {
+      textureLoader.load(
+        textureUrlFire,
+        (texture) => resolve(texture),
+        undefined,
+        (error) => reject(error)
+      );
+    });
 
-      // Configure texture
-      texture.encoding = THREE.sRGBEncoding;
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
+    // Load the sparkle texture
+    let textureUrlSparkle = 'diamondMap/diamond_sparkle.jpg';
+    const textureSparkle = await new Promise((resolve, reject) => {
+      textureLoader.load(
+        textureUrlSparkle,
+        (texture) => resolve(texture),
+        undefined,
+        (error) => reject(error)
+      );
+    });
+    let textureUrlTriTop = 'diamondMap/diamond_top_triangles.png';
+    const textureTriTop = await new Promise((resolve, reject) => {
+      textureLoader.load(
+        textureUrlTriTop,
+        (texture) => resolve(texture),
+        undefined,
+        (error) => reject(error)
+      );
+    });
+  
+    // Configure textures with modern Three.js properties
+    // Replace deprecated encoding with colorSpace
+    texture.colorSpace = THREE.SRGBColorSpace;  
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    
+    textureFire.colorSpace = THREE.SRGBColorSpace;
+    textureFire.wrapS = THREE.RepeatWrapping;
+    textureFire.wrapT = THREE.RepeatWrapping;
+    // Make sure fire texture is not filtered too much
+    textureFire.minFilter = THREE.LinearFilter;
+    textureFire.magFilter = THREE.LinearFilter;
+    
+    textureSparkle.colorSpace = THREE.SRGBColorSpace;
+    textureSparkle.wrapS = THREE.RepeatWrapping;
+    textureSparkle.wrapT = THREE.RepeatWrapping;
+  
+    textureTriTop.colorSpace = THREE.SRGBColorSpace;
+    textureTriTop.wrapS = THREE.RepeatWrapping;
+    textureTriTop.wrapT = THREE.RepeatWrapping;
+    // Make sure fire texture is not filtered too much
+    textureTriTop.minFilter = THREE.LinearFilter; 
+    textureTriTop.magFilter = THREE.LinearFilter;
 
-      // Apply texture to all meshes in the diamond model based on enabled effects
-      diamondModel.traverse((child) => {
-        if (child.isMesh && child.material) {
-          // Apply texture to each enabled map type
+    // Apply textures to all meshes in the diamond model
+    diamondModel.traverse((child) => {
+      if (child.isMesh && child.material) {
+        // Create a new material or clone the existing one to ensure proper settings
+        if (child.material.isMeshStandardMaterial || child.material.isMeshPhysicalMaterial) {
+          // Apply main texture to most map types
           if (effects.map) {
-            child.material.map = texture;
+            // child.material.map = texture;
           }
-
+    
           if (effects.normalMap) {
             child.material.normalMap = texture;
+            // Children.material.alphaMap = textureSparkle; // Apply alpha map for transparency
             child.material.normalScale = new THREE.Vector2(1, 1);
-          }
 
+          }
+    
           if (effects.roughnessMap) {
-            child.material.roughnessMap = texture;
+            child.material.roughnessMap = textureTriTop;
+            // Lower roughness for more shininess
+            child.material.roughness = 0.1;
           }
-
+    
           if (effects.metalnessMap) {
-            child.material.metalnessMap = texture;
+            // Use the sparkle texture for metallness to enhance the sparkle effect
+            child.material.metalnessMap = textureSparkle;
+            child.material.metalness = 0.7; // Higher metalness for better reflection
           }
-
+    
+          // Apply fire texture specifically to the emissive map with enhanced settings
           if (effects.emissiveMap) {
-            child.material.emissiveMap = texture;
-            child.material.emissive = new THREE.Color(1, 1, 1);
-            child.material.emissiveIntensity = 0.5;
+            child.material.emissiveMap = textureFire;
+            child.material.emissive = new THREE.Color(1, 1, 1); // Full white for maximum color from texture
+            child.material.emissiveIntensity = 1.2; // Increase intensity to make it more visible
           }
-
+    
           if (effects.aoMap) {
             child.material.aoMap = texture;
+            child.material.aoMapIntensity = 0.5; // Moderate AO effect
           }
-
+    
           if (effects.envMap) {
-            child.material.envMap = texture;
-            child.material.envMapIntensity = 1.0;
+            // child.material.envMap = texture;
+            // child.material.envMapIntensity = 1.5; // Stronger environment mapping
           }
-
+    
           if (effects.displacementMap) {
             child.material.displacementMap = texture;
-            child.material.displacementScale = 0.1;
+            child.material.displacementScale = 0.05; // More subtle displacement
+            child.material.displacementBias = 0;
           }
-
-          // Update the material
-          child.material.depthWrite = true;
-          child.material.depthTest = true;
-          child.material.transparent = false; // Make sure it's not transparent
-          child.material.polygonOffset = false; // Disable polygon offset for diamonds
-
-          // Set renderOrder at the mesh level (higher than midMesh)
-          child.renderOrder = 1000; // Increase to 4 from 3
-
-          child.material.needsUpdate = true;
-          child.material.needsUpdate = true;
         }
-      });
+  
+        // Update the material properties
+        child.material.depthWrite = true;
+        child.material.depthTest = true;
+        child.material.transparent = false;
+        child.material.polygonOffset = false;
+        child.renderOrder = 1000;
+        
+        // Make sure to update the material
+        child.material.needsUpdate = true;
+      }
+    });
 
-      // console.log(`Texture applied to diamond with effects:`, effects);
-      return Promise.resolve();
-    } catch (error) {
-      console.error('Error applying texture to diamond:', error);
-      return Promise.reject(error);
-    }
+    // Log success message with detailed info
+    console.log('Successfully applied textures to diamond model:', {
+      mainTexture: textureUrl,
+      fireTexture: textureUrlFire,
+      sparkleTexture: textureUrlSparkle,
+      effectsApplied: effects
+    });
+  
+    return Promise.resolve();
+  } catch (error) {
+    // Improved error logging
+    console.error('Error applying textures to diamond:', error);
+    console.error('Context:', {
+      mainTextureURL: textureUrl,
+      fireTextureURL: 'diamondMap/diamond_fire.jpg',
+      sparkleTextureURL: 'diamondMap/diamond_sparkle.jpg'
+    });
+    return Promise.reject(error);
   }
+}
 
   /**
    * Remove diamond from a specific ring
