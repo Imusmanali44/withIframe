@@ -217,6 +217,10 @@ export class ModelManager {
 
 // Updated loadMidMesh function
 async loadMidMesh(type, isTri) {
+  const loaderOverlay = document.querySelector('.loader-overlay');
+      if (loaderOverlay) {
+        loaderOverlay.style.display = 'block';
+      }
   if (type==undefined){
     type = "V-groove"
   }
@@ -226,6 +230,7 @@ async loadMidMesh(type, isTri) {
 
   // Check if the midMesh is already loaded, reuse it instead of loading again
   if (this.midMesh) {
+
     console.log("Using cached midMesh");
     // this.midMesh.renderOrder = -1000;
     // Reset transformations before adding to the scene
@@ -262,6 +267,10 @@ async loadMidMesh(type, isTri) {
       this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,false)
       this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,false)
 
+    }
+    const loaderOverlay = document.querySelector('.loader-overlay');
+    if (loaderOverlay) {
+      loaderOverlay.style.display = 'none';
     }
     return { midMesh: this.midMesh, midMesh2: this.midMesh2 };
   }
@@ -349,7 +358,10 @@ async loadMidMesh(type, isTri) {
     // this. defaultValueDepth2 = this.midMesh2.scale.y
 
     console.log("Loaded and stored midMesh");
-
+    const loaderOverlay = document.querySelector('.loader-overlay');
+      if (loaderOverlay) {
+        loaderOverlay.style.display = 'none';
+      }
     return { midMesh: this.midMesh, midMesh2: this.midMesh2 };
   } catch (error) {
     console.error("Error loading midMesh:", error);

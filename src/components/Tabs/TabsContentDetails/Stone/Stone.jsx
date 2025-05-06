@@ -16,6 +16,13 @@ export const Stone = ({
   setIsPair,
   isExpertMode,
 }) => {
+  // Create a key change tracker to force reset when ring changes
+  const [ringKey, setRingKey] = useState(() => {
+    return Array.isArray(activeRing) 
+      ? `${activeRing[0]?.name}_${activeRing[1]?.name}`
+      : `${activeRing?.name}`;
+  });
+
   // Initialize states from localStorage or use defaults
   const [selectedOption, setSelectedOption] = useState(() => {
     const storageKey = Array.isArray(activeRing) 
@@ -57,6 +64,39 @@ export const Stone = ({
     
     return localStorage.getItem(storageKey) || "0.005 ct. (Ø 1.0 mm)";
   });
+
+  // Key effect to detect ring changes and reset state
+  useEffect(() => {
+    const newRingKey = Array.isArray(activeRing) 
+      ? `${activeRing[0]?.name}_${activeRing[1]?.name}`
+      : `${activeRing?.name}`;
+    
+    // If ring has changed, update all states from localStorage
+    if (newRingKey !== ringKey) {
+      setRingKey(newRingKey);
+      
+      // Reset selectedOption for new ring
+      const optionKey = `stoneColorPurity_${newRingKey}`;
+      setSelectedOption(localStorage.getItem(optionKey) || undefined);
+      
+      // Reset option for new ring
+      const stoneOptionKey = `stoneOption_${newRingKey}`;
+      setOption(parseInt(localStorage.getItem(stoneOptionKey) || "2"));
+      
+      // Reset stones for new ring
+      const stonesKey = `stones_${newRingKey}`;
+      const savedStones = localStorage.getItem(stonesKey);
+      setStones(savedStones ? JSON.parse(savedStones) : []);
+      
+      // Reset activeTab for new ring
+      const tabKey = `stoneActiveTab_${newRingKey}`;
+      setActiveTab(parseInt(localStorage.getItem(tabKey) || "1"));
+      
+      // Reset stoneSize for new ring
+      const sizeKey = `stoneSize_${newRingKey}`;
+      setStoneSize(localStorage.getItem(sizeKey) || "0.005 ct. (Ø 1.0 mm)");
+    }
+  }, [activeRing, ringKey]);
 
   // Save selectedOption to localStorage when it changes
   useEffect(() => {

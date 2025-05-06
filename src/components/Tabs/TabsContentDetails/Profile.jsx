@@ -13,17 +13,27 @@ export const Profile = ({ rings, activeRing, isPair, setIsPair }) => {
       : `activeProfile_${activeRing?.name}`;
     
     const savedProfile = localStorage.getItem(storageKey);
-    if (savedProfile) {
-      setActiveProfile(savedProfile);
+    
+    // If there's a saved profile, use it; otherwise, default to the first profile
+    const profileToUse = savedProfile || (profileOptions[0]?.title || null);
+    
+    // Set the active profile
+    setActiveProfile(profileToUse);
+    
+    // // Send a message to update the model on initial load
+    // if (profileToUse) {
+    //   window.parent.postMessage({ 
+    //     action: "changeModel", 
+    //     modelId: profileToUse,
+    //     selectedRing: activeRing, 
+    //     pair: isPair 
+    //   }, "*");
       
-      // Optionally send a message to update the model on initial load
-      // window.parent.postMessage({ 
-      //   action: "changeModel", 
-      //   modelId: savedProfile,
-      //   selectedRing: activeRing, 
-      //   pair: isPair 
-      // }, "*");
-    }
+    //   // If this is the first time (no saved profile), save the default to localStorage
+    //   if (!savedProfile) {
+    //     localStorage.setItem(storageKey, profileToUse);
+    //   }
+    // }
   }, [activeRing, isPair]);
 
   const activeDesign = (id) => {

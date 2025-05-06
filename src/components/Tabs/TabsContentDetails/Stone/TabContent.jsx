@@ -197,6 +197,13 @@ const TabContent = ({
   handleChange,
   activeRing
 }) => {
+  // Track ring changes
+  const [currentRingKey, setCurrentRingKey] = useState(() => {
+    return Array.isArray(activeRing) 
+      ? `${activeRing[0]?.name}_${activeRing[1]?.name}`
+      : `${activeRing?.name}`;
+  });
+
   // Create storage key prefix based on activeRing and activeTab
   const getStorageKeyPrefix = () => {
     const ringKey = Array.isArray(activeRing) 
@@ -206,128 +213,118 @@ const TabContent = ({
     return `stone_${ringKey}_tab${activeTab}`;
   };
 
-  // Initialize currentTab from localStorage or default
-  const [currentTab, setCurrentTab] = useState(() => {
-    if (!activeRing || !activeTab) return "Settings";
-    const key = `${getStorageKeyPrefix()}_currentTab`;
-    return localStorage.getItem(key) || "Settings";
-  });
+  // Initialize state from localStorage or defaults
+  const [currentTab, setCurrentTab] = useState("Settings");
+  const [stoneStyle, setStoneStyle] = useState("Without");
+  const [stoneType, setStoneType] = useState("Without");
+  const [stoneNumber, setStoneNumber] = useState("1");
+  const [distribution, setDistribution] = useState("Together");
+  const [isGrouped, setIsGrouped] = useState(false);
+  const [stonesPerGroup, setStonesPerGroup] = useState("");
+  const [groupDivision, setGroupDivision] = useState("");
 
-  // Initialize stoneStyle from localStorage or default
-  const [stoneStyle, setStoneStyle] = useState(() => {
-    if (!activeRing || !activeTab) return "Without";
-    const key = `${getStorageKeyPrefix()}_stoneStyle`;
-    return localStorage.getItem(key) || "Without";
-  });
+  // Initialize state based on current ring/tab when component mounts
+  useEffect(() => {
+    loadStateForCurrentRing();
+  }, []);
 
-  // Initialize stoneType from localStorage or default
-  const [stoneType, setStoneType] = useState(() => {
-    if (!activeRing || !activeTab) return "Without";
-    const key = `${getStorageKeyPrefix()}_stoneType`;
-    return localStorage.getItem(key) || "Without";
-  });
-
-  // Initialize stoneNumber from localStorage or default
-  const [stoneNumber, setStoneNumber] = useState(() => {
-    if (!activeRing || !activeTab) return "1";
-    const key = `${getStorageKeyPrefix()}_stoneNumber`;
-    return localStorage.getItem(key) || "1";
-  });
-
-  // Initialize distribution from localStorage or default
-  const [distribution, setDistribution] = useState(() => {
-    if (!activeRing || !activeTab) return "Together";
-    const key = `${getStorageKeyPrefix()}_distribution`;
-    const savedDistribution = localStorage.getItem(key);
-    if (savedDistribution) {
-      window.distribution = savedDistribution; // Set global distribution
-      return savedDistribution;
+  // Function to load state for the current ring
+  const loadStateForCurrentRing = () => {
+    if (!activeRing || !activeTab) return;
+    
+    const prefix = getStorageKeyPrefix();
+    
+    // Load currentTab
+    const savedTab = localStorage.getItem(`${prefix}_currentTab`);
+    setCurrentTab(savedTab || "Settings");
+    
+    // Load stoneStyle
+    const savedStyle = localStorage.getItem(`${prefix}_stoneStyle`);
+    setStoneStyle(savedStyle || "Without");
+    
+    // Load stoneType
+    const savedType = localStorage.getItem(`${prefix}_stoneType`);
+    setStoneType(savedType || "Without");
+    
+    // Load stoneNumber
+    const savedNumber = localStorage.getItem(`${prefix}_stoneNumber`);
+    setStoneNumber(savedNumber || "1");
+    
+    // Load distribution
+    const savedDist = localStorage.getItem(`${prefix}_distribution`);
+    if (savedDist) {
+      setDistribution(savedDist);
+      window.distribution = savedDist;
+    } else {
+      setDistribution("Together");
+      window.distribution = "Together";
     }
-    return "Together";
-  });
+    
+    // Load isGrouped
+    const savedGrouped = localStorage.getItem(`${prefix}_isGrouped`);
+    setIsGrouped(savedGrouped === "true");
+    
+    // Load stonesPerGroup
+    const savedStonesPerGroup = localStorage.getItem(`${prefix}_stonesPerGroup`);
+    setStonesPerGroup(savedStonesPerGroup || "");
+    
+    // Load groupDivision
+    const savedDivision = localStorage.getItem(`${prefix}_groupDivision`);
+    setGroupDivision(savedDivision || "");
+  };
 
-  // Initialize isGrouped from localStorage or default
-  const [isGrouped, setIsGrouped] = useState(() => {
-    if (!activeRing || !activeTab) return false;
-    const key = `${getStorageKeyPrefix()}_isGrouped`;
-    return localStorage.getItem(key) === "true";
-  });
+  // Effect to detect ring or tab changes
+  useEffect(() => {
+    const newRingKey = Array.isArray(activeRing) 
+      ? `${activeRing[0]?.name}_${activeRing[1]?.name}`
+      : `${activeRing?.name}`;
+    
+    if (newRingKey !== currentRingKey || !currentRingKey) {
+      setCurrentRingKey(newRingKey);
+      loadStateForCurrentRing();
+      
+      // Notify parent about stone settings for this ring
+      if (stoneStyle !== "Without") {
+        window.parent.postMessage(
+          { action: "addStone", value: stoneStyle, ringKey: newRingKey },
+          "*"
+        );
+      }
+    }
+  }, [activeRing, activeTab]);
 
-  // Initialize stonesPerGroup from localStorage or default
-  const [stonesPerGroup, setStonesPerGroup] = useState(() => {
-    if (!activeRing || !activeTab) return "";
-    const key = `${getStorageKeyPrefix()}_stonesPerGroup`;
-    return localStorage.getItem(key) || "";
-  });
-
-  // Initialize groupDivision from localStorage or default
-  const [groupDivision, setGroupDivision] = useState(() => {
-    if (!activeRing || !activeTab) return "";
-    const key = `${getStorageKeyPrefix()}_groupDivision`;
-    return localStorage.getItem(key) || "";
-  });
-
-  // Save currentTab to localStorage when it changes
+  // Save states to localStorage when they change
   useEffect(() => {
     if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_currentTab`;
-    localStorage.setItem(key, currentTab);
-  }, [currentTab, activeRing, activeTab]);
-
-  // Save stoneStyle to localStorage when it changes
-  useEffect(() => {
-    if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_stoneStyle`;
-    localStorage.setItem(key, stoneStyle);
-  }, [stoneStyle, activeRing, activeTab]);
-
-  // Save stoneType to localStorage when it changes
-  useEffect(() => {
-    if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_stoneType`;
-    localStorage.setItem(key, stoneType);
-  }, [stoneType, activeRing, activeTab]);
-
-  // Save stoneNumber to localStorage when it changes
-  useEffect(() => {
-    if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_stoneNumber`;
-    localStorage.setItem(key, stoneNumber);
-  }, [stoneNumber, activeRing, activeTab]);
-
-  // Save distribution to localStorage when it changes
-  useEffect(() => {
-    if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_distribution`;
-    localStorage.setItem(key, distribution);
-    window.distribution = distribution; // Update global distribution
-  }, [distribution, activeRing, activeTab]);
-
-  // Save isGrouped to localStorage when it changes
-  useEffect(() => {
-    if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_isGrouped`;
-    localStorage.setItem(key, isGrouped.toString());
-  }, [isGrouped, activeRing, activeTab]);
-
-  // Save stonesPerGroup to localStorage when it changes
-  useEffect(() => {
-    if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_stonesPerGroup`;
-    localStorage.setItem(key, stonesPerGroup);
-  }, [stonesPerGroup, activeRing, activeTab]);
-
-  // Save groupDivision to localStorage when it changes
-  useEffect(() => {
-    if (!activeRing || !activeTab) return;
-    const key = `${getStorageKeyPrefix()}_groupDivision`;
-    localStorage.setItem(key, groupDivision);
-  }, [groupDivision, activeRing, activeTab]);
+    const prefix = getStorageKeyPrefix();
+    
+    localStorage.setItem(`${prefix}_currentTab`, currentTab);
+    localStorage.setItem(`${prefix}_stoneStyle`, stoneStyle);
+    localStorage.setItem(`${prefix}_stoneType`, stoneType);
+    localStorage.setItem(`${prefix}_stoneNumber`, stoneNumber);
+    localStorage.setItem(`${prefix}_distribution`, distribution);
+    localStorage.setItem(`${prefix}_isGrouped`, isGrouped.toString());
+    localStorage.setItem(`${prefix}_stonesPerGroup`, stonesPerGroup);
+    localStorage.setItem(`${prefix}_groupDivision`, groupDivision);
+    
+    // Update global distribution
+    window.distribution = distribution;
+  }, [
+    currentTab, 
+    stoneStyle, 
+    stoneType, 
+    stoneNumber, 
+    distribution, 
+    isGrouped,
+    stonesPerGroup,
+    groupDivision,
+    activeRing,
+    activeTab
+  ]);
 
   const handleCheckboxChange = (e) => {
     setIsGrouped(e.target.checked);
   };
-  console.log(1, stoneNumber);
 
   const renderTabContent = () => {
     switch (currentTab) {
@@ -340,10 +337,14 @@ const TabContent = ({
                 onClick={() => {
                   if (!item.disabled) {
                     window.parent.postMessage(
-                      { action: "addStone", value: item.name },
+                      { 
+                        action: "addStone", 
+                        value: item.name,
+                        ringKey: currentRingKey
+                      },
                       "*"
                     );
-                    console.log(`Clicked: ${item.name}, Index: ${index}`);
+                    console.log(`Clicked: ${item.name}, Index: ${index}, Ring: ${currentRingKey}`);
                     setStoneStyle(item.name);
                   }
                 }}
@@ -364,7 +365,9 @@ const TabContent = ({
             ))}
           </div>
         );
+        
       case "Type of Stone":
+        // Type of Stone content remains the same, but add ringKey to postMessage
         return (
           <div className="flex flex-col">
             <div className="mb-6">
@@ -378,6 +381,15 @@ const TabContent = ({
                     onClick={() => {
                       if (!item.disabled) {
                         setStoneType(item.name);
+                        // Add postMessage with ringKey
+                        window.parent.postMessage(
+                          { 
+                            action: "stoneType", 
+                            value: item.name,
+                            ringKey: currentRingKey
+                          },
+                          "*"
+                        );
                       }
                     }}
                     className={`bg-white w-full border p-2 
@@ -409,9 +421,13 @@ const TabContent = ({
                 value={stoneSize}
                 onChange={(e) => {
                   setStoneSize(e.target.value);
-                  console.log(`Clicked size ${e.target.value}`);
+                  console.log(`Clicked size ${e.target.value}, Ring: ${currentRingKey}`);
                   window.parent.postMessage(
-                    { action: "stoneSize", value: e.target.value },
+                    { 
+                      action: "stoneSize", 
+                      value: e.target.value,
+                      ringKey: currentRingKey
+                    },
                     "*"
                   );
                   
@@ -440,162 +456,210 @@ const TabContent = ({
             />
           </div>
         );
-        case "Number":
-          return (
-            <div className="flex flex-col">
-              <div className="flex mb-6 gap-6">
+        
+      case "Number":
+        // Number content remains the same, but add ringKey to postMessage
+        return (
+          <div className="flex flex-col">
+            <div className="flex mb-6 gap-6">
+              <div className="w-1/2">
+                <h3 className="mb-2 font-semibold text-sm text-black">
+                  Number
+                </h3>
+                <select
+                  value={stoneNumber}
+                  onChange={(e) => {
+                    setStoneNumber(e.target.value);
+                    window.parent.postMessage(
+                      { 
+                        action: "addStone", 
+                        value: e.target.value, 
+                        type: "Number", 
+                        stoneDist: window.distribution,
+                        ringKey: currentRingKey
+                      },
+                      "*")
+                  }}
+                  className="border border-[#e1e1e1] p-2 rounded w-full"
+                >
+                  {Array.from(
+                    { length: maxStonesPerDistribution[distribution] || 70 }, 
+                    (_, i) => i + 1
+                  ).map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))}
+                </select>
+                <div
+                  className={`flex flex-col mt-2 ${
+                    stoneNumber === "1" && "cursor-not-allowed"
+                  }`}
+                >
+                  <label
+                    className={`block relative text-sm font-semibold ${
+                      stoneNumber === "1"
+                        ? "select-none opacity-40 cursor-not-allowed"
+                        : "cursor-pointer"
+                    }`}
+                  >
+                    {/* Arrange stones as a group */}
+                  </label>
+                </div>
+              </div>
+              {stoneNumber > 1 && (
                 <div className="w-1/2">
                   <h3 className="mb-2 font-semibold text-sm text-black">
-                    Number
+                    Distribution
                   </h3>
                   <select
-                    value={stoneNumber}
+                    value={distribution}
                     onChange={(e) => {
-                      setStoneNumber(e.target.value);
-                      window.parent.postMessage(
-                        { action: "addStone", value: e.target.value, type: "Number", stoneDist: window.distribution },
-                        "*")
+                      setDistribution(e.target.value);
+                      window.distribution = e.target.value;
+                      console.log(`Clicked distribution ${window.distribution}, Ring: ${currentRingKey}`);
+                      
+                      // If current stone number exceeds max for new distribution, adjust it
+                      const maxForNewDistribution = maxStonesPerDistribution[e.target.value] || 70;
+                      if (parseInt(stoneNumber) > maxForNewDistribution) {
+                        setStoneNumber(String(maxForNewDistribution));
+                        window.parent.postMessage(
+                          { 
+                            action: "addStone", 
+                            value: String(maxForNewDistribution), 
+                            type: "Number", 
+                            stoneDist: e.target.value,
+                            ringKey: currentRingKey
+                          },
+                          "*");
+                      } else {
+                        // Also notify about distribution change even if stone number doesn't change
+                        window.parent.postMessage(
+                          { 
+                            action: "updateDistribution", 
+                            value: e.target.value,
+                            ringKey: currentRingKey 
+                          },
+                          "*");
+                      }
                     }}
                     className="border border-[#e1e1e1] p-2 rounded w-full"
                   >
-                    {Array.from(
-                      { length: maxStonesPerDistribution[distribution] || 70 }, 
-                      (_, i) => i + 1
-                    ).map((num) => (
+                    {DistributionOptions.map((size, index) => (
+                      <option key={index} value={size}>
+                        {size}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Max stones: {maxStonesPerDistribution[distribution] || 70}
+                  </p>
+                </div>
+              )}
+            </div>
+            {isGrouped && (
+              <div className="flex gap-4 mb-6">
+                <div className="w-2/5">
+                  <h3 className="mb-2 font-semibold text-sm text-black">
+                    Stones per Group
+                  </h3>
+                  <select
+                    value={stonesPerGroup}
+                    onChange={(e) => {
+                      setStonesPerGroup(e.target.value);
+                      // Add postMessage with ringKey
+                      window.parent.postMessage(
+                        { 
+                          action: "stonesPerGroup", 
+                          value: e.target.value,
+                          ringKey: currentRingKey
+                        },
+                        "*"
+                      );
+                    }}
+                    className="border border-[#e1e1e1] p-2 rounded w-full"
+                  >
+                    {StonesPerGroupOptions.map((num) => (
                       <option key={num} value={num}>
                         {num}
                       </option>
                     ))}
                   </select>
-                  <div
-                    className={`flex flex-col mt-2 ${
-                      stoneNumber === "1" && "cursor-not-allowed"
+                </div>
+      
+                <div className="w-3/5">
+                  <h3 className="mb-2 font-semibold text-sm text-black">
+                    Division of Groups
+                  </h3>
+                  <select
+                    value={groupDivision}
+                    onChange={(e) => {
+                      setGroupDivision(e.target.value);
+                      // Add postMessage with ringKey
+                      window.parent.postMessage(
+                        { 
+                          action: "groupDivision", 
+                          value: e.target.value,
+                          ringKey: currentRingKey
+                        },
+                        "*"
+                      );
+                    }}
+                    className="border border-[#e1e1e1] p-2 rounded w-full"
+                  >
+                    {DivisionGroupsOptions.map((num) => (
+                      <option key={num} value={num}>
+                        {num}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
+            <div>
+              <label className="mb-2 block font-semibold text-sm text-black">
+                Position
+              </label>
+              <div className="flex flex-wrap gap-2.5">
+                {PositionTypeOptions.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setStoneStyle(item.name);
+                      console.log(`Clicked position ${item.name}, Ring: ${currentRingKey}`);
+                      window.parent.postMessage(
+                        { 
+                          action: "stonePosition", 
+                          value: item.name,
+                          ringKey: currentRingKey
+                        },
+                        "*"
+                      );
+                    }}
+                    className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 hover:border-[#205fa8] ${
+                      stoneStyle === item.name
+                        ? "border-[#205fa8]"
+                        : "border-[#e1e1e1]"
                     }`}
                   >
-                    <label
-                      className={`block relative text-sm font-semibold ${
-                        stoneNumber === "1"
-                          ? "select-none opacity-40 cursor-not-allowed"
-                          : "cursor-pointer"
-                      }`}
-                    >
-                      {/* Arrange stones as a group */}
-                    </label>
-                  </div>
-                </div>
-                {stoneNumber > 1 && (
-                  <div className="w-1/2">
-                    <h3 className="mb-2 font-semibold text-sm text-black">
-                      Distribution
-                    </h3>
-                    <select
-                      value={distribution}
-                      onChange={(e) => {
-                        setDistribution(e.target.value);
-                        window.distribution = e.target.value;
-                        console.log(`Clicked distribution ${window.distribution}`);
-                        
-                        // If current stone number exceeds max for new distribution, adjust it
-                        const maxForNewDistribution = maxStonesPerDistribution[e.target.value] || 70;
-                        if (parseInt(stoneNumber) > maxForNewDistribution) {
-                          setStoneNumber(String(maxForNewDistribution));
-                          window.parent.postMessage(
-                            { action: "addStone", value: String(maxForNewDistribution), type: "Number", stoneDist: e.target.value },
-                            "*");
-                        }
-                      }}
-                      className="border border-[#e1e1e1] p-2 rounded w-full"
-                    >
-                      {DistributionOptions.map((size, index) => (
-                        <option key={index} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Max stones: {maxStonesPerDistribution[distribution] || 70}
-                    </p>
-                  </div>
-                )}
+                    <span className="mx-2 text-sm leading-none">
+                      {item.name}
+                    </span>
+                    <img
+                      src={item.img}
+                      className="mx-auto mt-3"
+                      alt={item.name}
+                    />
+                  </button>
+                ))}
               </div>
-              {isGrouped && (
-                <div className="flex gap-4 mb-6">
-                  <div className="w-2/5">
-                    <h3 className="mb-2 font-semibold text-sm text-black">
-                      Stones per Group
-                    </h3>
-                    <select
-                      value={stonesPerGroup}
-                      onChange={(e) => setStonesPerGroup(e.target.value)}
-                      className="border border-[#e1e1e1] p-2 rounded w-full"
-                    >
-                      {/* Options for stones per group */}
-                      {StonesPerGroupOptions.map((num) => (
-                        <option key={num} value={num}>
-                          {num}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-        
-                  <div className="w-3/5">
-                    <h3 className="mb-2 font-semibold text-sm text-black">
-                      Division of Groups
-                    </h3>
-                    <select
-                      value={groupDivision}
-                      onChange={(e) => setGroupDivision(e.target.value)}
-                      className="border border-[#e1e1e1] p-2 rounded w-full"
-                    >
-                      {/* Options for division of groups */}
-                      {DivisionGroupsOptions.map((num) => (
-                        <option key={num} value={num}>
-                          {num}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
-              <div>
-                <label className="mb-2 block font-semibold text-sm text-black">
-                  Position
-                </label>
-                <div className="flex flex-wrap gap-2.5">
-                  {PositionTypeOptions.map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setStoneStyle(item.name);
-                        console.log(`Clicked position ${item.name}`);
-                        window.parent.postMessage(
-                          { action: "stonePosition", value: item.name },
-                          "*"
-                        );
-                      }}
-                      className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 hover:border-[#205fa8] ${
-                        stoneStyle === item.name
-                          ? "border-[#205fa8]"
-                          : "border-[#e1e1e1]"
-                      }`}
-                    >
-                      <span className="mx-2 text-sm leading-none">
-                        {item.name}
-                      </span>
-                      <img
-                        src={item.img}
-                        className="mx-auto mt-3"
-                        alt={item.name}
-                      />
-                    </button>
-                  ))}
-                </div>
-                
-                {/* Render the FreePositionComponent when "Free" position is selected */}
-                {stoneStyle === "Free" && <StoneRangeSlider activeRing={activeRing} activeTab={activeTab} />}
-              </div>
+              
+              {/* Render the FreePositionComponent when "Free" position is selected */}
+              {stoneStyle === "Free" && <StoneRangeSlider activeRing={activeRing} activeTab={activeTab} />}
             </div>
-          );
+          </div>
+        );
+        
       default:
         return null;
     }
@@ -605,17 +669,6 @@ const TabContent = ({
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
       {/* Add and remove stone buttons */}
       <div className="flex items-center gap-5">
-        {/* {stones.length < 3 && (
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={addStone}
-          >
-            <div className="bg-white rounded-full border w-8 h-8 flex items-center justify-center">
-              <AddSvg />
-            </div>
-            Add stone group
-          </div>
-        )} */}
         {stones.length > 1 && (
           <div
             className="flex items-center gap-2 cursor-pointer"
