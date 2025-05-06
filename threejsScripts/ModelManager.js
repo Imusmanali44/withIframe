@@ -427,159 +427,200 @@ catch (error) {
 
 }
 
+optimalThicknessBool(value) {
+  // Set the optimal thickness flag
+  this.optimalThickness = value ? true : false;
+  console.log("Optimal thickness set to:", this.optimalThickness);
   
-  optimalThicknessBool(value) {
-    if (value) {
-      this.optimalThickness = true
-      console.log(this.optimalThickness)
+  // If optimal thickness is enabled and we're in pair mode, apply to both rings
+  if (this.optimalThickness && this.pair1) {
+    // Get the current width of the first ring
+    const model = this.currentDisplayedModels[0];
+    if (model) {
+      // Calculate the current width from the scale (reverse of the scaling we apply)
+      const currentWidth = model.scale.x / 0.15;
+      
+      // Apply optimal thickness to both rings
+      this.setOptimalThickness(1, currentWidth);
+      this.setOptimalThickness(2, currentWidth);
     }
-    else {
-      this.optimalThickness = false
-      console.log(this.optimalThickness)
-
+  } else if (this.optimalThickness) {
+    // Apply optimal thickness to the selected ring only
+    const model = this.currentDisplayedModels[this.selectedModel - 1];
+    if (model) {
+      const currentWidth = model.scale.x / 0.15;
+      this.setOptimalThickness(this.selectedModel, currentWidth);
     }
+  }
+}
 
+setOptimalThickness(selectedRingId, widthValue) {
+  // Adjust the factor based on the width
+  const minWidth = 1.0;
+  const maxWidth = 12.0;
+
+  // Normalize the width between a specific range
+  const normalizedWidth = (widthValue - minWidth) / (maxWidth - minWidth) + 1;
+
+  // Set optimal thickness based on width (you can adjust the logic here)
+  const optimalThickness = normalizedWidth * 1.5; // Scale factor can be customized
+
+  if (this.pair1 && selectedRingId === 1) {
+    // In pair mode, when setting optimal thickness for ring 1,
+    // also set it for ring 2, but respect the individual thickness factors
+    
+    // Apply to ring 1
+    this.changeRingThickness(1, optimalThickness.toFixed(2).replace('.', ',') + ' mm', false);
+    
+    // Also apply to ring 2
+    // We pass the same optimal thickness value, the changeRingThickness function
+    // will apply the appropriate factor for ring 2 (0.8)
+    this.changeRingThickness(2, optimalThickness.toFixed(2).replace('.', ',') + ' mm', false);
+    
+    console.log(`Optimal thickness set to ${optimalThickness.toFixed(2)} for both rings based on width ${widthValue}`);
+  } else {
+    // Apply only to the selected ring in individual mode
+    this.changeRingThickness(selectedRingId, optimalThickness.toFixed(2).replace('.', ',') + ' mm', false);
+    console.log(`Optimal thickness set to ${optimalThickness.toFixed(2)} for ring ${selectedRingId} based on width ${widthValue}`);
+  }
+}
+
+changeRingWidth(selectedRingId, width, isPair = true) {
+  // Handle clipping removal based on pair status
+  if (this.pair1 == true) {
+    // When in pair mode, remove helpers for both rings
+    this.PreciousMetal.removeHelperModelAndClipping(1);
+    this.PreciousMetal.removeHelperModelAndClipping(2);
+  } else {
+    // When not in pair mode, only remove helper for the selected ring
+    this.PreciousMetal.removeHelperModelAndClipping(selectedRingId);
+  }
+  
+  const widthValue = parseFloat(width.replace(',', '.')); // Parse width from string to number
+  if (isNaN(widthValue)) {
+    console.warn('Invalid width value:', width);
+    return;
   }
 
-  setOptimalThickness(selectedRingId, widthValue) {
-    // Adjust the factor based on the width
-    const minWidth = 1.0;
-    const maxWidth = 12.0;
-
-    // Normalize the width between a specific range
-    const normalizedWidth = (widthValue - minWidth) / (maxWidth - minWidth) + 1;
-
-    // Set optimal thickness based on width (you can adjust the logic here)
-    const optimalThickness = normalizedWidth * 1.5; // Scale factor can be customized
-
-    // Call the changeRingThickness function with the optimal thickness
-    this.changeRingThickness(selectedRingId, optimalThickness.toFixed(2), false);
-
-    console.log(`Optimal thickness set to ${optimalThickness.toFixed(2)} based on width ${widthValue}`);
+  // Get the model for the selected ring
+  const model = this.currentDisplayedModels[selectedRingId - 1];
+  if (!model) {
+    console.warn('Model not found for selectedRingId:', selectedRingId);
+    return;
   }
-
-  changeRingWidth(selectedRingId, width, isPair = true) {
-    if (selectedRingId == 1) {
-
-      this.PreciousMetal.removeHelperModelAndClipping(1);
-
+  
+  if (this.pair1 == true) {
+    // In pair mode, apply width to both rings
+    for (let i = 0; i < this.currentDisplayedModels.length; i++) {
+      if (this.currentDisplayedModels[i]) {
+        this.currentDisplayedModels[i].scale.setX(widthValue * 0.15);
+        console.log(`Ring ${i + 1} width changed to: ${widthValue}mm (pair mode)`);
+        
+        // Apply optimal thickness if enabled
+        if (this.optimalThickness) {
+          this.setOptimalThickness(i + 1, widthValue);
+        }
+      }
     }
-    if (selectedRingId == 2) {
-
-      this.PreciousMetal.removeHelperModelAndClipping(2);
-
-    }
-    const widthValue = parseFloat(width.replace(',', '.')); // Parse width from string to number
-    if (isNaN(widthValue)) {
-      console.warn('Invalid width value:', width);
-      return;
-    }
-
-    const model = this.currentDisplayedModels[selectedRingId - 1];
-    if (!model) {
-      console.warn('Model not found for selectedRingId:', selectedRingId);
-      return;
-    }
-
-    // Set the width of the selected ring
-    model.scale.setX(widthValue * 0.15); // Multiply by a factor to convert to model scale
-    console.log(`Ring ${selectedRingId} width changed to: ${widthValue}mm`);
-
-    // If this.optimalThickness is true, set optimal thickness based on the width
+  } else {
+    // Apply width only to the selected ring
+    model.scale.setX(widthValue * 0.15);
+    console.log(`Ring ${selectedRingId} width changed to: ${widthValue}mm (individual mode)`);
+    
+    // Apply optimal thickness if enabled
     if (this.optimalThickness) {
       this.setOptimalThickness(selectedRingId, widthValue);
     }
+  }
+}
 
-    // If isPair is true, apply the same width to the second ring
-    // if (isPair && this.currentDisplayedModels.length > 1) {
-    //   const secondRing = this.currentDisplayedModels[1]; // Assuming the second ring is at index 1
-    //   secondRing.scale.setX(widthValue * 10); // Apply the same width to the second ring
-    // }
+changeRingThickness(selectedRingId, thickness, isPair = false) {
+  // Handle clipping removal based on pair status
+  if (this.pair1 == true) {
+    // When in pair mode, remove helpers for both rings
+    this.PreciousMetal.removeHelperModelAndClipping(1);
+    this.PreciousMetal.removeHelperModelAndClipping(2);
+  } else {
+    // When not in pair mode, only remove helper for the selected ring
+    this.PreciousMetal.removeHelperModelAndClipping(selectedRingId);
   }
 
+  const thicknessValue = parseFloat(thickness.replace(',', '.'));
+  if (isNaN(thicknessValue)) {
+    console.warn('Invalid thickness value:', thickness);
+    return;
+  }
 
-  // Existing methods (loadModels, switchModel, etc.) will remain unchanged...
-  changeRingThickness(selectedRingId, thickness, isPair = false) {
-    // Convert thickness value to a float
-    if (selectedRingId == 1) {
+  const minThickness = 1.0;  // Define the minimum thickness
+  const maxThickness = 12.0; // Define the maximum thickness
+  
+  // Calculate normalized thickness
+  const normalizedThickness = (thicknessValue - minThickness) / (maxThickness - minThickness) + 1;
 
-      this.PreciousMetal.removeHelperModelAndClipping(1);
-
+  if (this.pair1 == true) {
+    // In pair mode, apply thickness to both rings
+    for (let i = 0; i < this.currentDisplayedModels.length; i++) {
+      if (this.currentDisplayedModels[i]) {
+        // Get thickness factor based on ring index
+        let thicknessFactor = (i + 1 == 2) ? 0.8 : 1;
+        
+        // Apply thickness scaling
+        this.currentDisplayedModels[i].scale.setY(normalizedThickness * thicknessFactor);
+        this.currentDisplayedModels[i].scale.setZ(normalizedThickness * thicknessFactor);
+        
+        console.log(`Ring ${i + 1} thickness changed to: ${thicknessValue}mm (pair mode)`);
+      }
     }
-    if (selectedRingId == 2) {
-
-      this.PreciousMetal.removeHelperModelAndClipping(2);
-
-    }
-
-    const thicknessValue = parseFloat(thickness.replace(',', '.'));
-    if (isNaN(thicknessValue)) {
-      console.warn('Invalid thickness value:', thickness);
-      return;
-    }
-
-    const minThickness = 1.0;  // Define the minimum thickness (based on UI options)
-    const maxThickness = 12.0; // Define the maximum thickness (based on UI options)
-
-    // Normalize thickness scaling based on a factor (adjust the factor as necessary for your model)
-    let thicknessFactor;
-    if (selectedRingId == 2) { thicknessFactor = 0.8; }
-    else {
-      thicknessFactor = 1;
-    }
-    // const thicknessFactor = 100; // Adjust this based on the visual difference you want
-    const normalizedThickness = (thicknessValue - minThickness) / (maxThickness - minThickness) + 1;
-
-    // Retrieve the current model for the selected ring
+  } else {
+    // Apply thickness only to the selected ring
     const model = this.currentDisplayedModels[selectedRingId - 1];
     if (!model) {
       console.warn('Model not found for selectedRingId:', selectedRingId);
       return;
     }
-    console.log("model", normalizedThickness);
-    // Apply thickness scaling based on normalized thickness
-    model.scale.setY(normalizedThickness * thicknessFactor); // Adjust for Y axis
-    model.scale.setZ(normalizedThickness * thicknessFactor); // Adjust for Z axis
-   
-
-    console.log(`Ring ${selectedRingId} thickness changed to: ${thicknessValue}mm`);
+    
+    // Get thickness factor for the selected ring
+    let thicknessFactor = (selectedRingId == 2) ? 0.8 : 1;
+    
+    // Apply thickness scaling
+    model.scale.setY(normalizedThickness * thicknessFactor);
+    model.scale.setZ(normalizedThickness * thicknessFactor);
+    
+    console.log(`Ring ${selectedRingId} thickness changed to: ${thicknessValue}mm (individual mode)`);
   }
-  setSizeCountryWise(value) {
-    if (value == 'F') {
-      this.changeRingThickness(this.selectedModel, '1,20 mm')
-    }
-    else if (value == 'F½') {
-      this.changeRingThickness(this.selectedModel, '1,40 mm')
-    }
-    else if (value == 'G') {
-      this.changeRingThickness(this.selectedModel, '1,60 mm')
-    }
-    else if (value == 'G½') {
-      this.changeRingThickness(this.selectedModel, '1,80 mm')
-    }
-    else if (value == 'H') {
-      this.changeRingThickness(this.selectedModel, '2,00 mm')
-    }
-    else if (value == 'H½') {
-      this.changeRingThickness(this.selectedModel, '2,20 mm')
-    }
-    else if (value == 'I') {
-      this.changeRingThickness(this.selectedModel, '2,40 mm')
-    }
-    else if (value == 'I½') {
-      this.changeRingThickness(this.selectedModel, '2,50 mm')
-    }
-    else if (value == 'J') {
-      this.changeRingThickness(this.selectedModel, '2,70 mm')
-    }
-    else if (value == 'J½') {
-      this.changeRingThickness(this.selectedModel, '2,70 mm')
-    }
+}
 
-
+setSizeCountryWise(value) {
+  // Call changeRingThickness for the selected model
+  const thickness = this.getThicknessForSize(value);
+  
+  if (this.pair1 == true) {
+    // In pair mode, apply to both rings
+    this.changeRingThickness(1, thickness);
+    this.changeRingThickness(2, thickness);
+  } else {
+    // Apply only to the selected ring
+    this.changeRingThickness(this.selectedModel, thickness);
   }
+}
 
-
+// Helper function to get thickness based on size
+getThicknessForSize(value) {
+  const thicknessMap = {
+    'F': '1,20 mm',
+    'F½': '1,40 mm',
+    'G': '1,60 mm',
+    'G½': '1,80 mm',
+    'H': '2,00 mm',
+    'H½': '2,20 mm',
+    'I': '2,40 mm',
+    'I½': '2,50 mm',
+    'J': '2,70 mm',
+    'J½': '2,70 mm'
+  };
+  
+  return thicknessMap[value] || '2,00 mm'; // Default to 2.00 mm if size not found
+}
 
   currentSelectedRing(id) {
     console.log("id is ", id)
