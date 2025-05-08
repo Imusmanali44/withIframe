@@ -11,6 +11,13 @@ export const PreciousMetalSelectBox = ({
   // Get URL from selected option, or use default
   // const url = selectedOption?.url || defaultUrl;
 
+  const handleChange = (e) => {
+    const selected = options?.find(
+      (option) => option.value === e.target.value
+    );
+    setSelectedOption(selected);
+  };
+
   return (
     <div className="relative flex items-center mb-3">
       {!isImageLess && (
@@ -24,17 +31,11 @@ export const PreciousMetalSelectBox = ({
       <select
         className="w-full border border-[#909090] px-3 py-2 flex-1"
         // style={{ width: isImageLess ? "150px" : "400px" }}
-        value={selectedOption?.value}
-        onChange={(e) => {
-          const selected = options?.find(
-            (option) => option.value === e.target.value
-          );
-          setSelectedOption(selected);
-        }}
+        value={selectedOption?.value || ''}
+        onChange={handleChange}
       >
         {options?.map((option, index) => (
           <option key={index} value={option.value} className="flex items-center">
-          
             {option.value}
           </option>
         ))}

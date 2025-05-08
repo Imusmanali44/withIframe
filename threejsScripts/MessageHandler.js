@@ -13,7 +13,7 @@ export class MessageHandler {
   }
 
   handleMessage(event) {
-    const { action, modelId, type, id, selectedRing, value, pair, isEngraving, isBiCol, isTriCol, isMetal, field, grooveId, stoneDist } = event.data;
+    const { action, modelId, type, id, selectedRing, value, pair, isEngraving, isBiCol, isTriCol, isMetal, field, grooveId, stoneDist, position, ringIdentifier } = event.data;
     // console.log('Message received from parent:', event.data, action);
 
     switch (action) {
@@ -163,49 +163,47 @@ export class MessageHandler {
         // console.log("value",value)
         break;
       case 'changeColor':
-        // console.log("value aaaaaaa",isBiCol.name, value.colorCode, field)
+        // Handle case when both isBiCol and isTriCol are null (single color)
         if (isBiCol == null && isTriCol == null) {
           this.modelManager.changeModelColor(value.colorCode)
           console.log("value", value.colorCode, value.value)
           return;
         }
-        if (isBiCol.name == "Two tone" && field == "single") {
-          this.pMetalManager.colorChangeBi(value.colorCode, 1)
-        }
-        else if (isBiCol.name == "Two tone" && field == "twoTone") {
-          this.pMetalManager.colorChangeBi(value.colorCode, 2)
 
-        }
-        else if (isBiCol.name == "Two tone" && field == "triColored") {
-          this.pMetalManager.colorChangeBi(value.colorCode, 3)
-
-        }
-
-        if (isBiCol.name == "Tri Colored") {
-          if (field == "single") {
-            this.pMetalManager.colorChangeBi(value.colorCode, 1)
-
+        // Handle two-tone coloring
+        if (isBiCol && isBiCol.name === "Two tone") {
+          // Handle different field positions for two-tone
+          if (field === "single" || field === "triColored1") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 1);
           }
-          else if (field == "twoTone") {
-            this.pMetalManager.colorChangeBi(value.colorCode, 3)
-
+          else if (field === "twoTone" || field === "triColored2") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 2);
           }
-          else if (field == "triColored") {
-            this.pMetalManager.colorChangeBi(value.colorCode, 2)
-
+          else if (field === "triColored" || field === "triColored3") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 3);
           }
-
         }
-        // else if(isTriCol!=null ){
-        //   if(field=="single"){  // single means first field
-        //   this.pMetalManager.coloChangeTri(value.colorCode,1) }
-        // }
-        // else  if(field=="twoTone"){ // second color field
-        //   this.pMetalManager.coloChangeTri(value.colorCode,2) 
-        // }
-        // else  if(field=="triColored"){ // // third color field
-        //   this.pMetalManager.coloChangeTri(value.colorCode,3) 
-        // }
+        // Handle tri-colored
+        else if (isBiCol && isBiCol.name === "Tri Colored") {
+          // Handle different field positions for tri-colored
+          if (field === "single" || field === "triColored1") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 1);
+          }
+          else if (field === "twoTone" || field === "triColored3") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 3);
+          }
+          else if (field === "triColored" || field === "triColored2") {
+            this.pMetalManager.colorChangeBi(value.colorCode, 2);
+          }
+        }
+        // Use position parameter if present (new format)
+        else if (position) {
+          // Position is a string - "1", "2", or "3"
+          const positionNum = parseInt(position);
+          if (!isNaN(positionNum) && positionNum >= 1 && positionNum <= 3) {
+            this.pMetalManager.colorChangeBi(value.colorCode, positionNum);
+          }
+        }
         break;
       case 'EngraveSymbol':
         console.log("hello", value)
@@ -329,33 +327,38 @@ export class MessageHandler {
         break;
 
       case "PreciousMetal":
-        console.log("cal", value, isBiCol, isTriCol)
-        let lengthModels = this.modelManager.currentDisplayedModels.length
-        if (value == 0) {
-          this.pMetalManager.removeHelperModelAndClipping(1)
-          this.pMetalManager.removeHelperModelAndClipping(2)
-          this.pMetalManager.removeClippingTriOneRing()
+        console.log("PreciousMetal change", value, isBiCol, isTriCol, ringIdentifier);
+        let lengthModels = this.modelManager.currentDisplayedModels.length;
+        
+        if (value === 0) {
+          this.pMetalManager.removeHelperModelAndClipping(1);
+          this.pMetalManager.removeHelperModelAndClipping(2);
+          this.pMetalManager.removeClippingTriOneRing();
           this.modelManager.GrooveManagerIns.removeMidMeshes();
 
-          this.pMetalManager.isEnable = false
+          this.pMetalManager.isEnable = false;
           return;
-
         }
-        if (lengthModels == 1 && isBiCol) {
+        
+        // Check if isBiCol is true or has a name property
+        const isTwoTone = isBiCol === true || (isBiCol && isBiCol.name === "Two tone");
+        const isTriColored = !isTwoTone && (isTriCol === true || (isBiCol && isBiCol.name === "Tri Colored"));
+        
+        if (lengthModels === 1 && isTwoTone) {
           this.pMetalManager.biColorOneRing(value);
         }
-        else if (lengthModels == 1 && (!isBiCol || isBiCol == null)) {
+        else if (lengthModels === 1 && isTriColored) {
           this.pMetalManager.triColorOneRing(value);
-
         }
-        else if (lengthModels == 2 && isBiCol) {
+        else if (lengthModels === 1) {
+          // Default to tri-color if we don't have enough info
+          this.pMetalManager.triColorOneRing(value);
+        }
+        else if (lengthModels === 2 && isTwoTone) {
           this.pMetalManager.biTriPair(value);
-          console.log("cal 1", value, isBiCol, isTriCol)
-
         }
-        else if (lengthModels == 2 && (!isBiCol || isBiCol == null)) {
-          console.log("cal 2", value, isBiCol, isTriCol)
-
+        else if (lengthModels === 2) {
+          // For tri-colored or default
           this.pMetalManager.biTriPair(value, true);
         }
         break;
@@ -547,3 +550,4 @@ export class MessageHandler {
   }
 
 }
+

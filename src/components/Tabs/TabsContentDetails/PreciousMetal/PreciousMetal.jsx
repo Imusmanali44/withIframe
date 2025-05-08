@@ -236,7 +236,37 @@ export const PreciousMetal = ({
   isExpert,
   activeRing,
 }) => {
-  // const prevRingsRef = useRef([]);
+  // Function to get ring-specific localStorage key
+  const getRingKey = (key) => {
+    if (Array.isArray(activeRing)) {
+      return `${key}_${activeRing.map(ring => ring.name).join('_')}`;
+    }
+    return `${key}_${activeRing?.name || 'default'}`;
+  };
+
+  // Function to save settings for paired rings
+  const savePairedSettings = (key, value) => {
+    if (isPair && isPair.pair1 && Array.isArray(rings) && rings.length >= 2) {
+      // Save for all pair rings
+      const ring1Key = `${key}_${rings[0]?.name || 'ring1'}`;
+      const ring2Key = `${key}_${rings[1]?.name || 'ring2'}`;
+      
+      localStorage.setItem(ring1Key, value);
+      localStorage.setItem(ring2Key, value);
+      
+      // If we have a second pair
+      if (isPair.pair2 && rings.length >= 4) {
+        const ring3Key = `${key}_${rings[2]?.name || 'ring3'}`;
+        const ring4Key = `${key}_${rings[3]?.name || 'ring4'}`;
+        
+        localStorage.setItem(ring3Key, value);
+        localStorage.setItem(ring4Key, value);
+      }
+    } else {
+      // Just save for the active ring
+      localStorage.setItem(getRingKey(key), value);
+    }
+  };
 
   const getTwoToneOptions = () => {
     return options.map((option) => {
@@ -285,6 +315,15 @@ export const PreciousMetal = ({
       metal: { value: "Silver", colorCode: "#E3E3E2" },
       surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
       purity: null,
+      metal1: { value: "Gold", colorCode: "#D8BC7E" },
+      surface1: { value: "Vertical matt", colorCode: "#D3D3D3" },
+      purity1: null,
+      metal2: { value: "Silver", colorCode: "#E3E3E2" },
+      surface2: { value: "Vertical matt", colorCode: "#D3D3D3" },
+      purity2: null,
+      metal3: { value: "Palladium", colorCode: "#CED0DD" },
+      surface3: { value: "Vertical matt", colorCode: "#D3D3D3" },
+      purity3: null,
     },
   });
 
@@ -309,9 +348,25 @@ export const PreciousMetal = ({
     useState(null);
 
   const togglePartitionDropdown = (item) => {
-    console.log(item);
+    console.log("Toggling partition dropdown:", item);
+    
+    // If we're selecting a new partition type, reset the old one
+    if (partition.name !== item.name) {
+      // Reset the appropriate image state
+      if (item.name === "Two tone") {
+        setSelectedPartitionTriColoredImg(null);
+        savePairedSettings("selectedPartitionTriColoredImg", JSON.stringify(null));
+      } else if (item.name === "Tri Colored") {
+        setSelectedPartitionTwotoneImg(null);
+        savePairedSettings("selectedPartitionTwotoneImg", JSON.stringify(null));
+      }
+    }
+    
+    // Update the partition state
     setPartition(item);
-    localStorage.setItem("partition", JSON.stringify(item));
+    savePairedSettings("partition", JSON.stringify(item));
+    
+    // Toggle the dropdown
     setIsPartitionDropdownOpen(!isPartitionDropdownOpen);
   };
 
@@ -320,7 +375,23 @@ export const PreciousMetal = ({
   };
 
   const updateSelection = (partition, field, value) => {
-    // Always send the message, regardless of whether the state changes
+    // Get the ring identifier for the message
+    const ringIdentifier = Array.isArray(activeRing) 
+      ? activeRing.map(ring => ring.name).join('_')
+      : activeRing?.name || 'default';
+    
+    // Determine actual partition and field for triColored sections
+    let actualPartition = partition;
+    let actualField = field;
+    
+    // For triColored1, triColored2, triColored3, map to the triColored object with specific fields
+    if (partition.startsWith('triColored')) {
+      const position = partition.charAt(partition.length - 1);
+      actualPartition = 'triColored';
+      actualField = `${field}${position}`;
+    }
+    
+    // Restore automatic message sending for user interaction
     window.parent.postMessage(
       {
         action: "changeColor",
@@ -328,134 +399,219 @@ export const PreciousMetal = ({
         isBiCol: selectedPartitionTwotoneImg,
         isTriCol: selectedPartitionTriColoredImg,
         field: partition,
+        position: partition.startsWith('triColored') ? partition.charAt(partition.length - 1) : null,
+        ringIdentifier: ringIdentifier,
+        isPair: isPair && isPair.pair1
       },
       "*"
     );
-
-    setSelections((prevSelections) => {
-      const updatedSelections = {
-        ...prevSelections,
-        [partition]: {
-          ...prevSelections[partition],
-          [field]: value,
-        },
-      };
     
-      localStorage.setItem("selections", JSON.stringify(updatedSelections));
+    setSelections((prevSelections) => {
+      const updatedSelections = { ...prevSelections };
+      
+      // If it's a triColored section (1, 2, or 3), update the specific field
+      if (partition.startsWith('triColored')) {
+        updatedSelections.triColored = {
+          ...updatedSelections.triColored,
+          [actualField]: value,
+        };
+      } else {
+        // Otherwise, just update the normal partition and field
+        updatedSelections[partition] = {
+          ...updatedSelections[partition],
+          [field]: value,
+        };
+      }
+    
+      // Save settings - either for current ring or for all rings if isPair is true
+      const selectionsStr = JSON.stringify(updatedSelections);
+      savePairedSettings("selections", selectionsStr);
+      
       return updatedSelections;
     });
-    
-
   };
 
-  // Function to handle selection from the dropdown
   // Function to handle selection from the dropdown
   const handleOptionSelect = (option) => {
     let isTwoTone = null;
+    const ringIdentifier = Array.isArray(activeRing) 
+      ? activeRing.map(ring => ring.name).join('_')
+      : activeRing?.name || 'default';
+    
     if (option.name === "Two tone") {
       setSelectedPartitionTwotoneImg(option);
-      localStorage.setItem(
-        "selectedPartitionTwotoneImg",
-        JSON.stringify(option)
-      );
+      savePairedSettings("selectedPartitionTwotoneImg", JSON.stringify(option));
+      
       setSelectedPartitionTriColoredImg(null);
-      localStorage.setItem(
-        "selectedPartitionTriColoredImg",
-        JSON.stringify(null)
-      );
+      savePairedSettings("selectedPartitionTriColoredImg", JSON.stringify(null));
+      
       isTwoTone = true;
     } else {
       setSelectedPartitionTriColoredImg(option);
-      localStorage.setItem(
-        "selectedPartitionTriColoredImg",
-        JSON.stringify(option)
-      );
+      savePairedSettings("selectedPartitionTriColoredImg", JSON.stringify(option));
+      
       setSelectedPartitionTwotoneImg(null);
-      localStorage.setItem(
-        "selectedPartitionTwotoneImg",
-        JSON.stringify(option)
-      );
+      savePairedSettings("selectedPartitionTwotoneImg", JSON.stringify(null));
+      
       isTwoTone = false;
+      
+      // Initialize tri-colored selections with defaults if not already set
+      setSelections(prev => {
+        // Only update if the tri-colored specific fields aren't already set
+        if (!prev.triColored.metal1 || !prev.triColored.metal2 || !prev.triColored.metal3) {
+          const updatedSelections = {
+            ...prev,
+            triColored: {
+              ...prev.triColored,
+              metal1: prev.triColored.metal1 || { value: "Gold", colorCode: "#D8BC7E" },
+              surface1: prev.triColored.surface1 || { value: "Vertical matt", colorCode: "#D3D3D3" },
+              purity1: prev.triColored.purity1 || null,
+              metal2: prev.triColored.metal2 || { value: "Silver", colorCode: "#E3E3E2" },
+              surface2: prev.triColored.surface2 || { value: "Vertical matt", colorCode: "#D3D3D3" },
+              purity2: prev.triColored.purity2 || null,
+              metal3: prev.triColored.metal3 || { value: "Palladium", colorCode: "#CED0DD" },
+              surface3: prev.triColored.surface3 || { value: "Vertical matt", colorCode: "#D3D3D3" },
+              purity3: prev.triColored.purity3 || null,
+            }
+          };
+          
+          // Save updated selections for all rings if isPair is true
+          savePairedSettings("selections", JSON.stringify(updatedSelections));
+          
+          return updatedSelections;
+        }
+        return prev;
+      });
     }
+    
     setSelectedOption(option);
     setIsPartitionDropdownOpen(false);
-
-    // Log the selection to the console
-    console.log(`Option selected: ${option.label}, Value: ${option.img}`);
+    
+    // Restore sending message for user-initiated changes
     window.parent.postMessage(
-      { action: "PreciousMetal", value: option.label, isBiCol: isTwoTone },
+      { 
+        action: "PreciousMetal", 
+        value: option.label, 
+        isBiCol: isTwoTone,
+        ringIdentifier: ringIdentifier,
+        isPair: isPair && isPair.pair1
+      },
       "*"
     );
+    
+    // Log the selection to the console
+    console.log(`Option selected: ${option.label}, Value: ${option.img}`);
   };
 
-  // useEffect(() => {
-  //   const current = JSON.stringify(rings);
-  //   const previous = prevRingsRef.current;
-  
-  //   if (current !== previous) {
-  //   console.log(current, previous)
+  useEffect(() => {
+    // Load ring-specific data from localStorage
+    const savedPartition = localStorage.getItem(getRingKey("partition"));
+    const savedSelections = localStorage.getItem(getRingKey("selections"));
+    const savedTwoToneImg = localStorage.getItem(getRingKey("selectedPartitionTwotoneImg"));
+    const savedTriColorImg = localStorage.getItem(getRingKey("selectedPartitionTriColoredImg"));
 
-  //     prevRingsRef.current = rings;
+    console.log("Loading state for ring:", activeRing?.name || 'default', 
+                "savedPartition:", savedPartition ? JSON.parse(savedPartition).name : 'none',
+                "hasTwoTone:", !!savedTwoToneImg, 
+                "hasTriColor:", !!savedTriColorImg,
+                "isPair:", isPair ? `pair1: ${isPair.pair1}, pair2: ${isPair.pair2}` : 'false');
 
-  //     const defaultPartition = {
-  //       name: "Single",
-  //       img: DistributionImg1,
-  //     };
-  //     setPartition(defaultPartition);
-  //     setSelectedPartitionTwotoneImg(null);
-  //     setSelectedPartitionTriColoredImg(null);
+    // Reset to default state first to avoid stale UI
+    setSelectedPartitionTwotoneImg(null);
+    setSelectedPartitionTriColoredImg(null);
+    setPartition({
+      name: "Single",
+      img: DistributionImg1,
+    });
 
-  //     localStorage.removeItem("partition");
-  //     localStorage.removeItem("selectedPartitionTwotoneImg");
-  //     localStorage.removeItem("selectedPartitionTriColoredImg");
+    // Apply saved data if available
+    if (savedPartition) {
+      const parsedPartition = JSON.parse(savedPartition);
+      setPartition(parsedPartition);
+      
+      // Make sure two-tone and tri-colored are properly set based on partition
+      if (parsedPartition.name === "Two tone" && savedTwoToneImg) {
+        setSelectedPartitionTwotoneImg(JSON.parse(savedTwoToneImg));
+      } else if (parsedPartition.name === "Tri Colored" && savedTriColorImg) {
+        setSelectedPartitionTriColoredImg(JSON.parse(savedTriColorImg));
+      }
+    }
+    
+    if (savedSelections) {
+      setSelections(JSON.parse(savedSelections));
+    }
+    
+    // If no saved data for this ring, reset to defaults
+    if (!savedPartition && !savedSelections) {
+      setSelections({
+        single: {
+          metal: { value: "Silver", colorCode: "#E3E3E2" },
+          surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity: null,
+        },
+        twoTone: {
+          metal: { value: "Gold", colorCode: "#D8BC7E" },
+          surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity: null,
+        },
+        triColored: {
+          // Legacy format - keep for backward compatibility
+          metal: { value: "Silver", colorCode: "#E3E3E2" },
+          surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity: null,
+          // New format with specific positions
+          metal1: { value: "Gold", colorCode: "#D8BC7E" },
+          surface1: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity1: null,
+          metal2: { value: "Silver", colorCode: "#E3E3E2" },
+          surface2: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity2: null,
+          metal3: { value: "Palladium", colorCode: "#CED0DD" },
+          surface3: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity3: null,
+        },
+      });
+    }
 
-  //     // optionally reset selections as well
-  //     const defaultSelections = {
-  //       single: {
-  //         metal: { value: "Silver", colorCode: "#E3E3E2" },
-  //         surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
-  //         purity: null,
-  //       },
-  //       twoTone: {
-  //         metal: { value: "Gold", colorCode: "#D8BC7E" },
-  //         surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
-  //         purity: null,
-  //       },
-  //       triColored: {
-  //         metal: { value: "Silver", colorCode: "#E3E3E2" },
-  //         surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
-  //         purity: null,
-  //       },
-  //     };
-  //     setSelections(defaultSelections);
-  //     localStorage.removeItem("selections");
-  //   }
-  // }, [rings]);
+    // NOTE: Removed automatic message sending to avoid applying changes to 3D app
+    // when switching between rings. Changes will only be applied when the user 
+    // explicitly interacts with the UI.
+  }, [activeRing, isPair]); // Re-run when activeRing or isPair changes
 
   useEffect(() => {
-    const savedPartition = localStorage.getItem("partition");
-    const savedSelections = localStorage.getItem("selections");
-    const savedTwoToneImg = localStorage.getItem("selectedPartitionTwotoneImg");
-    const savedTriColorImg = localStorage.getItem(
-      "selectedPartitionTriColoredImg"
-    );
-
-    console.log(savedPartition);
-
-    if (savedPartition) setPartition(JSON.parse(savedPartition));
-    if (savedSelections) setSelections(JSON.parse(savedSelections));
-    if (savedTwoToneImg)
-      setSelectedPartitionTwotoneImg(JSON.parse(savedTwoToneImg));
-    if (savedTriColorImg)
-      setSelectedPartitionTriColoredImg(JSON.parse(savedTriColorImg));
+    // If this is a new state (no saved data), initialize with proper structure for tri-colored
+    if (!localStorage.getItem(getRingKey("selections"))) {
+      setSelections({
+        single: {
+          metal: { value: "Silver", colorCode: "#E3E3E2" },
+          surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity: null,
+        },
+        twoTone: {
+          metal: { value: "Gold", colorCode: "#D8BC7E" },
+          surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity: null,
+        },
+        triColored: {
+          // Legacy format - keep for backward compatibility
+          metal: { value: "Silver", colorCode: "#E3E3E2" },
+          surface: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity: null,
+          // New format with specific positions
+          metal1: { value: "Gold", colorCode: "#D8BC7E" },
+          surface1: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity1: null,
+          metal2: { value: "Silver", colorCode: "#E3E3E2" },
+          surface2: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity2: null,
+          metal3: { value: "Palladium", colorCode: "#CED0DD" },
+          surface3: { value: "Vertical matt", colorCode: "#D3D3D3" },
+          purity3: null,
+        },
+      });
+    }
   }, []);
 
-
-  // console.log("purity", purity);
-  // console.log("partition", partition);
-  // console.log("activeRing:", activeRing);
-  // console.log("selectedOption", selectedOption);
-  // console.log("selectedPartitionImg", selectedPartitionTwotoneImg);
   return (
     <div className="mb-auto">
       {rings &&
@@ -482,12 +638,27 @@ export const PreciousMetal = ({
                           ? () => togglePartitionDropdown(item)
                           : () => {
                               setPartition(item);
+                              savePairedSettings("partition", JSON.stringify(item));
                               setIsPartitionDropdownOpen(false);
                               setSelectedPartitionTwotoneImg(null);
                               setSelectedPartitionTriColoredImg(null);
-                              // console.log(index, DistributionOptions)
+                              
+                              // Clear from localStorage too when switching to single
+                              savePairedSettings("selectedPartitionTwotoneImg", JSON.stringify(null));
+                              savePairedSettings("selectedPartitionTriColoredImg", JSON.stringify(null));
+                              
+                              // Restore message sending for user-initiated changes
+                              const ringIdentifier = Array.isArray(activeRing) 
+                                ? activeRing.map(ring => ring.name).join('_')
+                                : activeRing?.name || 'default';
+                                
                               window.parent.postMessage(
-                                { action: "PreciousMetal", value: index },
+                                { 
+                                  action: "PreciousMetal", 
+                                  value: 0,
+                                  ringIdentifier: ringIdentifier,
+                                  isPair: isPair && isPair.pair1
+                                },
                                 "*"
                               );
                             }
@@ -542,24 +713,6 @@ export const PreciousMetal = ({
           isExpert={isExpert}
           metalOptions={metalOptions}
           updateSelection={(partition, field, value) => {
-            // console.log("Updated selection in ColorSurface:", {
-            //   partition,
-            //   field,
-            //   value,
-            //   selectedPartitionTwotoneImg,
-            //   selectedPartitionTriColoredImg,
-            // });
-            // window.parent.postMessage(
-            //   {
-            //     action: "changeColor",
-            //     value,
-            //     isBiCol: selectedPartitionTwotoneImg,
-            //     isTriCol: selectedPartitionTriColoredImg,
-            //     field: partition,
-            //   },
-            //   "*"
-            // ); // Send message to Configurator
-
             updateSelection(partition, field, value);
           }}
           surfaceOptions={surfaceOptions}
@@ -567,6 +720,7 @@ export const PreciousMetal = ({
           selections={selections}
           selectedPartitionTwotoneImg={selectedPartitionTwotoneImg}
           selectedPartitionTriColoredImg={selectedPartitionTriColoredImg}
+          activeRing={activeRing}
         />
 
         {/* Surface Dropdown */}
@@ -626,9 +780,6 @@ export const PreciousMetal = ({
               defaultValue={0.7}
             />
           )}
-        {/* {isWeddingRing && selectedPartitionTriColoredImg && (
-        <MultiRangeSlider />
-        )} */}
         {isWeddingRing &&
           selectedPartitionTriColoredImg &&
           window.ringsLength == 1 && <MultiRangeMaskSlider0 />}

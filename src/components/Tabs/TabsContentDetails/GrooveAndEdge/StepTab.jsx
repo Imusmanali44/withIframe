@@ -38,39 +38,47 @@ const StepTab = ({
   selectedRightStepOptions,
   setSelectedRightStepOptions,
 }) => {
+  // Helper function to generate storage key based on active ring
+  const getStorageKey = (suffix) => {
+    return Array.isArray(activeRing) 
+      ? `${suffix}_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `${suffix}_${activeRing?.name}`;
+  };
+
   // Initialize optionStepLeft from localStorage or default to "Without"
   const [optionStepLeft, setOptionStepLeft] = useState(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `optionStepLeft_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `optionStepLeft_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('optionStepLeft');
     return localStorage.getItem(storageKey) || "Without";
   });
 
   // Initialize optionStepRight from localStorage or default to "Without"
   const [optionStepRight, setOptionStepRight] = useState(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `optionStepRight_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `optionStepRight_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('optionStepRight');
     return localStorage.getItem(storageKey) || "Without";
   });
 
+  // Effect to reload states when activeRing changes
+  useEffect(() => {
+    // Load left step option
+    const leftStepKey = getStorageKey('optionStepLeft');
+    const savedLeftStep = localStorage.getItem(leftStepKey);
+    if (savedLeftStep) setOptionStepLeft(savedLeftStep);
+    
+    // Load right step option
+    const rightStepKey = getStorageKey('optionStepRight');
+    const savedRightStep = localStorage.getItem(rightStepKey);
+    if (savedRightStep) setOptionStepRight(savedRightStep);
+  }, [activeRing]);
+
   // Save optionStepLeft to localStorage when it changes
   useEffect(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `optionStepLeft_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `optionStepLeft_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('optionStepLeft');
     localStorage.setItem(storageKey, optionStepLeft);
   }, [optionStepLeft, activeRing]);
 
   // Save optionStepRight to localStorage when it changes
   useEffect(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `optionStepRight_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `optionStepRight_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('optionStepRight');
     localStorage.setItem(storageKey, optionStepRight);
   }, [optionStepRight, activeRing]);
 
@@ -91,9 +99,9 @@ const StepTab = ({
                   action: "addStep",
                   value: "left",
                   type: item.name,
-                  // isBiCol: selectedPartitionTwotoneImg,
-                  // isTriCol: selectedPartitionTriColoredImg,
-                  // field: partition,
+                  ringKey: Array.isArray(activeRing) 
+                    ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+                    : activeRing?.name
                 },
                 "*"
               );
@@ -114,6 +122,7 @@ const StepTab = ({
           groove={optionStepLeft}
           selectedOptions={selectedLeftStepOptions}
           setSelectedOptions={setSelectedLeftStepOptions}
+          activeRing={activeRing}
         />
       )}
 
@@ -134,10 +143,9 @@ const StepTab = ({
                   action: "addStep",
                   value: "right",
                   type: item.name,
-
-                  // isBiCol: selectedPartitionTwotoneImg,
-                  // isTriCol: selectedPartitionTriColoredImg,
-                  // field: partition,
+                  ringKey: Array.isArray(activeRing) 
+                    ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+                    : activeRing?.name
                 },
                 "*"
               );
@@ -163,6 +171,7 @@ const StepTab = ({
           groove={optionStepRight}
           selectedOptions={selectedRightStepOptions}
           setSelectedOptions={setSelectedRightStepOptions}
+          activeRing={activeRing}
         />
       )}
     </div>

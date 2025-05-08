@@ -239,35 +239,71 @@ async loadMidMesh(type, isTri) {
 
     // Get scaling values for the current model
     const { x, y, z } = this.GrooveManagerIns.getScaleForModel(this.modelId, type);
-    this.midMesh.scale.set(x, y, z);
-    this.midMesh.position.x = -0.7;
     
-    this.scene.add(this.midMesh);
-    // const targetRing = this.currentDisplayedModels[0];
-    // targetRing.add(this.midMesh);
+    // Handle differently based on pair mode
+    if (this.pair1) {
+      // In pair mode, apply to both rings
+      this.midMesh.scale.set(x, y, z);
+      this.midMesh.position.x = -0.7;
+      this.scene.add(this.midMesh);
+      this.midMesh.userData = "midMeshRing1";
+      
+      // Clone midMesh for the second ring if needed
+      if (!this.midMesh2) {
+        this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
+      }
+      this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+      this.midMesh2.position.set(0.7, -0.15, 0);
+      this.scene.add(this.midMesh2);
+    } else {
+      // In single mode, only apply to the selected ring
+      if (this.selectedModel === 1) {
+        this.midMesh.scale.set(x, y, z);
+        this.midMesh.position.x = this.currentDisplayedModels[0].position.x;
+        this.scene.add(this.midMesh);
         this.midMesh.userData = "midMeshRing1";
-    // Clone midMesh for the second ring
-    if (!this.midMesh2) {
-      this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
+        
+        // Remove second midMesh if it exists
+        if (this.midMesh2 && this.scene.children.includes(this.midMesh2)) {
+          this.scene.remove(this.midMesh2);
+        }
+      } else if (this.selectedModel === 2) {
+        // Use midMesh2 for the second ring
+        if (!this.midMesh2) {
+          this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
+        }
+        this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+        this.midMesh2.position.x = this.currentDisplayedModels[1].position.x;
+        this.midMesh2.position.y = -0.15;
+        this.scene.add(this.midMesh2);
+        
+        // Remove first midMesh if it exists
+        if (this.midMesh && this.scene.children.includes(this.midMesh)) {
+          this.scene.remove(this.midMesh);
+        }
+      }
     }
-
-    this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
-    this.midMesh2.position.set(0.7, -0.15, 0);
-    this.scene.add(this.midMesh2);
 
     if (isTri) {
       this.GrooveManagerIns.triGroovePair();
     }
+    
     if(type=="Milgrain"){
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,true)
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,true)
-
+      if (this.pair1 || this.selectedModel === 1) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh, true);
+      }
+      if (this.pair1 || this.selectedModel === 2) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2, true);
+      }
+    } else {
+      if (this.pair1 || this.selectedModel === 1) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh, false);
+      }
+      if (this.pair1 || this.selectedModel === 2) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2, false);
+      }
     }
-    else{
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,false)
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,false)
-
-    }
+    
     const loaderOverlay = document.querySelector('.loader-overlay');
     if (loaderOverlay) {
       loaderOverlay.style.display = 'none';
@@ -319,43 +355,57 @@ async loadMidMesh(type, isTri) {
 
     // Get scaling values for the current model
     const { x, y, z } = this.GrooveManagerIns.getScaleForModel(this.modelId, type);
-    this.midMesh.scale.set(x, y, z);
-    this.midMesh.position.x = -0.7;
-
-    // Add the first mesh to the scene
-    this.scene.add(this.midMesh);
-    // const targetRing = this.currentDisplayedModels[0];
-// targetRing.add(this.midMesh);
-    this.midMesh.userData = "midMeshRing1";
-
-    // Clone the model with unique material
+    
+    // Create midMesh2 right away for later use
     this.midMesh2 = this.cloneModelWithUniqueMaterial(this.midMesh);
     this.midMesh2.userData = "midMeshRing2";
-    this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
-    this.midMesh2.position.set(0.7, -0.15, 0);
-    this.midMesh2.renderOrder = 1
+    this.midMesh2.renderOrder = 1;
 
-
-    // Add the second mesh to the scene
-    this.scene.add(this.midMesh2);
+    // Handle differently based on pair mode
+    if (this.pair1) {
+      // In pair mode, apply to both rings
+      this.midMesh.scale.set(x, y, z);
+      this.midMesh.position.x = -0.7;
+      this.scene.add(this.midMesh);
+      this.midMesh.userData = "midMeshRing1";
+      
+      this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+      this.midMesh2.position.set(0.7, -0.15, 0);
+      this.scene.add(this.midMesh2);
+    } else {
+      // In single mode, only apply to the selected ring
+      if (this.selectedModel === 1) {
+        this.midMesh.scale.set(x, y, z);
+        this.midMesh.position.x = this.currentDisplayedModels[0].position.x;
+        this.scene.add(this.midMesh);
+        this.midMesh.userData = "midMeshRing1";
+      } else if (this.selectedModel === 2) {
+        this.midMesh2.scale.set(x * 0.85, y * 0.85, z * 0.85);
+        this.midMesh2.position.x = this.currentDisplayedModels[1].position.x;
+        this.midMesh2.position.y = -0.15;
+        this.scene.add(this.midMesh2);
+      }
+    }
 
     if (isTri) {
       this.GrooveManagerIns.triGroovePair();
     }
+    
     if(type=="Milgrain"){
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,true)
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,true)
-
+      if (this.pair1 || this.selectedModel === 1) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh, true);
+      }
+      if (this.pair1 || this.selectedModel === 2) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2, true);
+      }
+    } else {
+      if (this.pair1 || this.selectedModel === 1) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh, false);
+      }
+      if (this.pair1 || this.selectedModel === 2) {
+        this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2, false);
+      }
     }
-    else{
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh,false)
-      this.GrooveManagerIns.toggleMilgrainGroove(this.midMesh2,false)
-
-    }
-    // this.defaultValueWidth1 = this.midMesh.scale.x
-    // this. defaultValueDepth1 = this.midMesh.scale.y
-    // this. defaultValueWidth2 = this.midMesh2.scale.x
-    // this. defaultValueDepth2 = this.midMesh2.scale.y
 
     console.log("Loaded and stored midMesh");
     const loaderOverlay = document.querySelector('.loader-overlay');
@@ -752,20 +802,32 @@ getThicknessForSize(value) {
       this.applyColorToModel(model2, "#D8BC7E");
       this.addShadowPair();
     } else {
-      // Only replace the first model
-      if (this.currentDisplayedModels[0]) {
-        this.scene.remove(this.currentDisplayedModels[0]);
+      // Handle individual ring selection
+      if (this.selectedModel === 1) {
+        // Replace first model
+        if (this.currentDisplayedModels[0]) {
+          this.scene.remove(this.currentDisplayedModels[0]);
+        }
+        this.scene.add(model1);
+        this.applyColorToModel(model1, "#D8BC7E");
+        model1.visible = true;
+        this.currentDisplayedModels[0] = model1;
+      } else if (this.selectedModel === 2) {
+        // Replace second model
+        if (this.currentDisplayedModels[1]) {
+          this.scene.remove(this.currentDisplayedModels[1]);
+        }
+        model1.scale.set(0.85, 0.85, 0.85);
+        this.scene.add(model1);
+        this.applyColorToModel(model1, "#D8BC7E");
+        model1.visible = true;
+        this.currentDisplayedModels[1] = model1;
       }
-      
-      this.scene.add(model1);
-      this.applyColorToModel(model1, "#D8BC7E");
-      model1.visible = true;
-      this.currentDisplayedModels[0] = model1;
     }
   
     // Update all ring positions based on how many are visible
     this.updateRingPositions();
-  }
+}
   showSecondModel(index) {
     // Remove the old second model if it exists
     if (this.currentDisplayedModels[1]) {

@@ -23,14 +23,30 @@ const surfaceOption = [
 ];
 
 const WidthDepthSurface = ({ groove, selectedOptions, setSelectedOptions, activeRing }) => {
+  // Helper function to generate storage key based on active ring and groove type
+  const getStorageKey = (suffix) => {
+    return Array.isArray(activeRing)
+      ? `${suffix}_${groove}_${activeRing[0]?.name}_${activeRing[1]?.name}`
+      : `${suffix}_${groove}_${activeRing?.name}`;
+  };
+
+  // Initialize from localStorage when component mounts or activeRing/groove changes
+  useEffect(() => {
+    if (!activeRing) return; // Skip if activeRing is not defined
+    
+    const storageKey = getStorageKey('widthDepthSurface');
+    const savedOptions = localStorage.getItem(storageKey);
+    
+    if (savedOptions) {
+      setSelectedOptions(JSON.parse(savedOptions));
+    }
+  }, [activeRing, groove]);
+  
   // Save selectedOptions to localStorage whenever they change
   useEffect(() => {
     if (!activeRing) return; // Skip if activeRing is not defined
     
-    const storageKey = Array.isArray(activeRing)
-      ? `widthDepthSurface_${groove}_${activeRing[0]?.name}_${activeRing[1]?.name}`
-      : `widthDepthSurface_${groove}_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('widthDepthSurface');
     localStorage.setItem(storageKey, JSON.stringify(selectedOptions));
   }, [selectedOptions, activeRing, groove]);
   
@@ -44,29 +60,18 @@ const WidthDepthSurface = ({ groove, selectedOptions, setSelectedOptions, active
       },
     }));
     
-    console.log(`Groove ${id} changed to:`, id);
+    console.log(`Groove ${id} changed to:`, selected.value);
     window.parent.postMessage(
-      { action: "addGroove", value: selected.value, type: id },
+      { 
+        action: "addGroove", 
+        value: selected.value, 
+        type: id,
+        ringKey: Array.isArray(activeRing) 
+          ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+          : activeRing?.name
+      },
       "*"
     );
-    
-    // If you want to specifically save just this change to localStorage
-    if (activeRing) {
-      const storageKey = Array.isArray(activeRing)
-        ? `widthDepthSurface_${groove}_${activeRing[0]?.name}_${activeRing[1]?.name}`
-        : `widthDepthSurface_${groove}_${activeRing?.name}`;
-      
-      const updatedOptions = {
-        ...selectedOptions,
-        [id]: {
-          ...selectedOptions[id],
-          name: selected.name,
-          value: selected.value,
-        },
-      };
-      
-      localStorage.setItem(storageKey, JSON.stringify(updatedOptions));
-    }
   };
 
   return (

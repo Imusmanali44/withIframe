@@ -11,8 +11,14 @@ export const ColorSurface = ({
   selections,
   selectedPartitionTwotoneImg,
   selectedPartitionTriColoredImg,
+  activeRing,
 }) => {
   const [activeTab, setActiveTab] = useState("single");
+
+  // Function to pass ring identifier with updateSelection
+  const handleUpdateSelection = (partition, field, value) => {
+    updateSelection(partition, field, value);
+  };
 
   return (
     <>
@@ -58,37 +64,39 @@ export const ColorSurface = ({
       </div>
 
       <div className="flex gap-3">
-        {/* {(activeTab === "single" || !activeTab) && ( */}
+        {/* Always show first color section */}
         <div className={`flex-1`}>
           <PreciousMetalSelectBox
             options={metalOptions}
             setSelectedOption={(value) =>
-              updateSelection("single", "metal", value)
+              handleUpdateSelection(selectedPartitionTriColoredImg ? "triColored1" : "single", "metal", value)
             }
-            selectedOption={selections.single.metal}
+            selectedOption={selectedPartitionTriColoredImg ? selections.triColored.metal1 || selections.single.metal : selections.single.metal}
           />
           {isWeddingRing && isExpert && (
             <PreciousMetalSelectBox
               options={surfaceOptions}
-              selectedOption={selections.single.surface}
+              selectedOption={selectedPartitionTriColoredImg ? selections.triColored.surface1 || selections.single.surface : selections.single.surface}
               setSelectedOption={(value) =>
-                updateSelection("single", "surface", value)
+                handleUpdateSelection(selectedPartitionTriColoredImg ? "triColored1" : "single", "surface", value)
               }
             />
           )}
           {/* Purity Selection */}
           <div className="py-1">
             <span className="text-sm font-semibold">
-              Cleanliness - {selections.single.metal?.value}
+              Cleanliness - {selectedPartitionTriColoredImg 
+                ? (selections.triColored.metal1?.value || selections.single.metal?.value) 
+                : selections.single.metal?.value}
             </span>
           </div>
           <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
             {purityOptions.map((item, index) => (
               <button
                 key={index}
-                onClick={() => updateSelection("single", "purity", item)}
+                onClick={() => handleUpdateSelection(selectedPartitionTriColoredImg ? "triColored1" : "single", "purity", item)}
                 className={`px-2.5 py-3 flex items-center justify-center border rounded-0 ${
-                  selections.single.purity === item
+                  (selectedPartitionTriColoredImg ? selections.triColored.purity1 : selections.single.purity) === item
                     ? "border border-[#205fa8]"
                     : "bg-white"
                 }`}
@@ -98,39 +106,41 @@ export const ColorSurface = ({
             ))}
           </div>
         </div>
-        {/* )} */}
 
-        {selectedPartitionTwotoneImg && (
+        {/* Show second color section for two-tone or tri-colored */}
+        {(selectedPartitionTwotoneImg || selectedPartitionTriColoredImg) && (
           <div className="flex-1">
             <PreciousMetalSelectBox
               options={metalOptions}
               setSelectedOption={(value) =>
-                updateSelection("twoTone", "metal", value)
+                handleUpdateSelection(selectedPartitionTriColoredImg ? "triColored2" : "twoTone", "metal", value)
               }
-              selectedOption={selections.twoTone.metal}
+              selectedOption={selectedPartitionTriColoredImg ? selections.triColored.metal2 || selections.twoTone.metal : selections.twoTone.metal}
             />
             {isWeddingRing && isExpert && (
               <PreciousMetalSelectBox
                 options={surfaceOptions}
-                selectedOption={selections.twoTone.surface}
+                selectedOption={selectedPartitionTriColoredImg ? selections.triColored.surface2 || selections.twoTone.surface : selections.twoTone.surface}
                 setSelectedOption={(value) =>
-                  updateSelection("twoTone", "surface", value)
+                  handleUpdateSelection(selectedPartitionTriColoredImg ? "triColored2" : "twoTone", "surface", value)
                 }
               />
             )}
             {/* Purity Selection */}
             <div className="py-1">
               <span className="text-sm font-semibold">
-                Cleanliness - {selections.twoTone.metal?.value}
+                Cleanliness - {selectedPartitionTriColoredImg 
+                  ? (selections.triColored.metal2?.value || selections.twoTone.metal?.value) 
+                  : selections.twoTone.metal?.value}
               </span>
             </div>
             <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
               {purityOptions.map((item, index) => (
                 <button
                   key={index}
-                  onClick={() => updateSelection("twoTone", "purity", item)}
+                  onClick={() => handleUpdateSelection(selectedPartitionTriColoredImg ? "triColored2" : "twoTone", "purity", item)}
                   className={`px-2.5 py-3 flex items-center justify-center border rounded-0 ${
-                    selections.twoTone.purity === item
+                    (selectedPartitionTriColoredImg ? selections.triColored.purity2 : selections.twoTone.purity) === item
                       ? "border border-[#205fa8]"
                       : "bg-white"
                   }`}
@@ -142,37 +152,38 @@ export const ColorSurface = ({
           </div>
         )}
 
+        {/* Show third color section only for tri-colored */}
         {selectedPartitionTriColoredImg && (
           <div className="flex-1">
             <PreciousMetalSelectBox
               options={metalOptions}
               setSelectedOption={(value) =>
-                updateSelection("triColored", "metal", value)
+                handleUpdateSelection("triColored3", "metal", value)
               }
-              selectedOption={selections.triColored.metal}
+              selectedOption={selections.triColored.metal3 || selections.triColored.metal}
             />
             {isWeddingRing && isExpert && (
               <PreciousMetalSelectBox
                 options={surfaceOptions}
-                selectedOption={selections.triColored.surface}
+                selectedOption={selections.triColored.surface3 || selections.triColored.surface}
                 setSelectedOption={(value) =>
-                  updateSelection("triColored", "surface", value)
+                  handleUpdateSelection("triColored3", "surface", value)
                 }
               />
             )}
             {/* Purity Selection */}
             <div className="py-1">
               <span className="text-sm font-semibold">
-                Cleanliness - {selections.triColored.metal?.value}
+                Cleanliness - {selections.triColored.metal3?.value || selections.triColored.metal?.value}
               </span>
             </div>
             <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
               {purityOptions.map((item, index) => (
                 <button
                   key={index}
-                  onClick={() => updateSelection("triColored", "purity", item)}
+                  onClick={() => handleUpdateSelection("triColored3", "purity", item)}
                   className={`px-2.5 py-3 flex items-center justify-center border rounded-0 ${
-                    selections.triColored.purity === item
+                    selections.triColored.purity3 === item
                       ? "border border-[#205fa8]"
                       : "bg-white"
                   }`}

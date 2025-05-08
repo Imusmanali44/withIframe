@@ -31,30 +31,28 @@ const StepGroove = ({
   selectedGrooveOptions,
   setSelectedGrooveOptions,
 }) => {
+  // Helper function to generate storage key based on active ring
+  const getStorageKey = (suffix) => {
+    return Array.isArray(activeRing) 
+      ? `${suffix}_${activeRing[0]?.name}_${activeRing[1]?.name}` 
+      : `${suffix}_${activeRing?.name}`;
+  };
+
   // Initialize groove from localStorage or default to "Without"
   const [groove, setGroove] = useState(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `groove_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `groove_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('groove');
     return localStorage.getItem(storageKey) || "Without";
   });
 
   // Initialize subActiveTab from localStorage or default to "choice_of_groove"
   const [subActiveTab, setSubActiveTab] = useState(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `grooveSubTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `grooveSubTab_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('grooveSubTab');
     return localStorage.getItem(storageKey) || "choice_of_groove";
   });
 
   // Initialize ring1Grooves from localStorage or default
   const [ring1Grooves, setRing1Grooves] = useState(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `ring1Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `ring1Grooves_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('ring1Grooves');
     const savedGrooves = localStorage.getItem(storageKey);
     return savedGrooves ? JSON.parse(savedGrooves) : [
       { id: 1, name: "Free Groove" },
@@ -63,62 +61,84 @@ const StepGroove = ({
 
   // Initialize ring2Grooves from localStorage or default
   const [ring2Grooves, setRing2Grooves] = useState(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `ring2Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `ring2Grooves_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('ring2Grooves');
     const savedGrooves = localStorage.getItem(storageKey);
     return savedGrooves ? JSON.parse(savedGrooves) : [
       { id: 1, name: "Free Groove" },
     ];
   });
 
+  // Effect to reload states when activeRing changes
+  useEffect(() => {
+    // Load groove setting
+    const grooveKey = getStorageKey('groove');
+    const savedGroove = localStorage.getItem(grooveKey);
+    if (savedGroove) setGroove(savedGroove);
+    
+    // Load subActiveTab
+    const subTabKey = getStorageKey('grooveSubTab');
+    const savedSubTab = localStorage.getItem(subTabKey);
+    if (savedSubTab) setSubActiveTab(savedSubTab);
+    
+    // Load ring1Grooves
+    const ring1Key = getStorageKey('ring1Grooves');
+    const savedRing1 = localStorage.getItem(ring1Key);
+    if (savedRing1) setRing1Grooves(JSON.parse(savedRing1));
+    
+    // Load ring2Grooves
+    const ring2Key = getStorageKey('ring2Grooves');
+    const savedRing2 = localStorage.getItem(ring2Key);
+    if (savedRing2) setRing2Grooves(JSON.parse(savedRing2));
+  }, [activeRing]);
+
   // Save groove to localStorage when it changes
   useEffect(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `groove_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `groove_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('groove');
     localStorage.setItem(storageKey, groove);
   }, [groove, activeRing]);
 
   // Save subActiveTab to localStorage when it changes
   useEffect(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `grooveSubTab_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `grooveSubTab_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('grooveSubTab');
     localStorage.setItem(storageKey, subActiveTab);
   }, [subActiveTab, activeRing]);
 
   // Save ring1Grooves to localStorage when it changes
   useEffect(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `ring1Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `ring1Grooves_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('ring1Grooves');
     localStorage.setItem(storageKey, JSON.stringify(ring1Grooves));
   }, [ring1Grooves, activeRing]);
 
   // Save ring2Grooves to localStorage when it changes
   useEffect(() => {
-    const storageKey = Array.isArray(activeRing) 
-      ? `ring2Grooves_${activeRing[0]?.name}_${activeRing[1]?.name}` 
-      : `ring2Grooves_${activeRing?.name}`;
-    
+    const storageKey = getStorageKey('ring2Grooves');
     localStorage.setItem(storageKey, JSON.stringify(ring2Grooves));
   }, [ring2Grooves, activeRing]);
 
   const handleGrooveSelection = (item) => {
     setGroove(item.name);
-    window.parent.postMessage({ action: 'addGroove', type: item.name }, "*");
+    window.parent.postMessage({ 
+      action: 'addGroove', 
+      type: item.name,
+      ringKey: Array.isArray(activeRing) 
+        ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+        : activeRing?.name
+    }, "*");
   };
 
   const addGrooveRing1 = () => {
     const newId = ring1Grooves.length + 1;
     setRing1Grooves([...ring1Grooves, { id: newId, name: "Free Groove" }]);
     window.parent.postMessage(
-      { action: "addGroove", value: newId, type: "defaultAdd", selectedRing: "Ring 1" },
+      { 
+        action: "addGroove", 
+        value: newId, 
+        type: "defaultAdd", 
+        selectedRing: "Ring 1",
+        ringKey: Array.isArray(activeRing) 
+          ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+          : activeRing?.name
+      },
       "*"
     );
   };
@@ -127,7 +147,15 @@ const StepGroove = ({
     const newId = ring2Grooves.length + 1;
     setRing2Grooves([...ring2Grooves, { id: newId, name: "Free Groove" }]);
     window.parent.postMessage(
-      { action: "addGroove", value: newId, type: "defaultAdd", selectedRing: "Ring 2" },
+      { 
+        action: "addGroove", 
+        value: newId, 
+        type: "defaultAdd", 
+        selectedRing: "Ring 2",
+        ringKey: Array.isArray(activeRing) 
+          ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+          : activeRing?.name
+      },
       "*"
     );
   };
@@ -135,7 +163,14 @@ const StepGroove = ({
   const removeGrooveRing1 = (id) => {
     setRing1Grooves(ring1Grooves.filter((groove) => groove.id !== id));
     window.parent.postMessage(
-      { action: "addGroove", type: "defaultDelete", selectedRing: "Ring 1" },
+      { 
+        action: "addGroove", 
+        type: "defaultDelete", 
+        selectedRing: "Ring 1",
+        ringKey: Array.isArray(activeRing) 
+          ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+          : activeRing?.name
+      },
       "*"
     );
   };
@@ -143,7 +178,14 @@ const StepGroove = ({
   const removeGrooveRing2 = (id) => {
     setRing2Grooves(ring2Grooves.filter((groove) => groove.id !== id));
     window.parent.postMessage(
-      { action: "addGroove", type: "defaultDelete", selectedRing: "Ring 2" },
+      { 
+        action: "addGroove", 
+        type: "defaultDelete", 
+        selectedRing: "Ring 2",
+        ringKey: Array.isArray(activeRing) 
+          ? `${activeRing[0]?.name}_${activeRing[1]?.name}` 
+          : activeRing?.name
+      },
       "*"
     );
   };
@@ -201,6 +243,7 @@ const StepGroove = ({
               groove={groove}
               selectedOptions={selectedGrooveOptions}
               setSelectedOptions={setSelectedGrooveOptions}
+              activeRing={activeRing}
             />
           )}
         </div>
