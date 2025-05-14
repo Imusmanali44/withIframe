@@ -4,6 +4,7 @@ import { Fragment, useEffect } from "react";
 import Modal from "../shared/Modal";
 import useModal from "../../hooks/useModal";
 import AddRemoveRings from "./AddRemoveRings";
+import { useLocalization } from "../../context/LocalizationContext";
 import {
   AddRemoveRingSvg,
   SelectWeddingRingSvg,
@@ -26,6 +27,7 @@ export const TopBar = ({
   setActiveRing,
 }) => {
   const { isOpen, openModal, closeModal } = useModal();
+  const { t } = useLocalization();
 
   useEffect(() => {
     if (rings.length >= 2) {
@@ -52,7 +54,7 @@ export const TopBar = ({
           <AddRemoveRingSvg />
         </i>
         <span className="max-w-28 text-xs font-semibold text-start">
-          Add or remove rings
+          {t('configurator.addOrRemoveRings')}
         </span>
       </button>
 
@@ -97,7 +99,7 @@ export const TopBar = ({
                       <ConnectRingSvg className={isPair.pair1 ? "#fff" : "#000"} />
                     </i>
                     <span className="connect-label hidden lg:block">
-                      Ring pair
+                      {t('configurator.ringPair')}
                     </span>
                   </div>
                 )}
@@ -121,7 +123,7 @@ export const TopBar = ({
                     <ConnectRingSvg className={isPair.pair2 ? "#fff" : "#000"} />
                   </i>
                   <span className="connect-label hidden lg:block">
-                    Ring pair
+                    {t('configurator.ringPair')}
                   </span>
                 </div>
               )}
@@ -140,9 +142,9 @@ export const TopBar = ({
       <Modal
         isOpen={isOpen}
         closeModal={closeModal}
-        title="Add or remove rings"
+        title={t('configurator.addOrRemoveRings')}
         bodyContent={<AddRemoveRings rings={rings} setRings={setRings} />}
-        primaryAction={{ label: "Close", onClick: closeModal }}
+        primaryAction={{ label: t('buttons.close'), onClick: closeModal }}
       />
     </div>
   );

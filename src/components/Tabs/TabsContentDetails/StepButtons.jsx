@@ -1,6 +1,9 @@
 import { StepLeftSvg, StepRightSvg } from "../../../static/SvgImages";
+import { useLocalization } from "../../../context/LocalizationContext";
 
 const StepButtons = ({ limit, handleNext, step, handleBack }) => {
+  const { t } = useLocalization();
+  
   return (
     <div
       className={`step-buttons flex justify-between gap-5 p-5 pt-3 border-b ${
@@ -12,7 +15,7 @@ const StepButtons = ({ limit, handleNext, step, handleBack }) => {
           className="px-2.5 py-1.5 bg-[#f1f1f3] font-semibold text-sm flex items-center gap-1"
           onClick={handleBack}
         >
-          <StepLeftSvg width={5} height={10} /> Back
+          <StepLeftSvg width={5} height={10} /> {t('navigation.back')}
         </button>
       )}
 
@@ -21,7 +24,7 @@ const StepButtons = ({ limit, handleNext, step, handleBack }) => {
           className="px-2.5 py-1.5 bg-[#f1f1f3] font-semibold text-sm flex items-center gap-1"
           onClick={handleNext}
         >
-          Next <StepRightSvg width={5} height={10} />
+          {t('navigation.next')} <StepRightSvg width={5} height={10} />
         </button>
       )}
     </div>

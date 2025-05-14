@@ -5,6 +5,7 @@ import {
   engagementNonExpertTabOptions,
 } from "../../utils";
 import { StepLeftSvg, StepRightSvg } from "../../static/SvgImages";
+import { useLocalization } from "../../context/LocalizationContext";
 
 export const Tabs = ({
   handleNext,
@@ -14,6 +15,8 @@ export const Tabs = ({
   step,
   activeRing,
 }) => {
+  const { t } = useLocalization();
+  
   // Ensure activeRing exists before accessing type
   const options = activeRing?.type === "Engagement"
     ? isExpertMode
@@ -40,7 +43,7 @@ export const Tabs = ({
             onClick={() => setStep(tab.id)}
           >
             <span className="configurator-nav-number">{tab.id}.</span>
-            {tab.title}
+            {t(tab.title)}
             <span className="configurator-nav-link-shadow"></span>
           </div>
         ))}

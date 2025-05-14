@@ -2,9 +2,11 @@ import { RefreshSvg, ReviewSvg } from "../../static/SvgImages";
 import Modal from "../shared/Modal";
 import useModal from "../../hooks/useModal";
 import RingDetails from "./RingDetails";
+import { useLocalization } from "../../context/LocalizationContext";
 
 const ConfiguratorFooter = () => {
   const { isOpen, openModal, closeModal } = useModal();
+  const { t } = useLocalization();
 
   const handleResetConfiguration = () => {
     console.log('Reset configuration')
@@ -16,16 +18,16 @@ const ConfiguratorFooter = () => {
         <div className="flex flex-col items-center max-w-[300px]">
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between">
-              <div className="text-sm ">Ring 1</div>
+              <div className="text-sm ">{t('configurator.ringTypes.ringName')} 1</div>
               <div className="text-sm ">447-€</div>
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-sm ">Ring 2</div>
+              <div className="text-sm ">{t('configurator.ringTypes.ringName')} 2</div>
               <div className="text-sm ">400-€</div>
             </div>
           </div>
           <div className="flex justify-between mt-2 w-full">
-            <div className="text-sm font-semibold">Total price</div>
+            <div className="text-sm font-semibold">{t('configurator.pricing.totalPrice')}</div>
             <div className="text-sm font-semibold">847,- €</div>
           </div>
         </div>
@@ -35,7 +37,7 @@ const ConfiguratorFooter = () => {
           <i className="text-primary svg-icon svg-icon-refresh">
             <RefreshSvg />
           </i>
-          <span className="text-sm">Reset configuration</span>
+          <span className="text-sm">{t('buttons.resetConfiguration')}</span>
         </button>
         <button
           className="flex items-center rounded-full bg-white border px-5 py-2 gap-1.5"
@@ -44,15 +46,15 @@ const ConfiguratorFooter = () => {
           <i className="svg-icon svg-icon-review">
             <ReviewSvg />
           </i>
-          <span className="text-sm font-semibold">Your rings</span>
+          <span className="text-sm font-semibold">{t('configurator.yourRings')}</span>
         </button>
       </div>
       <Modal
         isOpen={isOpen}
         closeModal={closeModal}
-        title="Your rings"
+        title={t('configurator.yourRings')}
         bodyContent={<RingDetails />}
-        primaryAction={{ label: "Close", onClick: closeModal }}
+        primaryAction={{ label: t('buttons.close'), onClick: closeModal }}
       />
     </div>
   );

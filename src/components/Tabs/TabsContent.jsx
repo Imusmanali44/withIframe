@@ -4,6 +4,7 @@ import { PreciousMetal } from "./TabsContentDetails/PreciousMetal/PreciousMetal"
 import { GrooveAndEdge } from "./TabsContentDetails/GrooveAndEdge/GrooveAndEdge";
 import { Stone } from "./TabsContentDetails/Stone/Stone";
 import EngravingOptions from "./TabsContentDetails/Engraving/Engraving";
+import { useLocalization } from "../../context/LocalizationContext";
 
 import StepButtons from "./TabsContentDetails/StepButtons";
 
@@ -17,6 +18,8 @@ const TabContent = ({
   rings,
   activeRing,
 }) => {
+  const { t } = useLocalization();
+  
   const stepButton = () => (
     <StepButtons
       limit={isExpertMode ? 6 : 4}
@@ -76,7 +79,7 @@ const TabContent = ({
             </>
           );
         default:
-          return <div>Unknown step</div>;
+          return <div>{t('tabs.unknownStep')}</div>;
       }
     } else {
       switch (step) {
@@ -113,7 +116,7 @@ const TabContent = ({
             </>
           );
         default:
-          return <div>Unknown step</div>;
+          return <div>{t('tabs.unknownStep')}</div>;
       }
     }
   } else {
@@ -191,7 +194,7 @@ const TabContent = ({
             </>
           );
         default:
-          return <div>Unknown step</div>;
+          return <div>{t('tabs.unknownStep')}</div>;
       }
     } else {
       switch (step) {
@@ -241,7 +244,7 @@ const TabContent = ({
             </>
           );
         default:
-          return <div>Unknown step</div>;
+          return <div>{t('tabs.unknownStep')}</div>;
       }
     }
   }

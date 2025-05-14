@@ -1,4 +1,7 @@
+import { useLocalization } from "../../context/LocalizationContext";
+
 const IsPair = ({ activeRing, isPair, setIsPair }) => {
+  const { t } = useLocalization();
   return (
     <div className="py-3 flex items-center bg-white">
       <input
@@ -21,7 +24,7 @@ const IsPair = ({ activeRing, isPair, setIsPair }) => {
         className="mr-2"
       />
       <label className="text-sm font-semibold">
-        Use the same settings for both rings
+        {t('shared.useSameSettings')}
       </label>
     </div>
   );

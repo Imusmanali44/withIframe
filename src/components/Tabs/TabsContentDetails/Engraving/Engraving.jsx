@@ -1,40 +1,7 @@
 import { useState, useEffect } from "react";
 import IsPair from "../../../shared/IsPair";
 import TabContent from "./TabContent";
-
-const engravingOptions = [
-  {
-    value: "handwritten",
-    label: "Handwriting",
-    description:
-      "Your handwriting can be engraved by laser on both the inside and outside of your rings. You will receive detailed information on the procedure once you place your order.",
-  },
-  {
-    value: "fingerprint",
-    label: "Fingerprint",
-    description:
-      "Your fingerprint can be engraved by laser on both the inside and outside of your rings. You will receive detailed information on the procedure once you place your order.",
-  },
-  {
-    value: "graphic",
-    label: "Graphics",
-    description:
-      "Your graphics can be engraved by laser on both the inside and outside of your rings. You will receive detailed information on the procedure once you place your order.",
-  },
-];
-
-const fontLaser = [
-  { value: "svnfont00", label: "Abc 123", style: "italic" },
-  { value: "svnfont01", label: "Abc 123", style: "italic" },
-  { value: "svnfont02", label: "Abc 123", style: "italic" },
-  { value: "svnfont03", label: "Abc 123", style: "italic" },
-  { value: "svnfont04", label: "Abc 123", style: "italic" },
-];
-
-const fontDiamond = [
-  { value: "svnfont00", label: "Abc 123", style: "italic" },
-  { value: "svnfont01", label: "Abc 123", style: "italic" },
-];
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 // Toggle Component
 export const Toggle = ({ label, checked, onChange }) => (
@@ -50,6 +17,40 @@ export const Toggle = ({ label, checked, onChange }) => (
 );
 
 const EngravingOptions = ({ rings, isPair, setIsPair, activeRing }) => {
+  const { t } = useLocalization();
+  
+  // Engraving options defined with translation keys
+  const engravingOptions = [
+    {
+      value: "handwritten",
+      label: t('engraving.options.handwritten.label'),
+      description: t('engraving.options.handwritten.description'),
+    },
+    {
+      value: "fingerprint",
+      label: t('engraving.options.fingerprint.label'),
+      description: t('engraving.options.fingerprint.description'),
+    },
+    {
+      value: "graphic",
+      label: t('engraving.options.graphic.label'),
+      description: t('engraving.options.graphic.description'),
+    },
+  ];
+
+  const fontLaser = [
+    { value: "svnfont00", label: "Abc 123", style: "italic" },
+    { value: "svnfont01", label: "Abc 123", style: "italic" },
+    { value: "svnfont02", label: "Abc 123", style: "italic" },
+    { value: "svnfont03", label: "Abc 123", style: "italic" },
+    { value: "svnfont04", label: "Abc 123", style: "italic" },
+  ];
+
+  const fontDiamond = [
+    { value: "svnfont00", label: "Abc 123", style: "italic" },
+    { value: "svnfont01", label: "Abc 123", style: "italic" },
+  ];
+
   // Initialize activeTab from localStorage or default to "laser"
   const [activeTab, setActiveTab] = useState(() => {
     const storageKey = Array.isArray(activeRing) 
@@ -135,7 +136,7 @@ const EngravingOptions = ({ rings, isPair, setIsPair, activeRing }) => {
             activeTab === "laser" ? "bg-[#f9f9fa] text-black text-lg" : ""
           }`}
         >
-          Laser engraving
+          {t('engraving.laserEngraving')}
         </button>
         <button
           onClick={() => setActiveTab("diamond")}
@@ -143,7 +144,7 @@ const EngravingOptions = ({ rings, isPair, setIsPair, activeRing }) => {
             activeTab === "diamond" ? "bg-[#f9f9fa] text-black text-lg" : ""
           }`}
         >
-          Diamond engraving
+          {t('engraving.diamondEngraving')}
         </button>
       </div>
 

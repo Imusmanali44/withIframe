@@ -1,0 +1,244 @@
+{
+  "en": {
+    "buttons": {
+      "delete": "To delete",
+      "loadSave": "Load / Save",
+      "printPDF": "Print PDF",
+      "share": "To Share",
+      "close": "Close",
+      "cancel": "Cancel",
+      "resetConfiguration": "Reset configuration",
+      "add": "Add"
+    },
+    "navigation": {
+      "next": "Next",
+      "back": "Back"
+    },
+    "tabs": {
+      "profile": "Profile",
+      "sizes": "Sizes",
+      "preciousMetal": "Precious Metal",
+      "grooveAndEdge": "Groove & Edge",
+      "stone": "Stone",
+      "engraving": "Engraving",
+      "unknownStep": "Unknown step"
+    },
+    "settings": {
+      "expertMode": "Expert Mode:"
+    },
+    "engraving": {
+      "laserEngraving": "Laser engraving",
+      "diamondEngraving": "Diamond engraving",
+      "options": {
+        "handwritten": {
+          "label": "Handwriting",
+          "description": "Your handwriting can be engraved by laser on both the inside and outside of your rings. You will receive detailed information on the procedure once you place your order."
+        },
+        "fingerprint": {
+          "label": "Fingerprint",
+          "description": "Your fingerprint can be engraved by laser on both the inside and outside of your rings. You will receive detailed information on the procedure once you place your order."
+        },
+        "graphic": {
+          "label": "Graphics",
+          "description": "Your graphics can be engraved by laser on both the inside and outside of your rings. You will receive detailed information on the procedure once you place your order."
+        }
+      },
+      "textLabels": {
+        "ring1": "Engraving text Ring 1",
+        "ring2": "Engraving text Ring 2",
+        "ring3": "Engraving text Ring 3",
+        "addSymbol": "Add symbol",
+        "font": "Font"
+      },
+      "symbols": {
+        "heart": {
+          "description": "» .description"
+        },
+        "doubleHeart": {
+          "description": "¾ .description"
+        },
+        "doubleRing": {
+          "description": "¼ .description"
+        },
+        "infinity": {
+          "description": "½ .description"
+        }
+      }
+    },
+    "configurator": {
+      "yourRings": "Your rings",
+      "addOrRemoveRings": "Add or remove rings",
+      "ringPair": "Ring pair",
+      "enterName": "Enter Name",
+      "shift": "Shift",
+      "ringTypes": {
+        "wedding": "Wedding",
+        "engagement": "Engagement",
+        "memoir": "Memoir",
+        "ringName": "Ring"
+      },
+      "pricing": {
+        "totalPrice": "Total price"
+      },
+      "details": {
+        "profileAndSize": "Profile and size",
+        "profile": "Profile",
+        "ringWidth": "Ring width",
+        "ringThickness": "Ring thickness",
+        "ringSize": "Ring size",
+        "preciousMetal": "Precious metal",
+        "ringModel": "Ring model",
+        "distribution": "Distribution",
+        "cleanlinessColor": "Cleanliness / Color",
+        "surface": "Surface",
+        "freeGrooves": "Free grooves",
+        "choiceOfGroove": "Choice of groove",
+        "widthDepth": "Width / Depth",
+        "stoneSetting": "Stone setting",
+        "specialEngravings": "Special engravings",
+        "price": "Price",
+        "singleColor": "Single color",
+        "without": "Without"
+      }
+    },
+    "sizes": {
+      "ringWidth": "Ring width",
+      "selectWidth": "Select width",
+      "ringThickness": "Ring thickness",
+      "selectThickness": "Select thickness",
+      "autoThickness": "Automatically set the optimal thickness",
+      "ringSize": "Ring size",
+      "selectSize": "Select size",
+      "country": {
+        "uk": "UK",
+        "es": "ES",
+        "pl": "PL",
+        "us": "US"
+      }
+    },
+    "shared": {
+      "useSameSettings": "Use the same settings for both rings"
+    }
+  },
+  "nl": {
+    "buttons": {
+      "delete": "Verwijderen",
+      "loadSave": "Laden / Opslaan",
+      "printPDF": "PDF afdrukken",
+      "share": "Delen",
+      "close": "Sluiten",
+      "cancel": "Annuleren",
+      "resetConfiguration": "Reset configuratie",
+      "add": "Toevoegen"
+    },
+    "navigation": {
+      "next": "Volgende",
+      "back": "Terug"
+    },
+    "tabs": {
+      "profile": "Profiel",
+      "sizes": "Maten",
+      "preciousMetal": "Edelmetaal",
+      "grooveAndEdge": "Groef & Rand",
+      "stone": "Steen",
+      "engraving": "Graveren",
+      "unknownStep": "Onbekende stap"
+    },
+    "settings": {
+      "expertMode": "Expert Modus:"
+    },
+    "engraving": {
+      "laserEngraving": "Laser graveren",
+      "diamondEngraving": "Diamant graveren",
+      "options": {
+        "handwritten": {
+          "label": "Handschrift",
+          "description": "Uw handschrift kan met laser worden gegraveerd aan zowel de binnen- als buitenkant van uw ringen. U ontvangt gedetailleerde informatie over de procedure zodra u uw bestelling plaatst."
+        },
+        "fingerprint": {
+          "label": "Vingerafdruk",
+          "description": "Uw vingerafdruk kan met laser worden gegraveerd aan zowel de binnen- als buitenkant van uw ringen. U ontvangt gedetailleerde informatie over de procedure zodra u uw bestelling plaatst."
+        },
+        "graphic": {
+          "label": "Afbeeldingen",
+          "description": "Uw afbeeldingen kunnen met laser worden gegraveerd aan zowel de binnen- als buitenkant van uw ringen. U ontvangt gedetailleerde informatie over de procedure zodra u uw bestelling plaatst."
+        }
+      },
+      "textLabels": {
+        "ring1": "Graveertekst Ring 1",
+        "ring2": "Graveertekst Ring 2",
+        "ring3": "Graveertekst Ring 3",
+        "addSymbol": "Symbool toevoegen",
+        "font": "Lettertype"
+      },
+      "symbols": {
+        "heart": {
+          "description": "» .beschrijving"
+        },
+        "doubleHeart": {
+          "description": "¾ .beschrijving"
+        },
+        "doubleRing": {
+          "description": "¼ .beschrijving"
+        },
+        "infinity": {
+          "description": "½ .beschrijving"
+        }
+      }
+    },
+    "configurator": {
+      "yourRings": "Uw ringen",
+      "addOrRemoveRings": "Ringen toevoegen of verwijderen",
+      "ringPair": "Ringenpaar",
+      "enterName": "Naam invoeren",
+      "shift": "Verschuiven",
+      "ringTypes": {
+        "wedding": "Trouw",
+        "engagement": "Verloving",
+        "memoir": "Memoire",
+        "ringName": "Ring"
+      },
+      "pricing": {
+        "totalPrice": "Totaalprijs"
+      },
+      "details": {
+        "profileAndSize": "Profiel en maat",
+        "profile": "Profiel",
+        "ringWidth": "Ringbreedte",
+        "ringThickness": "Ringdikte",
+        "ringSize": "Ringmaat",
+        "preciousMetal": "Edelmetaal",
+        "ringModel": "Ringmodel",
+        "distribution": "Verdeling",
+        "cleanlinessColor": "Zuiverheid / Kleur",
+        "surface": "Oppervlak",
+        "freeGrooves": "Vrije groeven",
+        "choiceOfGroove": "Keuze van groef",
+        "widthDepth": "Breedte / Diepte",
+        "stoneSetting": "Steenzetting",
+        "specialEngravings": "Speciale graveringen",
+        "price": "Prijs",
+        "singleColor": "Enkele kleur",
+        "without": "Zonder"
+      }
+    },
+    "sizes": {
+      "ringWidth": "Ringbreedte",
+      "selectWidth": "Selecteer breedte",
+      "ringThickness": "Ringdikte",
+      "selectThickness": "Selecteer dikte",
+      "autoThickness": "Automatisch de optimale dikte instellen",
+      "ringSize": "Ringmaat",
+      "selectSize": "Selecteer maat",
+      "country": {
+        "uk": "VK",
+        "es": "ES",
+        "pl": "PL",
+        "us": "VS"
+      }
+    },
+    "shared": {
+      "useSameSettings": "Gebruik dezelfde instellingen voor beide ringen"
+    }
+  }
+} 

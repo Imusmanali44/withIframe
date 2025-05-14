@@ -17,80 +17,80 @@ import P15 from "/profile/P15.png";
 export const tabOptions = [
   {
     id: 1,
-    title: "Profile",
+    title: "tabs.profile",
   },
   {
     id: 2,
-    title: "Sizes",
+    title: "tabs.sizes",
   },
   {
     id: 3,
-    title: "Precious metal",
+    title: "tabs.preciousMetal",
   },
   {
     id: 4,
-    title: "Grooves / edges",
+    title: "tabs.grooveAndEdge",
   },
   {
     id: 5,
-    title: "Stone setting",
+    title: "tabs.stone",
   },
   {
     id: 6,
-    title: "Engraving",
+    title: "tabs.engraving",
   },
 ];
 
 export const nonExpertTabOptions = [
   {
     id: 1,
-    title: "Precious metal",
+    title: "tabs.preciousMetal",
   },
   {
     id: 2,
-    title: "Stone setting",
+    title: "tabs.stone",
   },
   {
     id: 3,
-    title: "Engraving",
+    title: "tabs.engraving",
   },
   {
     id: 4,
-    title: "Sizes",
+    title: "tabs.sizes",
   },
 ];
 
 export const engagementTabOptions = [
   {
     id: 1,
-    title: "Sizes",
+    title: "tabs.sizes",
   },
   {
     id: 2,
-    title: "Precious metal",
+    title: "tabs.preciousMetal",
   },
   {
     id: 3,
-    title: "Stone setting",
+    title: "tabs.stone",
   },
   {
     id: 4,
-    title: "Engraving",
+    title: "tabs.engraving",
   },
 ];
 
 export const engagementNonExpertTabOptions = [
   {
     id: 1,
-    title: "Stone setting",
+    title: "tabs.stone",
   },
   {
     id: 2,
-    title: "Engraving",
+    title: "tabs.engraving",
   },
   {
     id: 3,
-    title: "Sizes",
+    title: "tabs.sizes",
   },
 ];
 

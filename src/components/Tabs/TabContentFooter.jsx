@@ -4,8 +4,11 @@ import {
   PrintSvg,
   ShareSvg,
 } from "../../static/SvgImages";
+import { useLocalization } from "../../context/LocalizationContext";
 
 const TabContentFooter = () => {
+  const { t } = useLocalization();
+
   const handleDeleteClick = () => {
     console.log("Delete button clicked");
   };
@@ -31,7 +34,7 @@ const TabContentFooter = () => {
         <i className="svg-icon svg-icon-revert">
           <DeleteSvg />
         </i>
-        <span>To delete</span>
+        <span>{t('buttons.delete')}</span>
       </button>
 
       <button
@@ -41,7 +44,7 @@ const TabContentFooter = () => {
         <i className="svg-icon svg-icon-save-load">
           <LoadSaveSvg />
         </i>
-        <span>Load / Save</span>
+        <span>{t('buttons.loadSave')}</span>
       </button>
 
       <button
@@ -51,7 +54,7 @@ const TabContentFooter = () => {
         <i className="svg-icon svg-icon-print">
           <PrintSvg />
         </i>
-        <span>Print PDF</span>
+        <span>{t('buttons.printPDF')}</span>
       </button>
 
       <button
@@ -61,7 +64,7 @@ const TabContentFooter = () => {
         <i className="svg-icon svg-icon-print">
           <ShareSvg />
         </i>
-        <span>To Share</span>
+        <span>{t('buttons.share')}</span>
       </button>
     </div>
   );

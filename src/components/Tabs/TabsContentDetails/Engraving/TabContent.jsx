@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Input from "../../../shared/InputField";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 // ButtonGroup Component
 export const ButtonGroup = ({
@@ -8,37 +9,43 @@ export const ButtonGroup = ({
   label,
   className = "",
   value,
-}) => (
-  <div className="mb-5">
-    {label && (
-      <label className="block py-1 font-semibold text-sm">{label}</label>
-    )}
-    <ul className="flex gap-1">
-      {options.map((option) => (
-        <li
-          className={`${className} ${
-            option.style
-          } bg-white flex justify-center items-center py-2 px-2.5 border text-lg cursor-pointer ${
-            value === option.value ? "border-[#205fa8]" : "border-[#e1e1e1]"
-          }`}
-          key={option.value}
-          onClick={() => onChange(option.value)}
-        >
-          {option.label}
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
-const symbols = [
-  { value: "heart", label: "♡", description: "» .description" },
-  { value: "double-heart", label: "♡♡", description: "¾ .description" },
-  { value: "double-ring", label: `○○`, description: "¼ .description" },
-  { value: "infinity", label: "∞", description: "½ .description" },
-];
+}) => {
+  const { t } = useLocalization();
+  
+  return (
+    <div className="mb-5">
+      {label && (
+        <label className="block py-1 font-semibold text-sm">{label}</label>
+      )}
+      <ul className="flex gap-1">
+        {options.map((option) => (
+          <li
+            className={`${className} ${
+              option.style
+            } bg-white flex justify-center items-center py-2 px-2.5 border text-lg cursor-pointer ${
+              value === option.value ? "border-[#205fa8]" : "border-[#e1e1e1]"
+            }`}
+            key={option.value}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
 const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
+  const { t } = useLocalization();
+  
+  const symbols = [
+    { value: "heart", label: "♡", description: t('engraving.symbols.heart.description') },
+    { value: "double-heart", label: "♡♡", description: t('engraving.symbols.doubleHeart.description') },
+    { value: "double-ring", label: `○○`, description: t('engraving.symbols.doubleRing.description') },
+    { value: "infinity", label: "∞", description: t('engraving.symbols.infinity.description') },
+  ];
+  
   const [selectedSymbol, setSelectedSymbol] = useState("");
   const [selectedFont, setSelectedFont] = useState("svnfont00");
   const typingTimeoutRef = useRef(null);
@@ -87,7 +94,7 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
       <div>
         <label className="block py-1 font-semibold text-sm">
-          Engraving text Ring 1
+          {t('engraving.textLabels.ring1')}
         </label>
         <Input
           type="text"
@@ -104,7 +111,7 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
       {(isPair.pair1 || isPair.pair2) && (
         <div>
           <label className="block py-1 font-semibold text-sm">
-            Engraving text Ring 2
+            {t('engraving.textLabels.ring2')}
           </label>
           <Input
             type="text"
@@ -118,10 +125,10 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
           </div>
         </div>
       )}
-          {(window.ringsLength == 3) && (
+      {(window.ringsLength == 3) && (
         <div>
           <label className="block py-1 font-semibold text-sm">
-            Engraving text Ring 3
+            {t('engraving.textLabels.ring3')}
           </label>
           <Input
             type="text"
@@ -141,10 +148,10 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
         options={symbols}
         value={selectedSymbol}
         onChange={handleSymbolSelect}
-        label="Add symbol"
+        label={t('engraving.textLabels.addSymbol')}
         className="w-14"
       />
-          <ButtonGroup
+      <ButtonGroup
         options={fonts}
         value={selectedFont}
         onChange={(font) => {
@@ -156,7 +163,7 @@ const TabContent = ({ isPair, engravingText, setEngravingText, fonts }) => {
             "*"
           );
         }}
-        label="Font"
+        label={t('engraving.textLabels.font')}
       />
     </div>
   );

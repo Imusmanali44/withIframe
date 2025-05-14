@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import { useLocalization } from "../../../context/LocalizationContext";
 
 export const Sizes = ({ rings, activeRing }) => {
+  const { t } = useLocalization();
   const [isRing1Auto, setIsRing1Auto] = useState(false);
   const [isRing2Auto, setIsRing2Auto] = useState(false);
   const [ring1Width, setRing1Width] = useState("");
@@ -171,14 +173,14 @@ export const Sizes = ({ rings, activeRing }) => {
             <div className="flex flex-row lg:flex-col justify-between gap-4 lg:gap-3">
               <div className="w-1/2 lg:w-auto mb-3 ring-width-1-before relative">
                 <label className="block mb-1 font-semibold text-sm">
-                  Ring width
+                  {t('sizes.ringWidth')}
                 </label>
                 <select
                   className="w-full border hover:border-[#909090] rounded px-2 py-3"
                   value={ring1Width}
                   onChange={handleRing1WidthChange}
                 >
-                  {!ring1Width && <option value="" disabled>Select width</option>}
+                  {!ring1Width && <option value="" disabled>{t('sizes.selectWidth')}</option>}
                   {[...Array(12)].map((_, i) => {
                     const size = i + 1;
                     return (
@@ -192,7 +194,7 @@ export const Sizes = ({ rings, activeRing }) => {
 
               <div className="w-1/2 lg:w-auto mb-4 ring-width-2-before relative">
                 <label className="block mb-1 font-semibold text-sm">
-                  Ring thickness
+                  {t('sizes.ringThickness')}
                 </label>
                 <select
                   className="w-full border hover:border-[#909090] rounded px-2 py-3"
@@ -200,7 +202,7 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring1Thickness}
                   onChange={handleRing1ThicknessChange}
                 >
-                  {!ring1Thickness && <option value="" disabled>Select thickness</option>}
+                  {!ring1Thickness && <option value="" disabled>{t('sizes.selectThickness')}</option>}
                   {[...Array(12)].map((_, i) => {
                     const size = i + 1;
                     return (
@@ -236,13 +238,13 @@ export const Sizes = ({ rings, activeRing }) => {
                 }}
               />
               <label className="font-semibold text-sm">
-                Automatically set the optimal thickness
+                {t('sizes.autoThickness')}
               </label>
             </div>
 
             <div className="ring-width-3-before relative">
               <label className="block mb-1 font-semibold text-sm">
-                Ring size
+                {t('sizes.ringSize')}
               </label>
               <div className="flex">
                 <select
@@ -250,17 +252,17 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring1SizeCountry}
                   onChange={(e) => handleRing1SizeChange(e, "country")}
                 >
-                  <option value="UK">UK</option>
-                  <option value="ES">ES</option>
-                  <option value="PL">PL</option>
-                  <option value="US">US</option>
+                  <option value="UK">{t('sizes.country.uk')}</option>
+                  <option value="ES">{t('sizes.country.es')}</option>
+                  <option value="PL">{t('sizes.country.pl')}</option>
+                  <option value="US">{t('sizes.country.us')}</option>
                 </select>
                 <select
                   className="w-full border hover:border-[#909090] rounded px-2 py-3"
                   value={ring1Size}
                   onChange={(e) => handleRing1SizeChange(e)}
                 >
-                  {!ring1Size && <option value="" disabled>Select size</option>}
+                  {!ring1Size && <option value="" disabled>{t('sizes.selectSize')}</option>}
                   <option value="F">F</option>
                   <option value="F½">F½</option>
                   <option value="G">G</option>
@@ -281,14 +283,14 @@ export const Sizes = ({ rings, activeRing }) => {
             <div className="flex flex-row lg:flex-col justify-between gap-4 lg:gap-3">
               <div className="w-1/2 lg:w-auto mb-3">
                 <label className="block mb-1 font-semibold text-sm">
-                  Ring width
+                  {t('sizes.ringWidth')}
                 </label>
                 <select
                   className="w-full border hover:border-[#909090] rounded px-2 py-3"
                   value={ring2Width}
                   onChange={handleRing2WidthChange}
                 >
-                  {!ring2Width && <option value="" disabled>Select width</option>}
+                  {!ring2Width && <option value="" disabled>{t('sizes.selectWidth')}</option>}
                   {[...Array(12)].map((_, i) => {
                     const size = i + 1;
                     return (
@@ -302,7 +304,7 @@ export const Sizes = ({ rings, activeRing }) => {
 
               <div className="w-1/2 lg:w-auto mb-4">
                 <label className="block mb-1 font-semibold text-sm">
-                  Ring thickness
+                  {t('sizes.ringThickness')}
                 </label>
                 <select
                   className="w-full border hover:border-[#909090] rounded px-2 py-3"
@@ -310,7 +312,7 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring2Thickness}
                   onChange={handleRing2ThicknessChange}
                 >
-                  {!ring2Thickness && <option value="" disabled>Select thickness</option>}
+                  {!ring2Thickness && <option value="" disabled>{t('sizes.selectThickness')}</option>}
                   {[...Array(12)].map((_, i = 2) => {
                     const size = i + 1;
                     return (
@@ -340,13 +342,13 @@ export const Sizes = ({ rings, activeRing }) => {
                 }}
               />
               <label className="font-semibold text-sm">
-                Automatically set the optimal thickness
+                {t('sizes.autoThickness')}
               </label>
             </div>
 
             <div className="relative">
               <label className="block mb-1 font-semibold text-sm">
-                Ring size
+                {t('sizes.ringSize')}
               </label>
               <div className="flex">
                 <select
@@ -354,17 +356,17 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring2SizeCountry}
                   onChange={(e) => handleRing2SizeChange(e, "country")}
                 >
-                  <option value="UK">UK</option>
-                  <option value="ES">ES</option>
-                  <option value="PL">PL</option>
-                  <option value="US">US</option>
+                  <option value="UK">{t('sizes.country.uk')}</option>
+                  <option value="ES">{t('sizes.country.es')}</option>
+                  <option value="PL">{t('sizes.country.pl')}</option>
+                  <option value="US">{t('sizes.country.us')}</option>
                 </select>
                 <select
                   className="w-full border hover:border-[#909090] rounded px-2 py-3"
                   value={ring2Size}
                   onChange={(e) => handleRing2SizeChange(e)}
                 >
-                  {!ring2Size && <option value="" disabled>Select size</option>}
+                  {!ring2Size && <option value="" disabled>{t('sizes.selectSize')}</option>}
                   <option value="F">F</option>
                   <option value="F½">F½</option>
                   <option value="G">G</option>
@@ -388,14 +390,14 @@ export const Sizes = ({ rings, activeRing }) => {
               <div className="flex flex-row lg:flex-col justify-between gap-4 lg:gap-0">
                 <div className="w-1/2 lg:w-auto mb-3 ring-width-1-before relative">
                   <label className="block mb-1 font-semibold text-sm">
-                    Ring width
+                    {t('sizes.ringWidth')}
                   </label>
                   <select
                     className="w-full border hover:border-[#909090] rounded px-2 py-3"
                     value={ring1Width}
                     onChange={handleRing1WidthChange}
                   >
-                    {!ring1Width && <option value="" disabled>Select width</option>}
+                    {!ring1Width && <option value="" disabled>{t('sizes.selectWidth')}</option>}
                     {[...Array(12)].map((_, i) => {
                       const size = i + 1;
                       return (
@@ -409,7 +411,7 @@ export const Sizes = ({ rings, activeRing }) => {
 
                 <div className="w-1/2 lg:w-auto mb-3 ring-width-2-before relative">
                   <label className="block mb-1 font-semibold text-sm">
-                    Ring thickness
+                    {t('sizes.ringThickness')}
                   </label>
                   <select
                     className="w-full border hover:border-[#909090] rounded px-2 py-3"
@@ -417,7 +419,7 @@ export const Sizes = ({ rings, activeRing }) => {
                     value={ring1Thickness}
                     onChange={handleRing1ThicknessChange}
                   >
-                    {!ring1Thickness && <option value="" disabled>Select thickness</option>}
+                    {!ring1Thickness && <option value="" disabled>{t('sizes.selectThickness')}</option>}
                     {/* Custom options */}
                     {thicknessOptions.map((size, index) => (
                       <option key={index} value={size}>
@@ -453,14 +455,14 @@ export const Sizes = ({ rings, activeRing }) => {
                   }}
                 />
                 <label className="font-semibold text-sm">
-                  Automatically set the optimal thickness
+                  {t('sizes.autoThickness')}
                 </label>
               </div>
             </>
           )}
           <div className="ring-width-3-before relative">
             <label className="block mb-1 font-semibold text-sm">
-              Ring size
+              {t('sizes.ringSize')}
             </label>
             <div className="flex">
               <select
@@ -468,10 +470,10 @@ export const Sizes = ({ rings, activeRing }) => {
                 value={ring1SizeCountry}
                 onChange={(e) => handleRing1SizeChange(e, "country")}
               >
-                <option value="UK">UK</option>
-                <option value="ES">ES</option>
-                <option value="PL">PL</option>
-                <option value="US">US</option>
+                <option value="UK">{t('sizes.country.uk')}</option>
+                <option value="ES">{t('sizes.country.es')}</option>
+                <option value="PL">{t('sizes.country.pl')}</option>
+                <option value="US">{t('sizes.country.us')}</option>
               </select>
               <select
                 className="w-full border hover:border-[#909090] rounded px-2 py-3"
@@ -488,7 +490,7 @@ export const Sizes = ({ rings, activeRing }) => {
                   );
                 }}
               >
-                {!ring1Size && <option value="" disabled>Select size</option>}
+                {!ring1Size && <option value="" disabled>{t('sizes.selectSize')}</option>}
                 <option value="F">F</option>
                 <option value="F½">F½</option>
                 <option value="G">G</option>

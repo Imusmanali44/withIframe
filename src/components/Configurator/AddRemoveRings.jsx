@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Input from "../shared/InputField";
+import { useLocalization } from "../../context/LocalizationContext";
 import {
   WeddingRingSVg,
   EngagementRingSvg,
@@ -139,6 +140,7 @@ const ringImages = {
 };
 
 const AddRemoveRings = ({ rings, setRings }) => {
+  const { t } = useLocalization();
   const [inputValues, setInputValues] = useState({});
   const [selectedType, setSelectedType] = useState(null);
   const [selectedRing, setSelectedRing] = useState(null);
@@ -147,34 +149,20 @@ const AddRemoveRings = ({ rings, setRings }) => {
   useEffect(() => {
     console.log("test", selectedRing)
     if (selectedRing && (selectedRing.name.toLowerCase().includes("engage") || selectedRing.name.toLowerCase().includes("memoir")) ) {
-      // if(window.ringsLength ==2){
-      //   alert("Delete a wedding ring to add an engagement ring")
-      //   return;
-      // }
       let type;
       if(selectedRing.name.toLowerCase().includes("engage")){
         type = "Engagement";
       }
       else if(selectedRing.name.toLowerCase().includes("memoir")){    
         type = "Memoir";
-
       }
-      // else{
-        window.parent.postMessage({ action: 'addRing', selectedRing, type }, "*");
-        window.ringsLength++;
-      // }
-      
-
+      window.parent.postMessage({ action: 'addRing', selectedRing, type }, "*");
+      window.ringsLength++;
     }
-
   }, [selectedRing]);
 
   const addRing = (type) => {
     if (rings.length < 4) {
-      // if(window.ringsLength ==2){
-      //   alert("only two rings for now")
-      //   return;
-      // }
       // Find the lowest available ID that's not in use
       const usedIds = rings.map(ring => ring.id);
       let newId = 1;
@@ -185,7 +173,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
       window.parent.postMessage({ action: 'addRing', type }, "*");
       setRings([
         ...rings,
-        { type, id: newId, name: `Ring ${newId}` },
+        { type, id: newId, name: `${t('configurator.ringTypes.ringName')} ${newId}` },
       ]);
       window.ringsLength++;
     }
@@ -228,11 +216,17 @@ const AddRemoveRings = ({ rings, setRings }) => {
     <>
       <div className="flex items-center justify-between py-3 border-b">
         <div className="flex items-center">
-          <h4 className="text-sx py-3 text-center lg:text-start">Your rings</h4>
+          <h4 className="text-sx py-3 text-center lg:text-start">{t('configurator.yourRings')}</h4>
           {selectedType && (
             <div className="flex items-center">
               <span className="text-black mx-1">{">"}</span>
-              <h3 className="m-0 text-black">Add {selectedType} Ring</h3>
+              <h3 className="m-0 text-black">
+                {t('buttons.add')} {selectedType === "Wedding" 
+                  ? t('configurator.ringTypes.wedding') 
+                  : selectedType === "Engagement" 
+                    ? t('configurator.ringTypes.engagement') 
+                    : t('configurator.ringTypes.memoir')} {t('configurator.ringTypes.ringName')}
+              </h3>
             </div>
           )}
         </div>
@@ -243,7 +237,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
           }`}
           onClick={() => setSelectedType(null)}
         >
-          <CloseSvg width={30} height={30} /> Cancel
+          <CloseSvg width={30} height={30} /> {t('buttons.cancel')}
         </button>
       </div>
 
@@ -259,7 +253,11 @@ const AddRemoveRings = ({ rings, setRings }) => {
           >
             <div className="ring-card-top text-center w-1/3 lg:w-auto">
               <div className="label-dark mb-5 font-semibold">
-                {ring.type} Ring
+                {ring.type === "Wedding" 
+                  ? t('configurator.ringTypes.wedding') 
+                  : ring.type === "Engagement" 
+                    ? t('configurator.ringTypes.engagement') 
+                    : t('configurator.ringTypes.memoir')} {t('configurator.ringTypes.ringName')}
               </div>
               <i className="ring-card-img max-w-32">
                 {ring.type === "Wedding" && <WeddingRingSVg />}
@@ -270,7 +268,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
             <div className="ring-card-bottom pl-3 lg:pl-0 w-2/3 lg:w-auto">
               <div className="my-1">
                 <label className="label-dark py-1 inline-block">
-                  Enter Name
+                  {t('configurator.enterName')}
                 </label>
                 <Input
                   type="text"
@@ -284,7 +282,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
                   <button className="p-1 rotate-90 lg:rotate-0">
                     <ArrowLeftSvg />
                   </button>
-                  <span className="hidden lg:flex">Shift</span>
+                  <span className="hidden lg:flex">{t('configurator.shift')}</span>
                   <button className="p-1 rotate-90 lg:rotate-0">
                     <ArrowRightSvg />
                   </button>
@@ -296,7 +294,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
                   <i icon="trash-2" className="mr-2">
                     <TrashSvg />
                   </i>
-                  <span>To delete</span>
+                  <span>{t('buttons.delete')}</span>
                 </button>
               </div>
             </div>
@@ -313,31 +311,23 @@ const AddRemoveRings = ({ rings, setRings }) => {
               <i className="svg-icon text-center">
                 <AddWeddingRingSvg />
               </i>
-              <h4>Wedding</h4>
+              <h4>{t('configurator.ringTypes.wedding')}</h4>
             </div>
             <div
-  className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
-  onClick={() => {
-    // if (window.ringsLength == 2) {
-    //   alert("Delete a wedding ring to add an engagement ring");
-    //   return;
-    // }
-    setSelectedType("Engagement");
-  }}
->
+              className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
+              onClick={() => {
+                setSelectedType("Engagement");
+              }}
+            >
               <i className="svg-icon text-center">
                 <AddEngagementRingSvg />
               </i>
-              <h4>Engagement</h4>
+              <h4>{t('configurator.ringTypes.engagement')}</h4>
             </div>
             <div
               className="ring-type p-3.5 text-center cursor-pointer hover:bg-[#0000000d] duration-300"
              
               onClick={() => {
-                // if (window.ringsLength == 2) {
-                //   alert("Delete a wedding ring to add an engagement ring");
-                //   return;
-                // }
                 setSelectedType("Memoir");
               }}
             
@@ -345,7 +335,7 @@ const AddRemoveRings = ({ rings, setRings }) => {
               <i className="svg-icon text-center">
                 <AddMemoirRingSvg />
               </i>
-              <h4>Memoir</h4>
+              <h4>{t('configurator.ringTypes.memoir')}</h4>
             </div>
           </div>
         )}
