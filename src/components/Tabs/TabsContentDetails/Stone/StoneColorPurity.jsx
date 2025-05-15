@@ -1,6 +1,9 @@
 import { useEffect } from "react";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 const StoneColorPurity = ({ selectedOption, handleChange, activeRing }) => {
+  const { t } = useLocalization();
+  
   // Save selected option to localStorage when it changes
   useEffect(() => {
     if (selectedOption && activeRing) {
@@ -15,7 +18,7 @@ const StoneColorPurity = ({ selectedOption, handleChange, activeRing }) => {
   return (
     <div>
       <h3 className="m-0 font-semibold text-sm text-black">
-        Stone color and purity
+        {t('stone.colorAndPurity')}
       </h3>
       <div className="flex flex-col mt-1 bg-white px-6 py-4 ">
         {[

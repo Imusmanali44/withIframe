@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { PreciousMetalSelectBox } from "./PreciousMetalSelectBox";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 export const ColorSurface = ({
   isWeddingRing,
@@ -14,6 +15,7 @@ export const ColorSurface = ({
   activeRing,
 }) => {
   const [activeTab, setActiveTab] = useState("single");
+  const { t } = useLocalization();
 
   // Function to pass ring identifier with updateSelection
   const handleUpdateSelection = (partition, field, value) => {
@@ -23,7 +25,7 @@ export const ColorSurface = ({
   return (
     <>
       <label className="block text-sm font-medium mt-4">
-        Color and Surface
+        {t('preciousMetal.colorAndSurface')}
       </label>
 
       <div className="sm:hidden flex justify-between border-b mb-4">
@@ -35,7 +37,7 @@ export const ColorSurface = ({
               : ""
           }`}
         >
-          Single
+          {t('preciousMetal.singleColor')}
         </button>
         {selectedPartitionTwotoneImg && (
           <button
@@ -46,7 +48,7 @@ export const ColorSurface = ({
                 : ""
             }`}
           >
-            Two-Tone
+            {t('preciousMetal.twoTone')}
           </button>
         )}
         {selectedPartitionTriColoredImg && (
@@ -58,7 +60,7 @@ export const ColorSurface = ({
                 : ""
             }`}
           >
-            Tri-Colored
+            {t('preciousMetal.triColored')}
           </button>
         )}
       </div>
@@ -85,9 +87,11 @@ export const ColorSurface = ({
           {/* Purity Selection */}
           <div className="py-1">
             <span className="text-sm font-semibold">
-              Cleanliness - {selectedPartitionTriColoredImg 
-                ? (selections.triColored.metal1?.value || selections.single.metal?.value) 
-                : selections.single.metal?.value}
+              {t('preciousMetal.cleanliness', { 
+                metal: selectedPartitionTriColoredImg 
+                  ? (selections.triColored.metal1?.value || selections.single.metal?.value) 
+                  : selections.single.metal?.value 
+              })}
             </span>
           </div>
           <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
@@ -101,7 +105,7 @@ export const ColorSurface = ({
                     : "bg-white"
                 }`}
               >
-                {item} kt
+                {item} {t('preciousMetal.kt')}
               </button>
             ))}
           </div>
@@ -129,9 +133,11 @@ export const ColorSurface = ({
             {/* Purity Selection */}
             <div className="py-1">
               <span className="text-sm font-semibold">
-                Cleanliness - {selectedPartitionTriColoredImg 
-                  ? (selections.triColored.metal2?.value || selections.twoTone.metal?.value) 
-                  : selections.twoTone.metal?.value}
+                {t('preciousMetal.cleanliness', { 
+                  metal: selectedPartitionTriColoredImg 
+                    ? (selections.triColored.metal2?.value || selections.twoTone.metal?.value) 
+                    : selections.twoTone.metal?.value 
+                })}
               </span>
             </div>
             <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
@@ -145,7 +151,7 @@ export const ColorSurface = ({
                       : "bg-white"
                   }`}
                 >
-                  {item} kt
+                  {item} {t('preciousMetal.kt')}
                 </button>
               ))}
             </div>
@@ -174,7 +180,9 @@ export const ColorSurface = ({
             {/* Purity Selection */}
             <div className="py-1">
               <span className="text-sm font-semibold">
-                Cleanliness - {selections.triColored.metal3?.value || selections.triColored.metal?.value}
+                {t('preciousMetal.cleanliness', { 
+                  metal: selections.triColored.metal3?.value || selections.triColored.metal?.value 
+                })}
               </span>
             </div>
             <div className="flex flex-wrap space-x-1 space-y-1 mb-5">
@@ -188,7 +196,7 @@ export const ColorSurface = ({
                       : "bg-white"
                   }`}
                 >
-                  {item} kt
+                  {item} {t('preciousMetal.kt')}
                 </button>
               ))}
             </div>

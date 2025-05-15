@@ -2,8 +2,11 @@ import { useState, useEffect } from "react";
 import StepTab from "./StepTab";
 import StepGroove from "./StepGroove";
 import IsPair from "../../../shared/IsPair";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 export const GrooveAndEdge = ({rings, isPair, setIsPair, activeRing }) => {
+  const { t } = useLocalization();
+  
   // Create storage key based on the active ring
   const getStorageKey = (suffix) => {
     return Array.isArray(activeRing) 
@@ -152,7 +155,7 @@ export const GrooveAndEdge = ({rings, isPair, setIsPair, activeRing }) => {
             activeTab === "grooves" ? "bg-[#f9f9fa] text-black text-lg" : ""
           }`}
         >
-          Grooves
+          {t('grooveAndEdge.tabs.grooves')}
         </button>
         <button
           onClick={() => setActiveTab("steps")}
@@ -160,7 +163,7 @@ export const GrooveAndEdge = ({rings, isPair, setIsPair, activeRing }) => {
             activeTab === "steps" ? "bg-[#f9f9fa] text-black text-lg" : ""
           }`}
         >
-          Steps
+          {t('grooveAndEdge.tabs.steps')}
         </button>
       </div>
 

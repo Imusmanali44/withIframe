@@ -8,6 +8,7 @@ import {
 } from "../../../../static/SvgImages";
 import StoneColorPurity from "./StoneColorPurity";
 import TabContent from "./TabContent";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 export const Stone = ({
   rings,
@@ -16,6 +17,8 @@ export const Stone = ({
   setIsPair,
   isExpertMode,
 }) => {
+  const { t } = useLocalization();
+  
   // Create a key change tracker to force reset when ring changes
   const [ringKey, setRingKey] = useState(() => {
     return Array.isArray(activeRing) 
@@ -207,13 +210,13 @@ export const Stone = ({
                 <AddStoneSvg />
                 <div>
                   <p className="mb-4">
-                    Here you can set the ring with a stone.
+                    {t('stone.setStoneInfo')}
                   </p>
                   <button
                     onClick={addStone}
                     className={`p-3 uppercase bg-white font-semibold text-sm border flex items-center gap-2 border-[#205fa8]`}
                   >
-                    Add stone
+                    {t('stone.addStone')}
                   </button>
                 </div>
               </div>
@@ -229,7 +232,7 @@ export const Stone = ({
                 }`}
               >
                 <WithStoneSvg />
-                with stone
+                {t('stone.withStone')}
               </button>
               <button
                 onClick={() => setOption(2)}
@@ -238,7 +241,7 @@ export const Stone = ({
                 }`}
               >
                 <WithoutStoneSvg />
-                without stone
+                {t('stone.withoutStone')}
               </button>
             </div>
             {option === 1 && (

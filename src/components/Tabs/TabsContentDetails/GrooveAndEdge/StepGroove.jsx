@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import WidthDepthSurface from "./WidthDepthSurface";
 import { TrashSvg, AddSvg } from "../../../../static/SvgImages";
 import { GrooveRangeSlider } from "../../../shared/GrooveRangeSlider";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 const DistributionOptions = [
   {
@@ -31,6 +32,8 @@ const StepGroove = ({
   selectedGrooveOptions,
   setSelectedGrooveOptions,
 }) => {
+  const { t } = useLocalization();
+  
   // Helper function to generate storage key based on active ring
   const getStorageKey = (suffix) => {
     return Array.isArray(activeRing) 
@@ -55,7 +58,7 @@ const StepGroove = ({
     const storageKey = getStorageKey('ring1Grooves');
     const savedGrooves = localStorage.getItem(storageKey);
     return savedGrooves ? JSON.parse(savedGrooves) : [
-      { id: 1, name: "Free Groove" },
+      { id: 1, name: t('grooveAndEdge.labels.freeGroove') },
     ];
   });
 
@@ -64,7 +67,7 @@ const StepGroove = ({
     const storageKey = getStorageKey('ring2Grooves');
     const savedGrooves = localStorage.getItem(storageKey);
     return savedGrooves ? JSON.parse(savedGrooves) : [
-      { id: 1, name: "Free Groove" },
+      { id: 1, name: t('grooveAndEdge.labels.freeGroove') },
     ];
   });
 
@@ -128,7 +131,7 @@ const StepGroove = ({
 
   const addGrooveRing1 = () => {
     const newId = ring1Grooves.length + 1;
-    setRing1Grooves([...ring1Grooves, { id: newId, name: "Free Groove" }]);
+    setRing1Grooves([...ring1Grooves, { id: newId, name: t('grooveAndEdge.labels.freeGroove') }]);
     window.parent.postMessage(
       { 
         action: "addGroove", 
@@ -145,7 +148,7 @@ const StepGroove = ({
 
   const addGrooveRing2 = () => {
     const newId = ring2Grooves.length + 1;
-    setRing2Grooves([...ring2Grooves, { id: newId, name: "Free Groove" }]);
+    setRing2Grooves([...ring2Grooves, { id: newId, name: t('grooveAndEdge.labels.freeGroove') }]);
     window.parent.postMessage(
       { 
         action: "addGroove", 
@@ -189,6 +192,18 @@ const StepGroove = ({
       "*"
     );
   };
+  
+  // Function to get localized groove name
+  const getLocalizedGrooveName = (name) => {
+    switch(name) {
+      case "Without": return t('grooveAndEdge.options.without');
+      case "V-groove": return t('grooveAndEdge.options.vGroove');
+      case "U-groove": return t('grooveAndEdge.options.uGroove');
+      case "Corner joint": return t('grooveAndEdge.options.cornerJoint');
+      case "Milgrain": return t('grooveAndEdge.options.milgrain');
+      default: return name;
+    }
+  };
 
   return (
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
@@ -202,7 +217,7 @@ const StepGroove = ({
           }`}
           onClick={() => setSubActiveTab("choice_of_groove")}
         >
-          Choice of Groove
+          {t('grooveAndEdge.tabs.choiceOfGroove')}
         </button>
         {groove !== "Without" && (
           <button
@@ -213,7 +228,7 @@ const StepGroove = ({
             }`}
             onClick={() => setSubActiveTab("position")}
           >
-            Position
+            {t('grooveAndEdge.tabs.position')}
           </button>
         )}
       </div>
@@ -222,7 +237,7 @@ const StepGroove = ({
       {subActiveTab === "choice_of_groove" && (
         <div className="mt-5">
           <label className="text-sm block font-semibold py-1">
-            Choice of groove
+            {t('grooveAndEdge.labels.choiceOfGroove')}
           </label>
           <div className="flex items-start space-x-2">
             {DistributionOptions.map((item, index) => (
@@ -233,7 +248,7 @@ const StepGroove = ({
                   groove === item.name ? "border-[#205fa8]" : "border-[#e1e1e1]"
                 }`}
               >
-                <span className="text-sm">{item.name}</span>
+                <span className="text-sm">{getLocalizedGrooveName(item.name)}</span>
                 <img src={item.img} className="mx-auto mt-5" alt={item.name} />
               </button>
             ))}
@@ -255,7 +270,7 @@ const StepGroove = ({
           <div className="flex flex-row space-x-4">
             {/* Ring 1 */}
             <div className={activeRing.type === "Wedding" ? "w-1/2" : "w-full"}>
-              <label className="block font-semibold py-1">Ring 1</label>
+              <label className="block font-semibold py-1">{t('grooveAndEdge.labels.ring1')}</label>
               {ring1Grooves.map((grooveItem) => (
                 <div className="flex items-center mb-2.5" key={grooveItem.id}>
                   <span className="w-7 h-7 flex items-center justify-center">
@@ -277,14 +292,14 @@ const StepGroove = ({
                 <div className="bg-white rounded-full mr-2 border border-[#e1e1e1] w-7 h-7 flex justify-center items-center">
                   <AddSvg />
                 </div>
-                <span className="text-sm">Add another groove</span>
+                <span className="text-sm">{t('grooveAndEdge.labels.addAnotherGroove')}</span>
               </div>
             </div>
 
             {/* Ring 2 */}
             {activeRing.type === "Wedding" && window.ringsLength === 2 && (
               <div className="w-1/2">
-                <label className="block font-semibold py-1">Ring 2</label>
+                <label className="block font-semibold py-1">{t('grooveAndEdge.labels.ring2')}</label>
                 {ring2Grooves.map((grooveItem) => (
                   <div className="flex items-center mb-2.5" key={grooveItem.id}>
                     <span className="w-7 h-7 flex items-center justify-center">
@@ -306,7 +321,7 @@ const StepGroove = ({
                   <div className="bg-white rounded-full mr-2 border border-[#e1e1e1] w-7 h-7 flex justify-center items-center">
                     <AddSvg />
                   </div>
-                  <span className="text-sm">Add another groove</span>
+                  <span className="text-sm">{t('grooveAndEdge.labels.addAnotherGroove')}</span>
                 </div>
               </div>
             )}
@@ -315,7 +330,7 @@ const StepGroove = ({
           {/* Sliders */}
           <div className="mt-4">
             <GrooveRangeSlider
-              title="Ring 1"
+              title={t('grooveAndEdge.labels.ring1')}
               grooves={ring1Grooves}
               min={-0.85}
               max={-0.55}
@@ -327,7 +342,7 @@ const StepGroove = ({
           {activeRing.type === "Wedding" && window.ringsLength === 2 && (
             <div className="mt-4">
               <GrooveRangeSlider
-                title="Ring 2"
+                title={t('grooveAndEdge.labels.ring2')}
                 grooves={ring2Grooves}
                 min={0.55}
                 max={0.85}

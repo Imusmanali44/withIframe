@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import WidthDepthSurface from "./WidthDepthSurface";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 const stepLeftOptions = [
   {
@@ -38,6 +39,8 @@ const StepTab = ({
   selectedRightStepOptions,
   setSelectedRightStepOptions,
 }) => {
+  const { t } = useLocalization();
+  
   // Helper function to generate storage key based on active ring
   const getStorageKey = (suffix) => {
     return Array.isArray(activeRing) 
@@ -81,11 +84,21 @@ const StepTab = ({
     const storageKey = getStorageKey('optionStepRight');
     localStorage.setItem(storageKey, optionStepRight);
   }, [optionStepRight, activeRing]);
+  
+  // Function to get localized step name
+  const getLocalizedStepName = (name) => {
+    switch(name) {
+      case "Without": return t('grooveAndEdge.options.without');
+      case "Step": return t('grooveAndEdge.options.step');
+      case "Milgrain": return t('grooveAndEdge.options.milgrain');
+      default: return name;
+    }
+  };
 
   return (
     <div className="flex flex-col w-full max-w-[500px] mx-auto pt-5">
       <label htmlFor="steps" className="block mb-2">
-        Left
+        {t('grooveAndEdge.labels.left')}
       </label>
       <div className="flex items-start space-x-2">
         {stepLeftOptions.map((item, index) => (
@@ -112,7 +125,7 @@ const StepTab = ({
                 : "border-[#e1e1e1]"
             }`}
           >
-            <span className="text-sm">{item.name}</span>
+            <span className="text-sm">{getLocalizedStepName(item.name)}</span>
             <img src={item.img} className="mx-auto mt-5" alt={item.name} />
           </button>
         ))}
@@ -129,7 +142,7 @@ const StepTab = ({
       <div className="border my-10"></div>
 
       <label htmlFor="steps" className="block mb-2">
-        Right
+        {t('grooveAndEdge.labels.right')}
       </label>
       <div className="flex items-start space-x-2">
         {stepRightOptions.map((item, index) => (
@@ -156,7 +169,7 @@ const StepTab = ({
                 : "border-[#e1e1e1]"
             }`}
           >
-            <span className="text-sm">{item.name}</span>
+            <span className="text-sm">{getLocalizedStepName(item.name)}</span>
             <img
               src={item.img}
               className="mx-auto mt-5 scale-x-[-1]"

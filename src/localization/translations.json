@@ -118,6 +118,105 @@
     },
     "shared": {
       "useSameSettings": "Use the same settings for both rings"
+    },
+    "preciousMetal": {
+      "colorAndSurface": "Color and Surface",
+      "partition": "Partition",
+      "singleColor": "Single",
+      "twoTone": "Two-Tone",
+      "triColored": "Tri-Colored",
+      "chooseDifferentSurface": "Choose different surface",
+      "cleanliness": "Cleanliness - {{metal}}",
+      "kt": "kt",
+      "dropdown": {
+        "close": "Close"
+      }
+    },
+    "grooveAndEdge": {
+      "tabs": {
+        "grooves": "Grooves",
+        "steps": "Steps",
+        "choiceOfGroove": "Choice of Groove",
+        "position": "Position"
+      },
+      "labels": {
+        "choiceOfGroove": "Choice of groove",
+        "ring1": "Ring 1",
+        "ring2": "Ring 2",
+        "addAnotherGroove": "Add another groove",
+        "left": "Left",
+        "right": "Right",
+        "freeGroove": "Free Groove"
+      },
+      "options": {
+        "without": "Without",
+        "vGroove": "V-groove",
+        "uGroove": "U-groove",
+        "cornerJoint": "Corner joint",
+        "milgrain": "Milgrain",
+        "step": "Step"
+      },
+      "widthDepth": {
+        "width": "Width",
+        "depth": "Depth",
+        "surface": "Surface"
+      }
+    },
+    "stone": {
+      "withStone": "with stone",
+      "withoutStone": "without stone",
+      "addStone": "Add stone",
+      "removeStoneGroup": "Remove stone group",
+      "setStoneInfo": "Here you can set the ring with a stone.",
+      "colorAndPurity": "Stone color and purity",
+      "tabs": {
+        "settings": "Settings",
+        "typeOfStone": "Type of Stone",
+        "number": "Number"
+      },
+      "grinding": "Grinding",
+      "stoneSize": "Stone size",
+      "number": "Number",
+      "distribution": "Distribution",
+      "maxStones": "Max stones:",
+      "stonesPerGroup": "Stones per Group",
+      "divisionOfGroups": "Division of Groups",
+      "position": "Position",
+      "arrangeGroup": "Arrange stones as a group",
+      "stoneOptions": {
+        "without": "Without",
+        "smoothConversion": "Smooth conversion",
+        "pave": "Pavé",
+        "railSetting": "Rail setting",
+        "smoothStone": "Smooth Stone",
+        "railSettingAcross": "Rail setting Across",
+        "smoothSettingAcross": "Smooth setting Across",
+        "channelSide": "Channel side",
+        "freeLayout": "Free layout",
+        "tensionRing": "Tension ring",
+        "tensionRingDiagonally": "Tension ring diagonally",
+        "canalAround": "Canal around"
+      },
+      "stoneType": {
+        "brilliant": "Brilliant",
+        "princess": "Princess",
+        "baguette": "Baguette"
+      },
+      "positions": {
+        "left": "Left",
+        "middle": "Middle",
+        "right": "Right",
+        "free": "Free"
+      },
+      "distributions": {
+        "together": "Together",
+        "halfStoneDistance": "Half stone distance",
+        "wholeStoneDistance": "Whole stone distance",
+        "doubleStoneSpacing": "Double stone spacing",
+        "aThirdRing": "A third ring",
+        "halfRing": "Half ring",
+        "wholeRing": "Whole ring"
+      }
     }
   },
   "nl": {
@@ -239,6 +338,105 @@
     },
     "shared": {
       "useSameSettings": "Gebruik dezelfde instellingen voor beide ringen"
+    },
+    "preciousMetal": {
+      "colorAndSurface": "Kleur en Oppervlak",
+      "partition": "Verdeling",
+      "singleColor": "Enkele kleur",
+      "twoTone": "Tweekleurig",
+      "triColored": "Driekleuren",
+      "chooseDifferentSurface": "Kies een ander oppervlak",
+      "cleanliness": "Zuiverheid - {{metal}}",
+      "kt": "kt",
+      "dropdown": {
+        "close": "Sluiten"
+      }
+    },
+    "grooveAndEdge": {
+      "tabs": {
+        "grooves": "Groeven",
+        "steps": "Treden",
+        "choiceOfGroove": "Keuze van groef",
+        "position": "Positie"
+      },
+      "labels": {
+        "choiceOfGroove": "Keuze van groef",
+        "ring1": "Ring 1",
+        "ring2": "Ring 2",
+        "addAnotherGroove": "Voeg nog een groef toe",
+        "left": "Links",
+        "right": "Rechts",
+        "freeGroove": "Vrije Groef"
+      },
+      "options": {
+        "without": "Zonder",
+        "vGroove": "V-groef",
+        "uGroove": "U-groef",
+        "cornerJoint": "Hoekverbinding",
+        "milgrain": "Milgrain",
+        "step": "Trede"
+      },
+      "widthDepth": {
+        "width": "Breedte",
+        "depth": "Diepte",
+        "surface": "Oppervlak"
+      }
+    },
+    "stone": {
+      "withStone": "met steen",
+      "withoutStone": "zonder steen",
+      "addStone": "Steen toevoegen",
+      "removeStoneGroup": "Steengroep verwijderen",
+      "setStoneInfo": "Hier kunt u de ring met een steen instellen.",
+      "colorAndPurity": "Steenkleur en zuiverheid",
+      "tabs": {
+        "settings": "Instellingen",
+        "typeOfStone": "Type Steen",
+        "number": "Aantal"
+      },
+      "grinding": "Slijpsel",
+      "stoneSize": "Steengrootte",
+      "number": "Aantal",
+      "distribution": "Verdeling",
+      "maxStones": "Maximaal aantal stenen:",
+      "stonesPerGroup": "Stenen per groep",
+      "divisionOfGroups": "Verdeling van groepen",
+      "position": "Positie",
+      "arrangeGroup": "Stenen als groep rangschikken",
+      "stoneOptions": {
+        "without": "Zonder",
+        "smoothConversion": "Gladde zetting",
+        "pave": "Pavé",
+        "railSetting": "Railzetting",
+        "smoothStone": "Gladde steen",
+        "railSettingAcross": "Railzetting dwars",
+        "smoothSettingAcross": "Gladde zetting dwars",
+        "channelSide": "Kanaalkant",
+        "freeLayout": "Vrije opmaak",
+        "tensionRing": "Spanring",
+        "tensionRingDiagonally": "Spanring diagonaal",
+        "canalAround": "Kanaal rondom"
+      },
+      "stoneType": {
+        "brilliant": "Briljant",
+        "princess": "Princess",
+        "baguette": "Baguette"
+      },
+      "positions": {
+        "left": "Links",
+        "middle": "Midden",
+        "right": "Rechts",
+        "free": "Vrij"
+      },
+      "distributions": {
+        "together": "Samen",
+        "halfStoneDistance": "Halve steenafstand",
+        "wholeStoneDistance": "Hele steenafstand",
+        "doubleStoneSpacing": "Dubbele steenafstand",
+        "aThirdRing": "Een derde ring",
+        "halfRing": "Halve ring",
+        "wholeRing": "Hele ring"
+      }
     }
   }
 } 

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { SelectField } from "../../../shared/SelectField";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 const widthOption = [
   { name: "0.20 mm", value: "0.20" },
@@ -23,6 +24,8 @@ const surfaceOption = [
 ];
 
 const WidthDepthSurface = ({ groove, selectedOptions, setSelectedOptions, activeRing }) => {
+  const { t } = useLocalization();
+  
   // Helper function to generate storage key based on active ring and groove type
   const getStorageKey = (suffix) => {
     return Array.isArray(activeRing)
@@ -77,7 +80,7 @@ const WidthDepthSurface = ({ groove, selectedOptions, setSelectedOptions, active
   return (
     <div className="flex space-x-4 mt-4">
       <div className="flex-1">
-        <label>Width</label>
+        <label>{t('grooveAndEdge.widthDepth.width')}</label>
         <SelectField
           options={widthOption}
           selectedOption={selectedOptions.width}
@@ -86,7 +89,7 @@ const WidthDepthSurface = ({ groove, selectedOptions, setSelectedOptions, active
         />
       </div>
       <div className="flex-1">
-        <label>Depth</label>
+        <label>{t('grooveAndEdge.widthDepth.depth')}</label>
         <SelectField
           options={depthOption}
           selectedOption={selectedOptions.depth}
@@ -96,7 +99,7 @@ const WidthDepthSurface = ({ groove, selectedOptions, setSelectedOptions, active
       </div>
       {groove !== "Milgrain" && (
         <div className="flex-1">
-          <label>Surface</label>
+          <label>{t('grooveAndEdge.widthDepth.surface')}</label>
           <SelectField
             options={surfaceOption}
             selectedOption={selectedOptions.surface}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { CloseSvg } from "../../../../static/SvgImages";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 export const Dropdown = ({
   title,
@@ -8,6 +9,8 @@ export const Dropdown = ({
   selectedOption,
   setSelectedOption,
 }) => {
+  const { t } = useLocalization();
+  
   const handleSelect = (option) => {
     setSelectedOption({name: title, ...option});
     setIsOpen(false);
@@ -18,7 +21,7 @@ export const Dropdown = ({
       <div className="head flex items-center justify-between mb-3">
         <h3 className="font-semibold text-sm text-black m-0">{title}</h3>
         <div onClick={() => setIsOpen(false)}>
-          <CloseSvg width={15} height={15} onClick={() => setIsOpen(false)} />
+          <CloseSvg width={15} height={15} onClick={() => setIsOpen(false)} title={t('preciousMetal.dropdown.close')} />
         </div>
       </div>
       <ul className="flex flex-wrap justify-start">

@@ -10,6 +10,7 @@ import MultiRangeMaskSlider from "../../../shared/SimpleCRangeSlider";
 import MultiRangeMaskSlider2 from "../../../shared/SimpleCRangeSlider2";
 import { ColorSurface } from "./ColorSurface";
 import IsPair from "../../../shared/IsPair";
+import { useLocalization } from "../../../../context/LocalizationContext";
 
 const metalOptions = [
   {
@@ -236,6 +237,8 @@ export const PreciousMetal = ({
   isExpert,
   activeRing,
 }) => {
+  const { t } = useLocalization();
+
   // Function to get ring-specific localStorage key
   const getRingKey = (key) => {
     if (Array.isArray(activeRing)) {
@@ -627,7 +630,7 @@ export const PreciousMetal = ({
         {/* Partition Selection */}
         {isWeddingRing && isExpert && (
           <>
-            <label className="block text-sm font-medium mb-2">Partition</label>
+            <label className="block text-sm font-medium mb-2">{t('preciousMetal.partition')}</label>
             <div className="relative">
               <div className="flex space-x-2 mb-6">
                 {DistributionOptions.map((item, index) => (
@@ -672,7 +675,9 @@ export const PreciousMetal = ({
                       }`}
                       disabled={item.disabled}
                     >
-                      <span>{item.name}</span>
+                      <span>{item.name === "Single" ? t('preciousMetal.singleColor') : 
+                             item.name === "Two tone" ? t('preciousMetal.twoTone') : 
+                             t('preciousMetal.triColored')}</span>
                       <img
                         src={
                           item.name === "Two tone" &&
@@ -732,7 +737,7 @@ export const PreciousMetal = ({
               className="mt-4 relative px-3 py-2 bg-white border"
               onClick={toggleSurfaceDropdown}
             >
-              <button>Choose different surface</button>
+              <button>{t('preciousMetal.chooseDifferentSurface')}</button>
               {isSurfaceDropdownOpen && (
                 <Dropdown
                   title="Surface Options"

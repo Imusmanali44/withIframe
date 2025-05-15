@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { AddSvg, TrashSvg } from "../../../../static/SvgImages";
 import StoneColorPurity from "./StoneColorPurity";
+import { useLocalization } from "../../../../context/LocalizationContext";
 // stone style image
 import StoneStyleWithout from "../../../../assets/images/StoneSetting/stoneStyle/none.svg";
 import StoneStyleSmooth from "../../../../assets/images/StoneSetting/stoneStyle/bezel.svg";
@@ -32,6 +33,20 @@ import {StoneRangeSlider} from "../../../shared/StoneRangeSlider";
 if (typeof window !== 'undefined' && window.distribution === undefined) {
   window.distribution = "Together";
 }
+
+// Helper function to get distribution translation key
+const getDistributionKey = (distribution) => {
+  switch (distribution) {
+    case "Together": return "together";
+    case "Half stone distance": return "halfStoneDistance";
+    case "Whole stone distance": return "wholeStoneDistance";
+    case "Double stone spacing": return "doubleStoneSpacing";
+    case "A third ring": return "aThirdRing";
+    case "Half ring": return "halfRing";
+    case "Whole ring": return "wholeRing";
+    default: return distribution;
+  }
+};
 
 const maxStonesPerDistribution = {
   'Together': 8,
@@ -173,18 +188,32 @@ const DivisionGroupsOptions = [
   "Whole ring",
 ];
 
-const TabButton = ({ label, currentTab, setTab }) => (
-  <button
-    onClick={() => setTab(label)}
-    className={`font-semibold ${
-      currentTab === label
-        ? "text-[#205fa8] border-b border-[#205fa8]"
-        : "text-[#626262]"
-    }`}
-  >
-    {label}
-  </button>
-);
+const TabButton = ({ label, currentTab, setTab }) => {
+  const { t } = useLocalization();
+  
+  // Map raw labels to translation keys
+  const getTranslationKey = (rawLabel) => {
+    switch(rawLabel) {
+      case "Settings": return 'stone.tabs.settings';
+      case "Type of Stone": return 'stone.tabs.typeOfStone';
+      case "Number": return 'stone.tabs.number';
+      default: return rawLabel;
+    }
+  };
+  
+  return (
+    <button
+      onClick={() => setTab(label)}
+      className={`font-semibold ${
+        currentTab === label
+          ? "text-[#205fa8] border-b border-[#205fa8]"
+          : "text-[#626262]"
+      }`}
+    >
+      {t(getTranslationKey(label))}
+    </button>
+  );
+};
 
 const TabContent = ({
   activeTab,
@@ -197,6 +226,48 @@ const TabContent = ({
   handleChange,
   activeRing
 }) => {
+  const { t } = useLocalization();
+  
+  // Helper function to get translated stone style name
+  const getStoneStyleTranslation = (name) => {
+    switch(name) {
+      case "Without": return t('stone.stoneOptions.without');
+      case "Smooth conversion": return t('stone.stoneOptions.smoothConversion');
+      case "Pavé": return t('stone.stoneOptions.pave');
+      case "Rail setting": return t('stone.stoneOptions.railSetting');
+      case "Smooth Stone": return t('stone.stoneOptions.smoothStone');
+      case "Rail setting Across": return t('stone.stoneOptions.railSettingAcross');
+      case "Smooth setting Across": return t('stone.stoneOptions.smoothSettingAcross');
+      case "Channel side": return t('stone.stoneOptions.channelSide');
+      case "Free layout": return t('stone.stoneOptions.freeLayout');
+      case "Tension ring": return t('stone.stoneOptions.tensionRing');
+      case "Tension ring diagonally": return t('stone.stoneOptions.tensionRingDiagonally');
+      case "Canal around": return t('stone.stoneOptions.canalAround');
+      default: return name;
+    }
+  };
+  
+  // Helper function to get translated stone type name
+  const getStoneTypeTranslation = (name) => {
+    switch(name) {
+      case "Brilliant": return t('stone.stoneType.brilliant');
+      case "Princess": return t('stone.stoneType.princess');
+      case "Baguette": return t('stone.stoneType.baguette');
+      default: return name;
+    }
+  };
+  
+  // Helper function to get translated position name
+  const getPositionTranslation = (name) => {
+    switch(name) {
+      case "Left": return t('stone.positions.left');
+      case "Middle": return t('stone.positions.middle');
+      case "Right": return t('stone.positions.right');
+      case "Free": return t('stone.positions.free');
+      default: return name;
+    }
+  };
+  
   // Track ring changes
   const [currentRingKey, setCurrentRingKey] = useState(() => {
     return Array.isArray(activeRing) 
@@ -356,7 +427,7 @@ const TabContent = ({
                 disabled={item.disabled}
               >
                 <span className={`mx-2 text-sm leading-none ${item.disabled ? "text-gray-400" : ""}`}>
-                  {item.name}
+                  {getStoneStyleTranslation(item.name)}
                 </span>
                 <div className={`${item.disabled ? "opacity-30" : ""}`}>
                   <img src={item.img} className="mx-auto mt-3" alt={item.name} />
@@ -372,7 +443,7 @@ const TabContent = ({
           <div className="flex flex-col">
             <div className="mb-6">
               <h3 className="mb-2 font-semibold text-sm text-black">
-                Grinding
+                {t('stone.grinding')}
               </h3>
               <div className="flex items-start space-x-2">
                 {RingStoneTypeOptions.map((item, index) => (
@@ -400,7 +471,7 @@ const TabContent = ({
                     disabled={item.disabled}
                   >
                     <span className={`text-sm ${item.disabled ? "text-gray-400" : ""}`}>
-                      {item.name}
+                      {getStoneTypeTranslation(item.name)}
                     </span>
                     <div className={`${item.disabled ? "opacity-30" : ""}`}>
                       <img
@@ -415,7 +486,7 @@ const TabContent = ({
             </div>
             <div className="mb-6">
               <h3 className="mb-2 font-semibold text-sm text-black">
-                Stone size
+                {t('stone.stoneSize')}
               </h3>
               <select
                 value={stoneSize}
@@ -464,7 +535,7 @@ const TabContent = ({
             <div className="flex mb-6 gap-6">
               <div className="w-1/2">
                 <h3 className="mb-2 font-semibold text-sm text-black">
-                  Number
+                  {t('stone.number')}
                 </h3>
                 <select
                   value={stoneNumber}
@@ -504,13 +575,14 @@ const TabContent = ({
                     }`}
                   >
                     {/* Arrange stones as a group */}
+                    {t('stone.arrangeGroup')}
                   </label>
                 </div>
               </div>
               {stoneNumber > 1 && (
                 <div className="w-1/2">
                   <h3 className="mb-2 font-semibold text-sm text-black">
-                    Distribution
+                    {t('stone.distribution')}
                   </h3>
                   <select
                     value={distribution}
@@ -547,12 +619,12 @@ const TabContent = ({
                   >
                     {DistributionOptions.map((size, index) => (
                       <option key={index} value={size}>
-                        {size}
+                        {t(`stone.distributions.${getDistributionKey(size)}`)}
                       </option>
                     ))}
                   </select>
                   <p className="text-xs text-gray-500 mt-1">
-                    Max stones: {maxStonesPerDistribution[distribution] || 70}
+                    {t('stone.maxStones')} {maxStonesPerDistribution[distribution] || 70}
                   </p>
                 </div>
               )}
@@ -561,7 +633,7 @@ const TabContent = ({
               <div className="flex gap-4 mb-6">
                 <div className="w-2/5">
                   <h3 className="mb-2 font-semibold text-sm text-black">
-                    Stones per Group
+                    {t('stone.stonesPerGroup')}
                   </h3>
                   <select
                     value={stonesPerGroup}
@@ -589,7 +661,7 @@ const TabContent = ({
       
                 <div className="w-3/5">
                   <h3 className="mb-2 font-semibold text-sm text-black">
-                    Division of Groups
+                    {t('stone.divisionOfGroups')}
                   </h3>
                   <select
                     value={groupDivision}
@@ -609,7 +681,7 @@ const TabContent = ({
                   >
                     {DivisionGroupsOptions.map((num) => (
                       <option key={num} value={num}>
-                        {num}
+                        {t(`stone.distributions.${getDistributionKey(num)}`)}
                       </option>
                     ))}
                   </select>
@@ -618,7 +690,7 @@ const TabContent = ({
             )}
             <div>
               <label className="mb-2 block font-semibold text-sm text-black">
-                Position
+                {t('stone.position')}
               </label>
               <div className="flex flex-wrap gap-2.5">
                 {PositionTypeOptions.map((item, index) => (
@@ -643,7 +715,7 @@ const TabContent = ({
                     }`}
                   >
                     <span className="mx-2 text-sm leading-none">
-                      {item.name}
+                      {getPositionTranslation(item.name)}
                     </span>
                     <img
                       src={item.img}
@@ -677,7 +749,7 @@ const TabContent = ({
             <div className="bg-white rounded-full border w-8 h-8 flex items-center justify-center">
               <TrashSvg className={"text-inherit w-6"} />
             </div>
-            Remove stone group
+            {t('stone.removeStoneGroup')}
           </div>
         )}
       </div>

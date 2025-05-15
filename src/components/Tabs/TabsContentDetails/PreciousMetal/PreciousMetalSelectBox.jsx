@@ -1,9 +1,13 @@
+import { useLocalization } from "../../../../context/LocalizationContext";
+
 export const PreciousMetalSelectBox = ({
   options,
   setSelectedOption,
   selectedOption,
   isImageLess,
 }) => {
+  const { t } = useLocalization();
+  
   // Fallback URL if none is provided for an option
   // const defaultUrl =
   //   "https://ui.cdn.confmetrix.com/auronia/production/12.3.5/images/disc/color/585_rotgold.png";
