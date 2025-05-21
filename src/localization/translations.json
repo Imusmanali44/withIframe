@@ -438,5 +438,225 @@
         "wholeRing": "Hele ring"
       }
     }
+  },
+  "fr": {
+    "buttons": {
+      "delete": "Supprimer",
+      "loadSave": "Charger / Sauvegarder",
+      "printPDF": "Imprimer PDF",
+      "share": "Partager",
+      "close": "Fermer",
+      "cancel": "Annuler",
+      "resetConfiguration": "Réinitialiser la configuration",
+      "add": "Ajouter"
+    },
+    "navigation": {
+      "next": "Suivant",
+      "back": "Retour"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "sizes": "Tailles",
+      "preciousMetal": "Métal Précieux",
+      "grooveAndEdge": "Rainure & Bord",
+      "stone": "Pierre",
+      "engraving": "Gravure",
+      "unknownStep": "Étape inconnue"
+    },
+    "settings": {
+      "expertMode": "Mode Expert :"
+    },
+    "engraving": {
+      "laserEngraving": "Gravure laser",
+      "diamondEngraving": "Gravure diamant",
+      "options": {
+        "handwritten": {
+          "label": "Manuscrite",
+          "description": "Votre écriture manuscrite peut être gravée au laser à l'intérieur et à l'extérieur de vos bagues. Vous recevrez des informations détaillées sur la procédure une fois votre commande passée."
+        },
+        "fingerprint": {
+          "label": "Empreinte digitale",
+          "description": "Votre empreinte digitale peut être gravée au laser à l'intérieur et à l'extérieur de vos bagues. Vous recevrez des informations détaillées sur la procédure une fois votre commande passée."
+        },
+        "graphic": {
+          "label": "Graphiques",
+          "description": "Vos graphiques peuvent être gravés au laser à l'intérieur et à l'extérieur de vos bagues. Vous recevrez des informations détaillées sur la procédure une fois votre commande passée."
+        }
+      },
+      "textLabels": {
+        "ring1": "Texte de gravure Bague 1",
+        "ring2": "Texte de gravure Bague 2",
+        "ring3": "Texte de gravure Bague 3",
+        "addSymbol": "Ajouter un symbole",
+        "font": "Police"
+      },
+      "symbols": {
+        "heart": {
+          "description": "» .description"
+        },
+        "doubleHeart": {
+          "description": "¾ .description"
+        },
+        "doubleRing": {
+          "description": "¼ .description"
+        },
+        "infinity": {
+          "description": "½ .description"
+        }
+      }
+    },
+    "configurator": {
+      "yourRings": "Vos bagues",
+      "addOrRemoveRings": "Ajouter ou supprimer des bagues",
+      "ringPair": "Paire de bagues",
+      "enterName": "Entrez le nom",
+      "shift": "Décaler",
+      "ringTypes": {
+        "wedding": "Alliance",
+        "engagement": "Fiançailles",
+        "memoir": "Mémoire",
+        "ringName": "Bague"
+      },
+      "pricing": {
+        "totalPrice": "Prix total"
+      },
+      "details": {
+        "profileAndSize": "Profil et taille",
+        "profile": "Profil",
+        "ringWidth": "Largeur de la bague",
+        "ringThickness": "Épaisseur de la bague",
+        "ringSize": "Taille de la bague",
+        "preciousMetal": "Métal précieux",
+        "ringModel": "Modèle de bague",
+        "distribution": "Distribution",
+        "cleanlinessColor": "Pureté / Couleur",
+        "surface": "Surface",
+        "freeGrooves": "Rainures libres",
+        "choiceOfGroove": "Choix de rainure",
+        "widthDepth": "Largeur / Profondeur",
+        "stoneSetting": "Sertissage de pierre",
+        "specialEngravings": "Gravures spéciales",
+        "price": "Prix",
+        "singleColor": "Monocolore",
+        "without": "Sans"
+      }
+    },
+    "sizes": {
+      "ringWidth": "Largeur de la bague",
+      "selectWidth": "Sélectionner la largeur",
+      "ringThickness": "Épaisseur de la bague",
+      "selectThickness": "Sélectionner l'épaisseur",
+      "autoThickness": "Définir automatiquement l'épaisseur optimale",
+      "ringSize": "Taille de la bague",
+      "selectSize": "Sélectionner la taille",
+      "country": {
+        "uk": "RU",
+        "es": "ES",
+        "pl": "PL",
+        "us": "US"
+      }
+    },
+    "shared": {
+      "useSameSettings": "Utiliser les mêmes paramètres pour les deux bagues"
+    },
+    "preciousMetal": {
+      "colorAndSurface": "Couleur et Surface",
+      "partition": "Partition",
+      "singleColor": "Monocolore",
+      "twoTone": "Bicolore",
+      "triColored": "Tricolore",
+      "chooseDifferentSurface": "Choisir une surface différente",
+      "cleanliness": "Pureté - {{metal}}",
+      "kt": "ct",
+      "dropdown": {
+        "close": "Fermer"
+      }
+    },
+    "grooveAndEdge": {
+      "tabs": {
+        "grooves": "Rainures",
+        "steps": "Paliers",
+        "choiceOfGroove": "Choix de rainure",
+        "position": "Position"
+      },
+      "labels": {
+        "choiceOfGroove": "Choix de rainure",
+        "ring1": "Bague 1",
+        "ring2": "Bague 2",
+        "addAnotherGroove": "Ajouter une autre rainure",
+        "left": "Gauche",
+        "right": "Droite",
+        "freeGroove": "Rainure libre"
+      },
+      "options": {
+        "without": "Sans",
+        "vGroove": "Rainure en V",
+        "uGroove": "Rainure en U",
+        "cornerJoint": "Joint d'angle",
+        "milgrain": "Milgrain",
+        "step": "Palier"
+      },
+      "widthDepth": {
+        "width": "Largeur",
+        "depth": "Profondeur",
+        "surface": "Surface"
+      }
+    },
+    "stone": {
+      "withStone": "avec pierre",
+      "withoutStone": "sans pierre",
+      "addStone": "Ajouter une pierre",
+      "removeStoneGroup": "Supprimer le groupe de pierres",
+      "setStoneInfo": "Ici, vous pouvez sertir la bague avec une pierre.",
+      "colorAndPurity": "Couleur et pureté de la pierre",
+      "tabs": {
+        "settings": "Paramètres",
+        "typeOfStone": "Type de Pierre",
+        "number": "Nombre"
+      },
+      "grinding": "Taille",
+      "stoneSize": "Taille de la pierre",
+      "number": "Nombre",
+      "distribution": "Distribution",
+      "maxStones": "Nombre max. de pierres :",
+      "stonesPerGroup": "Pierres par groupe",
+      "divisionOfGroups": "Division des groupes",
+      "position": "Position",
+      "arrangeGroup": "Disposer les pierres en groupe",
+      "stoneOptions": {
+        "without": "Sans",
+        "smoothConversion": "Sertissage lisse",
+        "pave": "Pavé",
+        "railSetting": "Sertissage rail",
+        "smoothStone": "Pierre lisse",
+        "railSettingAcross": "Sertissage rail transversal",
+        "smoothSettingAcross": "Sertissage lisse transversal",
+        "channelSide": "Sertissage canal latéral",
+        "freeLayout": "Disposition libre",
+        "tensionRing": "Sertissage tension",
+        "tensionRingDiagonally": "Sertissage tension en diagonale",
+        "canalAround": "Canal autour"
+      },
+      "stoneType": {
+        "brilliant": "Brillant",
+        "princess": "Princesse",
+        "baguette": "Baguette"
+      },
+      "positions": {
+        "left": "Gauche",
+        "middle": "Milieu",
+        "right": "Droite",
+        "free": "Libre"
+      },
+      "distributions": {
+        "together": "Ensemble",
+        "halfStoneDistance": "Demi-distance de pierre",
+        "wholeStoneDistance": "Distance de pierre entière",
+        "doubleStoneSpacing": "Double espacement de pierre",
+        "aThirdRing": "Un tiers de bague",
+        "halfRing": "Demi-bague",
+        "wholeRing": "Bague entière"
+      }
+    }
   }
-} 
+}

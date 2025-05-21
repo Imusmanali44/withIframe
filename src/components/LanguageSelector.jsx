@@ -18,6 +18,12 @@ const LanguageSelector = () => {
       >
         NL
       </button>
+      <button
+        className={`px-2 py-1 rounded ${language === 'fr' ? 'bg-primary text-white' : 'bg-gray-200'}`}
+        onClick={() => changeLanguage('fr')}
+      >
+        FR
+      </button>
     </div>
   );
 };
