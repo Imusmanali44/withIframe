@@ -2,12 +2,11 @@ import * as THREE from 'three';
 
 export class Renderer {
   constructor() {
-    this.renderer = null; // Initialize the renderer variable
     this.initRenderer();
   }
 
   initRenderer() {
-     const params = {
+    const params = {
       exposure: 2.4,
       toneMapping: 'ACESFilmic',
       blurriness: 0.3,
@@ -25,33 +24,34 @@ export class Renderer {
       Custom: THREE.CustomToneMapping,
     };
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true,stencil:true ,alpha: true,
-      
-      preserveDrawingBuffer: true});
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    // Optimize for mobile devices
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const pixelRatio = isMobile ? Math.min(window.devicePixelRatio, 2) : window.devicePixelRatio;
+
+    this.renderer = new THREE.WebGLRenderer({ 
+      antialias: !isMobile,
+      stencil: true,
+      alpha: true,
+      preserveDrawingBuffer: true,
+      powerPreference: 'high-performance'
+    });
+
+    this.renderer.setPixelRatio(pixelRatio);
     this.renderer.toneMapping = toneMappingOptions[params.toneMapping];
     this.renderer.toneMappingExposure = params.exposure;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.localClippingEnabled = true;
-    // this.renderer.preserveDrawingBuffer = true;
-    // this.renderer.sortObjects = true;
-    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace; // Use LinearSRGBColorSpace if working with modern Three.js
-
-
-    // THREE.ShaderChunk.tonemapping_pars_fragment = THREE.ShaderChunk.tonemapping_pars_fragment.replace(
-    //   'vec3 CustomToneMapping( vec3 color ) { return color; }',
-    //   `#define Uncharted2Helper( x ) max( ( ( x * ( 0.15 * x + 0.10 * 0.50 ) + 0.20 * 0.02 ) / ( x * ( 0.15 * x + 0.50 ) + 0.20 * 0.30 ) ) - 0.02 / 0.30, vec3( 0.0 ) )
-    //   float toneMappingWhitePoint = 1.0;
-    //   vec3 CustomToneMapping( vec3 color ) {
-    //     color *= toneMappingExposure;
-    //     return saturate( Uncharted2Helper( color ) / Uncharted2Helper( vec3( toneMappingWhitePoint ) ) );
-    //   }`
-    // );
-    // this.renderer.shadowMap.enabled = true;
+    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+    
+    // Optimize for mobile
+    if (isMobile) {
+      this.renderer.shadowMap.enabled = false;
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    }
   }
 
   getRenderer() {
-    return this.renderer; // This allows access to the renderer instance outside of the class
+    return this.renderer;
   }
 
   updateRendererOnResize() {

@@ -25,37 +25,32 @@ class RotatingRingApp {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color('#FFFFFF'); // Light gray background
     this.scene.env = null;
-    // this.modelManager = new ModelManager(this.scene);
+    
     this.cameraInstance = new Camera(this.scene);
-    this.camera = this.cameraInstance.getCamera(); // Get the camera instance
+    this.camera = this.cameraInstance.getCamera();
     this.rendererInstance = new Renderer();
     this.renderer = this.rendererInstance.getRenderer(); 
     this.renderer.localClippingEnabled = true;
-    // this.PreciousMetalins = new PreciousMetal(this.scene,this.modelManager, this.renderer );
-    
 
-    this.PreciousMetalins = new PreciousMetal(this.scene, null,null, this.renderer);
-
-    // Create ModelManager and pass PreciousMetal instance
-    this.modelManager = new ModelManager(this.scene, this.PreciousMetalins,this.renderer);
-
-    // Update PreciousMetal with ModelManager instance
+    this.PreciousMetalins = new PreciousMetal(this.scene, null, null, this.renderer);
+    this.modelManager = new ModelManager(this.scene, this.PreciousMetalins, this.renderer);
     this.PreciousMetalins.modelManager = this.modelManager;
     
-    this.PreciousMetalHelper = new PreciousMetalHelper(this.scene,this.PreciousMetalins,this.modelManager  )
-    this.EngagementRings = new EngagementRings(this.scene,this.modelManager);
-    this.MemoirRings = new MemoirRings(this.scene,this.modelManager);
+    this.PreciousMetalHelper = new PreciousMetalHelper(this.scene, this.PreciousMetalins, this.modelManager);
+    this.EngagementRings = new EngagementRings(this.scene, this.modelManager);
+    this.MemoirRings = new MemoirRings(this.scene, this.modelManager);
 
-    this.GrooveManager = new GrooveManager(this.scene,this.modelManager)
-    this.StepsManager = new StepsManager(this.scene,this.modelManager, this.GrooveManager)
-    this.StoneManager = new StoneManager(this.scene,this.modelManager,this.renderer)
-    this.modelManager.StoneManagerIns = this.StoneManager
-    this.modelManager.EngagementRingsins  = this.EngagementRings 
-    this.modelManager.MemoirRingsins  = this.MemoirRings
-    this.modelManager.GrooveManagerIns  = this.GrooveManager 
-    this.modelManager.StepsManagerIns = this.StepsManager
+    this.GrooveManager = new GrooveManager(this.scene, this.modelManager);
+    this.StepsManager = new StepsManager(this.scene, this.modelManager, this.GrooveManager);
+    this.StoneManager = new StoneManager(this.scene, this.modelManager, this.renderer);
+    
+    this.modelManager.StoneManagerIns = this.StoneManager;
+    this.modelManager.EngagementRingsins = this.EngagementRings;
+    this.modelManager.MemoirRingsins = this.MemoirRings;
+    this.modelManager.GrooveManagerIns = this.GrooveManager;
+    this.modelManager.StepsManagerIns = this.StepsManager;
 
-    this.PreciousMetalins.pmHelper = this.PreciousMetalHelper
+    this.PreciousMetalins.pmHelper = this.PreciousMetalHelper;
     this.lighting = new Lighting(this.scene);
     this.floor = new Floor(this.scene, this.camera, this.renderer);
     this.environment = new Environment(this.scene, this.renderer);
@@ -64,38 +59,37 @@ class RotatingRingApp {
     
     document.body.appendChild(this.renderer.domElement);
 
-    // Load GLB models
-    const modelData = [
-      { glbPath: 'models/p1.glb', texturePath: 'path/to/texture2.jpg' },
-      { glbPath: 'models/p2.glb', texturePath: 'path/to/texture3.jpg' },
-      { glbPath: 'models/p3.glb', texturePath: 'path/to/texture1.jpg' },
-      { glbPath: 'models/p4.glb' },
-      { glbPath: 'models/p5.glb' },
-      { glbPath: 'models/p6.glb' },
-      { glbPath: 'models/p7.glb' },
-      { glbPath: 'models/p8.glb' },
-      { glbPath: 'models/p9.glb' },
-      { glbPath: 'models/p10.glb' },
-      { glbPath: 'models/p11.glb' },
-      { glbPath: 'models/p12.glb' },
-      { glbPath: 'models/p13.glb' },
-      { glbPath: 'models/p14.glb' },
-      { glbPath: 'models/p15.glb' },
-    ];
+    // Wait for environment to load before loading models
+    document.addEventListener('environmentLoaded', () => {
+      // Load GLB models
+      const modelData = [
+        { glbPath: 'models/p1.glb', texturePath: 'path/to/texture2.jpg' },
+        { glbPath: 'models/p2.glb', texturePath: 'path/to/texture3.jpg' },
+        { glbPath: 'models/p3.glb', texturePath: 'path/to/texture1.jpg' },
+        { glbPath: 'models/p4.glb' },
+        { glbPath: 'models/p5.glb' },
+        { glbPath: 'models/p6.glb' },
+        { glbPath: 'models/p7.glb' },
+        { glbPath: 'models/p8.glb' },
+        { glbPath: 'models/p9.glb' },
+        { glbPath: 'models/p10.glb' },
+        { glbPath: 'models/p11.glb' },
+        { glbPath: 'models/p12.glb' },
+        { glbPath: 'models/p13.glb' },
+        { glbPath: 'models/p14.glb' },
+        { glbPath: 'models/p15.glb' },
+      ];
 
-  
-    this.modelManager.loadModels(modelData);
-
+      this.modelManager.loadModels(modelData);
+      console.log("Models loaded after environment");
+    });
 
     // Handle window resize
     window.addEventListener('resize', this.onWindowResize.bind(this));
 
-    // Listen for key presses to switch models
-    // window.addEventListener('keydown', this.switchModelLocal.bind(this));
-
     // Start the render loop
     this.animate();
-    console.log("loaded")
+    console.log("App initialized");
   }
 
   showCurrentModels() {
