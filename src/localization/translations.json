@@ -658,5 +658,225 @@
         "wholeRing": "Bague entière"
       }
     }
+  },
+  "tr": {
+    "buttons": {
+      "delete": "Silmek için",
+      "loadSave": "Yükle / Kaydet",
+      "printPDF": "PDF Yazdır",
+      "share": "Paylaşmak için",
+      "close": "Kapat",
+      "cancel": "İptal",
+      "resetConfiguration": "Yapılandırmayı sıfırla",
+      "add": "Ekle"
+    },
+    "navigation": {
+      "next": "İleri",
+      "back": "Geri"
+    },
+    "tabs": {
+      "profile": "Profil",
+      "sizes": "Boyutlar",
+      "preciousMetal": "Değerli Metal",
+      "grooveAndEdge": "Oluk & Kenar",
+      "stone": "Taş",
+      "engraving": "Gravür",
+      "unknownStep": "Bilinmeyen adım"
+    },
+    "settings": {
+      "expertMode": "Uzman Modu:"
+    },
+    "engraving": {
+      "laserEngraving": "Lazer gravür",
+      "diamondEngraving": "Elmas gravür",
+      "options": {
+        "handwritten": {
+          "label": "El Yazısı",
+          "description": "El yazınız, yüzüklerinizin hem içine hem de dışına lazerle kazınabilir. Siparişinizi verdikten sonra prosedür hakkında ayrıntılı bilgi alacaksınız."
+        },
+        "fingerprint": {
+          "label": "Parmak İzi",
+          "description": "Parmak iziniz, yüzüklerinizin hem içine hem de dışına lazerle kazınabilir. Siparişinizi verdikten sonra prosedür hakkında ayrıntılı bilgi alacaksınız."
+        },
+        "graphic": {
+          "label": "Grafikler",
+          "description": "Grafikleriniz, yüzüklerinizin hem içine hem de dışına lazerle kazınabilir. Siparişinizi verdikten sonra prosedür hakkında ayrıntılı bilgi alacaksınız."
+        }
+      },
+      "textLabels": {
+        "ring1": "Gravür metni Yüzük 1",
+        "ring2": "Gravür metni Yüzük 2",
+        "ring3": "Gravür metni Yüzük 3",
+        "addSymbol": "Sembol ekle",
+        "font": "Yazı Tipi"
+      },
+      "symbols": {
+        "heart": {
+          "description": "» .açıklama"
+        },
+        "doubleHeart": {
+          "description": "¾ .açıklama"
+        },
+        "doubleRing": {
+          "description": "¼ .açıklama"
+        },
+        "infinity": {
+          "description": "½ .açıklama"
+        }
+      }
+    },
+    "configurator": {
+      "yourRings": "Yüzükleriniz",
+      "addOrRemoveRings": "Yüzük ekle veya kaldır",
+      "ringPair": "Yüzük çifti",
+      "enterName": "İsim Girin",
+      "shift": "Kaydır",
+      "ringTypes": {
+        "wedding": "Alyans",
+        "engagement": "Nişan",
+        "memoir": "Hatıra",
+        "ringName": "Yüzük"
+      },
+      "pricing": {
+        "totalPrice": "Toplam fiyat"
+      },
+      "details": {
+        "profileAndSize": "Profil ve boyut",
+        "profile": "Profil",
+        "ringWidth": "Yüzük genişliği",
+        "ringThickness": "Yüzük kalınlığı",
+        "ringSize": "Yüzük boyutu",
+        "preciousMetal": "Değerli metal",
+        "ringModel": "Yüzük modeli",
+        "distribution": "Dağılım",
+        "cleanlinessColor": "Saflık / Renk",
+        "surface": "Yüzey",
+        "freeGrooves": "Serbest oluklar",
+        "choiceOfGroove": "Oluk seçimi",
+        "widthDepth": "Genişlik / Derinlik",
+        "stoneSetting": "Taş yerleştirme",
+        "specialEngravings": "Özel gravürler",
+        "price": "Fiyat",
+        "singleColor": "Tek renk",
+        "without": "Yok"
+      }
+    },
+    "sizes": {
+      "ringWidth": "Yüzük genişliği",
+      "selectWidth": "Genişlik seçin",
+      "ringThickness": "Yüzük kalınlığı",
+      "selectThickness": "Kalınlık seçin",
+      "autoThickness": "Optimum kalınlığı otomatik olarak ayarla",
+      "ringSize": "Yüzük boyutu",
+      "selectSize": "Boyut seçin",
+      "country": {
+        "uk": "BK",
+        "es": "ES",
+        "pl": "PL",
+        "us": "ABD"
+      }
+    },
+    "shared": {
+      "useSameSettings": "Her iki yüzük için de aynı ayarları kullanın"
+    },
+    "preciousMetal": {
+      "colorAndSurface": "Renk ve Yüzey",
+      "partition": "Bölümleme",
+      "singleColor": "Tek Renk",
+      "twoTone": "İki Renkli",
+      "triColored": "Üç Renkli",
+      "chooseDifferentSurface": "Farklı yüzey seçin",
+      "cleanliness": "Saflık - {{metal}}",
+      "kt": "ayar",
+      "dropdown": {
+        "close": "Kapat"
+      }
+    },
+    "grooveAndEdge": {
+      "tabs": {
+        "grooves": "Oluklar",
+        "steps": "Basamaklar",
+        "choiceOfGroove": "Oluk Seçimi",
+        "position": "Pozisyon"
+      },
+      "labels": {
+        "choiceOfGroove": "Oluk seçimi",
+        "ring1": "Yüzük 1",
+        "ring2": "Yüzük 2",
+        "addAnotherGroove": "Başka bir oluk ekle",
+        "left": "Sol",
+        "right": "Sağ",
+        "freeGroove": "Serbest Oluk"
+      },
+      "options": {
+        "without": "Yok",
+        "vGroove": "V-oluk",
+        "uGroove": "U-oluk",
+        "cornerJoint": "Köşe birleşimi",
+        "milgrain": "Milgrain",
+        "step": "Basamak"
+      },
+      "widthDepth": {
+        "width": "Genişlik",
+        "depth": "Derinlik",
+        "surface": "Yüzey"
+      }
+    },
+    "stone": {
+      "withStone": "taşlı",
+      "withoutStone": "taşsız",
+      "addStone": "Taş ekle",
+      "removeStoneGroup": "Taş grubunu kaldır",
+      "setStoneInfo": "Burada yüzüğü bir taşla ayarlayabilirsiniz.",
+      "colorAndPurity": "Taş rengi ve saflığı",
+      "tabs": {
+        "settings": "Ayarlar",
+        "typeOfStone": "Taş Türü",
+        "number": "Sayı"
+      },
+      "grinding": "Kesim",
+      "stoneSize": "Taş boyutu",
+      "number": "Sayı",
+      "distribution": "Dağılım",
+      "maxStones": "Maksimum taş:",
+      "stonesPerGroup": "Grup Başına Taş Sayısı",
+      "divisionOfGroups": "Grupların Bölünmesi",
+      "position": "Pozisyon",
+      "arrangeGroup": "Taşları grup olarak düzenle",
+      "stoneOptions": {
+        "without": "Yok",
+        "smoothConversion": "Pürüzsüz yerleştirme",
+        "pave": "Pave",
+        "railSetting": "Raylı yerleştirme",
+        "smoothStone": "Pürüzsüz Taş",
+        "railSettingAcross": "Çapraz raylı yerleştirme",
+        "smoothSettingAcross": "Çapraz pürüzsüz yerleştirme",
+        "channelSide": "Kanal yanı",
+        "freeLayout": "Serbest düzen",
+        "tensionRing": "Gergi yüzük",
+        "tensionRingDiagonally": "Çapraz gergi yüzük",
+        "canalAround": "Çepeçevre kanal"
+      },
+      "stoneType": {
+        "brilliant": "Pırlanta",
+        "princess": "Prenses",
+        "baguette": "Baget"
+      },
+      "positions": {
+        "left": "Sol",
+        "middle": "Orta",
+        "right": "Sağ",
+        "free": "Serbest"
+      },
+      "distributions": {
+        "together": "Birlikte",
+        "halfStoneDistance": "Yarım taş mesafesi",
+        "wholeStoneDistance": "Tam taş mesafesi",
+        "doubleStoneSpacing": "Çift taş aralığı",
+        "aThirdRing": "Yüzüğün üçte biri",
+        "halfRing": "Yarım yüzük",
+        "wholeRing": "Tam yüzük"
+      }
+    }
   }
 }
