@@ -1,7 +1,68 @@
 import { useLocalization } from "../../context/LocalizationContext";
+import { useState, useEffect } from "react";
+import { getCombinedPricing, getAllSizePricing, formatPrice } from "../../utils/pricing";
 
 export default function RingDetails() {
   const { t } = useLocalization();
+  const [currentPricing, setCurrentPricing] = useState({ ring1: 0, ring2: 0 });
+  const [currentProfile, setCurrentProfile] = useState('P1');
+  
+  // Function to get the current profile from localStorage
+  const getCurrentProfile = () => {
+    // Check for any profile keys in localStorage
+    const keys = Object.keys(localStorage);
+    const profileKey = keys.find(key => key.startsWith('activeProfile_'));
+    
+    if (profileKey) {
+      const profile = localStorage.getItem(profileKey);
+      return profile;
+    }
+    
+    // Default to P1 if no profile is found
+    return 'P1';
+  };
+
+  // Update pricing when component mounts and when localStorage changes
+  useEffect(() => {
+    const updatePricing = () => {
+      const profile = getCurrentProfile();
+      const sizeValues = getAllSizePricing();
+      const pricing = getCombinedPricing(profile, sizeValues);
+      setCurrentPricing(pricing);
+      setCurrentProfile(profile);
+    };
+
+    // Initial load
+    updatePricing();
+
+    // Listen for storage changes
+    const handleStorageChange = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also listen for custom events when profile changes within the same window
+    const handleProfileChange = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('profileChanged', handleProfileChange);
+    
+    // Listen for size pricing changes
+    const handleSizePricingChange = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('sizePricingChanged', handleSizePricingChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('profileChanged', handleProfileChange);
+      window.removeEventListener('sizePricingChanged', handleSizePricingChange);
+    };
+  }, []);
   
   return (
     <div className="overflow-x-auto h-full">
@@ -19,8 +80,8 @@ export default function RingDetails() {
           </tr>
           <tr>
             <td className="py-1 border-b">{t('configurator.details.profile')}</td>
-            <td className="py-1 border-b">P3</td>
-            <td className="py-1 border-b">P3</td>
+            <td className="py-1 border-b">{currentProfile}</td>
+            <td className="py-1 border-b">{currentProfile}</td>
           </tr>
           <tr>
             <td className="py-1 border-b">{t('configurator.details.ringWidth')}</td>
@@ -103,8 +164,8 @@ export default function RingDetails() {
           </tr>
           <tr>
             <td className="py-1 border-b-2 border-black font-semibold">{t('configurator.details.price')}</td>
-            <td className="py-1 border-b-2 border-black font-semibold">287,- €</td>
-            <td className="py-1 border-b-2 border-black font-semibold">716,- €</td>
+            <td className="py-1 border-b-2 border-black font-semibold">{formatPrice(currentPricing.ring1)}</td>
+            <td className="py-1 border-b-2 border-black font-semibold">{formatPrice(currentPricing.ring2)}</td>
           </tr>
         </tbody>
       </table>

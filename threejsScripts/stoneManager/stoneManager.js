@@ -262,7 +262,7 @@ export class StoneManager {
       // Select model based on stone type
       switch (stoneType) {
         case "Smooth conversion":
-          config.modelUrl = "diamondm/d1.glb";
+          config.modelUrl = "diamondm/s11.glb";
           break;
         case "Pavé":
           config.modelUrl = "diamondm/d2.glb";
@@ -271,7 +271,7 @@ export class StoneManager {
           config.modelUrl = "diamondm/d1.glb";
           break;
         case "Smooth Stone":
-          config.modelUrl = "diamondm/d3.glb";
+          config.modelUrl = "diamondm/c.glb";
           break;
         case "Rail setting Across":
           config.modelUrl = "diamondm/d1a.glb";

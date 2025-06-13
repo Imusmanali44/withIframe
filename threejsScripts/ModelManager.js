@@ -1631,7 +1631,23 @@ getThicknessForSize(value) {
 
   engraveTextOnModel(text, options = {}) {
     console.log("Engraving...");
-    
+    this.engravingText = text;
+    if(this.pair1){
+      this.engravingTextPair1 = text;
+    }
+    if(this.pair2){
+      this.engravingTextPair2 = text;
+    }
+    if(!this.pair1 && this.selectedModel==1){
+      this.engravingTextRing1 = text;
+
+
+    }
+    if(!this.pair1 && this.selectedModel==2){
+      this.engravingTextRing2 = text;
+
+
+    }
     // Default configurations for each font based on this.fontIndex
     const fontConfigurations = {
       1: {
@@ -1937,7 +1953,7 @@ console.log("model 3")
         // Engrave on both ring 1 and ring 2 if pair1 is active
         const ring1 = this.currentDisplayedModels[0];
         const ring2 = this.currentDisplayedModels[1];
-  
+        this.engravingText = text;
         if (ring1) createEngraving(ring1);
         if (ring2) createEngraving(ring2);
   
@@ -1949,6 +1965,8 @@ console.log("model 3")
           console.warn('Model not found for selectedRingId:', this.selectedModel);
           return;
         }
+        this.engravingText = text;
+
         createEngraving(model);
         console.log(`Engraved text "${text}" on model ${this.selectedModel}`);
       }

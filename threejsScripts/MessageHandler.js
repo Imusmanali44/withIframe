@@ -362,31 +362,44 @@ export class MessageHandler {
           this.pMetalManager.biTriPair(value, true);
         }
         break;
-      case "FontChange":
+        case "FontChange":
+        this.modelManager.removeEngraving()
         if (value == "svnfont00") {
           this.modelManager.changeFont(1);
-
+          // if(this.modelManager.engravingTextPair1){
+          this.modelManager.engraveTextOnModel(this.modelManager.engravingTextPair1)
+          // }
         }
         else if (value == "svnfont01") {
           this.modelManager.changeFont(2);
-
+          // if(this.modelManager.engravingTextPair1){
+            this.modelManager.engraveTextOnModel(this.modelManager.engravingTextPair1)
+            // }
         }
         else if (value == "svnfont02") {
           this.modelManager.changeFont(5);
+          // if(this.modelManager.engravingTextPair1){
+            this.modelManager.engraveTextOnModel(this.modelManager.engravingTextPair1)
+            // }
 
         }
         else if (value == "svnfont03") {
           this.modelManager.changeFont(4);
+          // if(this.modelManager.engravingTextPair1){
+            this.modelManager.engraveTextOnModel(this.modelManager.engravingTextPair1)
+            // }
 
         }
         else if (value == "svnfont04") {
           this.modelManager.changeFont(5);
+          // if(this.modelManager.engravingTextPair1){
+            this.modelManager.engraveTextOnModel(this.modelManager.engravingTextPair1)
+            // }
 
         }
         else {
           console.log("unknown font value", value)
         }
-        this.modelManager.removeEngraving()
 
         break;
 

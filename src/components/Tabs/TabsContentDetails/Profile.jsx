@@ -20,6 +20,9 @@ export const Profile = ({ rings, activeRing, isPair, setIsPair }) => {
     // Set the active profile
     setActiveProfile(profileToUse);
     
+    // Dispatch custom event for initial load
+    window.dispatchEvent(new CustomEvent('profileChanged'));
+    
     // // Send a message to update the model on initial load
     // if (profileToUse) {
     //   window.parent.postMessage({ 
@@ -45,6 +48,9 @@ export const Profile = ({ rings, activeRing, isPair, setIsPair }) => {
       : `activeProfile_${activeRing?.name}`;
     
     localStorage.setItem(storageKey, id);
+
+    // Dispatch custom event to notify other components about profile change
+    window.dispatchEvent(new CustomEvent('profileChanged'));
 
     // Send a message to the parent window
     window.parent.postMessage({ 

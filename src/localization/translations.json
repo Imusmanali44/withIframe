@@ -110,6 +110,7 @@
       "ringSize": "Ring size",
       "selectSize": "Select size",
       "country": {
+        "eu": "EU",
         "uk": "UK",
         "es": "ES",
         "pl": "PL",
@@ -330,6 +331,7 @@
       "ringSize": "Ringmaat",
       "selectSize": "Selecteer maat",
       "country": {
+        "eu": "EU",
         "uk": "VK",
         "es": "ES",
         "pl": "PL",
@@ -550,6 +552,7 @@
       "ringSize": "Taille de la bague",
       "selectSize": "Sélectionner la taille",
       "country": {
+        "eu": "UE",
         "uk": "RU",
         "es": "ES",
         "pl": "PL",
@@ -770,6 +773,7 @@
       "ringSize": "Yüzük boyutu",
       "selectSize": "Boyut seçin",
       "country": {
+        "eu": "AB",
         "uk": "BK",
         "es": "ES",
         "pl": "PL",

@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLocalization } from "../../../context/LocalizationContext";
+import { saveSizePricing } from "../../../utils/pricing";
 
 export const Sizes = ({ rings, activeRing }) => {
   const { t } = useLocalization();
   const [isRing1Auto, setIsRing1Auto] = useState(false);
   const [isRing2Auto, setIsRing2Auto] = useState(false);
-  const [ring1Width, setRing1Width] = useState("");
-  const [ring1Thickness, setRing1Thickness] = useState("");
-  const [ring1SizeCountry, setRing1SizeCountry] = useState("UK");
-  const [ring1Size, setRing1Size] = useState("");
-  const [ring2Width, setRing2Width] = useState("");
-  const [ring2Thickness, setRing2Thickness] = useState("");
-  const [ring2SizeCountry, setRing2SizeCountry] = useState("UK");
-  const [ring2Size, setRing2Size] = useState("");
+  const [ring1Width, setRing1Width] = useState("4,50 mm");
+  const [ring1Thickness, setRing1Thickness] = useState("1,70 mm");
+  const [ring1SizeCountry, setRing1SizeCountry] = useState("EU");
+  const [ring1Size, setRing1Size] = useState("62");
+  const [ring2Width, setRing2Width] = useState("3,50 mm");
+  const [ring2Thickness, setRing2Thickness] = useState("1,70 mm");
+  const [ring2SizeCountry, setRing2SizeCountry] = useState("EU");
+  const [ring2Size, setRing2Size] = useState("56");
 
   // Generate storage keys based on active ring
   const getStorageKey = (prefix) => {
@@ -20,6 +21,77 @@ export const Sizes = ({ rings, activeRing }) => {
       return `${prefix}_${activeRing[0]?.name}_${activeRing[1]?.name}`;
     }
     return `${prefix}_${activeRing?.name}`;
+  };
+
+  // Update pricing for a specific ring
+  const updateRingPricing = (ringKey, values) => {
+    saveSizePricing(ringKey, values);
+  };
+
+  // Check if we're in pair mode
+  const isPairMode = Array.isArray(activeRing) && activeRing[0]?.type === "Wedding";
+
+  // Determine which ring we're working with in single mode
+  const getCurrentRingKey = () => {
+    if (isPairMode) return null; // Not applicable in pair mode
+    
+    // Check if activeRing has an id or name that indicates ring 2
+    if (activeRing?.id === 2 || activeRing?.name?.toLowerCase().includes('ring 2') || activeRing?.name?.includes('2')) {
+      return 'ring2';
+    }
+    return 'ring1'; // Default to ring1
+  };
+
+  // Update pricing for both rings or individual ring
+  const updatePricing = () => {
+    // Only save/update pricing if user has actually made changes
+    // Check if current values differ from defaults
+    const hasRing1Changes = ring1Width !== "4,50 mm" || ring1Thickness !== "1,70 mm" || ring1Size !== "62" || ring1SizeCountry !== "EU" || isRing1Auto !== false;
+    const hasRing2Changes = ring2Width !== "3,50 mm" || ring2Thickness !== "1,70 mm" || ring2Size !== "56" || ring2SizeCountry !== "EU" || isRing2Auto !== false;
+    
+    if (isPairMode) {
+      // Update both rings in pair mode
+      if (hasRing1Changes) {
+        updateRingPricing('ring1', {
+          width: ring1Width,
+          thickness: ring1Thickness,
+          size: ring1Size,
+          sizeCountry: ring1SizeCountry,
+          isAuto: isRing1Auto
+        });
+      }
+      
+      if (hasRing2Changes) {
+        updateRingPricing('ring2', {
+          width: ring2Width,
+          thickness: ring2Thickness,
+          size: ring2Size,
+          sizeCountry: ring2SizeCountry,
+          isAuto: isRing2Auto
+        });
+      }
+    } else {
+      // Update individual ring only
+      const currentRingKey = getCurrentRingKey();
+      
+      if (currentRingKey === 'ring2' && hasRing2Changes) {
+        updateRingPricing('ring2', {
+          width: ring2Width,
+          thickness: ring2Thickness,
+          size: ring2Size,
+          sizeCountry: ring2SizeCountry,
+          isAuto: isRing2Auto
+        });
+      } else if (currentRingKey !== 'ring2' && hasRing1Changes) {
+        updateRingPricing('ring1', {
+          width: ring1Width,
+          thickness: ring1Thickness,
+          size: ring1Size,
+          sizeCountry: ring1SizeCountry,
+          isAuto: isRing1Auto
+        });
+      }
+    }
   };
 
   // Load saved values from localStorage on component mount
@@ -75,6 +147,12 @@ export const Sizes = ({ rings, activeRing }) => {
       // }, "*");
     }
   }, [activeRing]);
+
+  // Update pricing whenever values change
+  useEffect(() => {
+    updatePricing();
+  }, [ring1Width, ring1Thickness, ring1Size, ring1SizeCountry, isRing1Auto, 
+      ring2Width, ring2Thickness, ring2Size, ring2SizeCountry, isRing2Auto]);
 
   const handleRing1WidthChange = (e) => {
     const value = e.target.value;
@@ -157,12 +235,45 @@ export const Sizes = ({ rings, activeRing }) => {
   };
 
   console.log("Active Ring(s):", activeRing);
-  console.log("rings", rings)
+  console.log("rings", rings);
+  console.log("isPairMode:", isPairMode);
+  console.log("getCurrentRingKey():", getCurrentRingKey());
   const thicknessOptions = [
     "1,20 mm", "1,30 mm", "1,40 mm", "1,50 mm", "1,60 mm",
     "1,70 mm", "1,80 mm", "1,90 mm", "2,00 mm", "2,10 mm",
     "2,20 mm", "2,30 mm"
   ];
+
+  // Width options including decimal values
+  const widthOptions = [
+    "1,00 mm", "1,50 mm", "2,00 mm", "2,50 mm", "3,00 mm", "3,50 mm",
+    "4,00 mm", "4,50 mm", "5,00 mm", "5,50 mm", "6,00 mm", "6,50 mm",
+    "7,00 mm", "7,50 mm", "8,00 mm", "8,50 mm", "9,00 mm", "9,50 mm",
+    "10,00 mm", "10,50 mm", "11,00 mm", "11,50 mm", "12,00 mm"
+  ];
+
+  // Ring size options based on country
+  const getRingSizeOptions = (country) => {
+    switch (country) {
+      case "EU":
+        return [
+          "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+          "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70"
+        ];
+      case "UK":
+        return ["F", "F½", "G", "G½", "H", "H½", "I", "I½", "J", "J½"];
+      case "US":
+        return ["5", "5.5", "6", "6.5", "7", "7.5", "8", "8.5", "9", "9.5", "10"];
+      case "ES":
+      case "PL":
+        return [
+          "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+          "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70"
+        ];
+      default:
+        return ["F", "F½", "G", "G½", "H", "H½", "I", "I½", "J", "J½"];
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row justify-between w-full max-w-[500px] mx-auto px-3 py-5 gap-5 mb-auto">
@@ -180,15 +291,11 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring1Width}
                   onChange={handleRing1WidthChange}
                 >
-                  {!ring1Width && <option value="" disabled>{t('sizes.selectWidth')}</option>}
-                  {[...Array(12)].map((_, i) => {
-                    const size = i + 1;
-                    return (
-                      <option key={size} value={`${size},00 mm`}>
-                        {`${size},00 mm`}
-                      </option>
-                    );
-                  })}
+                  {widthOptions.map((size, index) => (
+                    <option key={index} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -202,15 +309,11 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring1Thickness}
                   onChange={handleRing1ThicknessChange}
                 >
-                  {!ring1Thickness && <option value="" disabled>{t('sizes.selectThickness')}</option>}
-                  {[...Array(12)].map((_, i) => {
-                    const size = i + 1;
-                    return (
-                      <option key={size} value={`${size},00 mm`}>
-                        {`${size},00 mm`}
-                      </option>
-                    );
-                  })}
+                  {thicknessOptions.map((size, index) => (
+                    <option key={index} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -252,6 +355,7 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring1SizeCountry}
                   onChange={(e) => handleRing1SizeChange(e, "country")}
                 >
+                  <option value="EU">{t('sizes.country.eu') || 'EU'}</option>
                   <option value="UK">{t('sizes.country.uk')}</option>
                   <option value="ES">{t('sizes.country.es')}</option>
                   <option value="PL">{t('sizes.country.pl')}</option>
@@ -262,17 +366,11 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring1Size}
                   onChange={(e) => handleRing1SizeChange(e)}
                 >
-                  {!ring1Size && <option value="" disabled>{t('sizes.selectSize')}</option>}
-                  <option value="F">F</option>
-                  <option value="F½">F½</option>
-                  <option value="G">G</option>
-                  <option value="G½">G½</option>
-                  <option value="H">H</option>
-                  <option value="H½">H½</option>
-                  <option value="I">I</option>
-                  <option value="I½">I½</option>
-                  <option value="J">J</option>
-                  <option value="J½">J½</option>
+                  {getRingSizeOptions(ring1SizeCountry).map((size, index) => (
+                    <option key={index} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -290,15 +388,11 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring2Width}
                   onChange={handleRing2WidthChange}
                 >
-                  {!ring2Width && <option value="" disabled>{t('sizes.selectWidth')}</option>}
-                  {[...Array(12)].map((_, i) => {
-                    const size = i + 1;
-                    return (
-                      <option key={size} value={`${size},00 mm`}>
-                        {`${size},00 mm`}
-                      </option>
-                    );
-                  })}
+                  {widthOptions.map((size, index) => (
+                    <option key={index} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -312,15 +406,11 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring2Thickness}
                   onChange={handleRing2ThicknessChange}
                 >
-                  {!ring2Thickness && <option value="" disabled>{t('sizes.selectThickness')}</option>}
-                  {[...Array(12)].map((_, i = 2) => {
-                    const size = i + 1;
-                    return (
-                      <option key={size} value={`${size},00 mm`}>
-                        {`${size},00 mm`}
-                      </option>
-                    );
-                  })}
+                  {thicknessOptions.map((size, index) => (
+                    <option key={index} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -356,6 +446,7 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring2SizeCountry}
                   onChange={(e) => handleRing2SizeChange(e, "country")}
                 >
+                  <option value="EU">{t('sizes.country.eu') || 'EU'}</option>
                   <option value="UK">{t('sizes.country.uk')}</option>
                   <option value="ES">{t('sizes.country.es')}</option>
                   <option value="PL">{t('sizes.country.pl')}</option>
@@ -366,17 +457,11 @@ export const Sizes = ({ rings, activeRing }) => {
                   value={ring2Size}
                   onChange={(e) => handleRing2SizeChange(e)}
                 >
-                  {!ring2Size && <option value="" disabled>{t('sizes.selectSize')}</option>}
-                  <option value="F">F</option>
-                  <option value="F½">F½</option>
-                  <option value="G">G</option>
-                  <option value="G½">G½</option>
-                  <option value="H">H</option>
-                  <option value="H½">H½</option>
-                  <option value="I">I</option>
-                  <option value="I½">I½</option>
-                  <option value="J">J</option>
-                  <option value="J½">J½</option>
+                  {getRingSizeOptions(ring2SizeCountry).map((size, index) => (
+                    <option key={index} value={size}>
+                      {size}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -385,81 +470,95 @@ export const Sizes = ({ rings, activeRing }) => {
       ) : (
         <div className="lg:ml-12 w-full">
           <h3 className="mb-3 font-semibold text-sm">{activeRing.name}</h3>
-          {activeRing?.type === "Wedding" && (
-            <>
-              <div className="flex flex-row lg:flex-col justify-between gap-4 lg:gap-0">
-                <div className="w-1/2 lg:w-auto mb-3 ring-width-1-before relative">
-                  <label className="block mb-1 font-semibold text-sm">
-                    {t('sizes.ringWidth')}
-                  </label>
-                  <select
-                    className="w-full border hover:border-[#909090] rounded px-2 py-3"
-                    value={ring1Width}
-                    onChange={handleRing1WidthChange}
-                  >
-                    {!ring1Width && <option value="" disabled>{t('sizes.selectWidth')}</option>}
-                    {[...Array(12)].map((_, i) => {
-                      const size = i + 1;
-                      return (
-                        <option key={size} value={`${size},00 mm`}>
-                          {`${size},00 mm`}
+          {activeRing?.type === "Wedding" && (() => {
+            const currentRingKey = getCurrentRingKey();
+            const isRing2 = currentRingKey === 'ring2';
+            
+            return (
+              <>
+                <div className="flex flex-row lg:flex-col justify-between gap-4 lg:gap-0">
+                  <div className="w-1/2 lg:w-auto mb-3 ring-width-1-before relative">
+                    <label className="block mb-1 font-semibold text-sm">
+                      {t('sizes.ringWidth')}
+                    </label>
+                    <select
+                      className="w-full border hover:border-[#909090] rounded px-2 py-3"
+                      value={isRing2 ? ring2Width : ring1Width}
+                      onChange={isRing2 ? handleRing2WidthChange : handleRing1WidthChange}
+                    >
+                      {widthOptions.map((size, index) => (
+                        <option key={index} value={size}>
+                          {size}
                         </option>
-                      );
-                    })}
-                  </select>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="w-1/2 lg:w-auto mb-3 ring-width-2-before relative">
+                    <label className="block mb-1 font-semibold text-sm">
+                      {t('sizes.ringThickness')}
+                    </label>
+                    <select
+                      className="w-full border hover:border-[#909090] rounded px-2 py-3"
+                      disabled={isRing2 ? isRing2Auto : isRing1Auto}
+                      value={isRing2 ? ring2Thickness : ring1Thickness}
+                      onChange={isRing2 ? handleRing2ThicknessChange : handleRing1ThicknessChange}
+                    >
+                      {thicknessOptions.map((size, index) => (
+                        <option key={index} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                <div className="w-1/2 lg:w-auto mb-3 ring-width-2-before relative">
-                  <label className="block mb-1 font-semibold text-sm">
-                    {t('sizes.ringThickness')}
+                <div className="flex mb-3 auto-setting">
+                  <input
+                    type="checkbox"
+                    className="mr-2"
+                    checked={isRing2 ? isRing2Auto : isRing1Auto}
+                    onChange={() => {
+                      if (isRing2) {
+                        const newValue = !isRing2Auto;
+                        setIsRing2Auto(newValue);
+                        localStorage.setItem(getStorageKey("ring2Auto"), newValue.toString());
+
+                        console.log(
+                          newValue
+                            ? "Ring 2: Automatically set the optimal thickness is checked"
+                            : "Ring 2: Automatically set the optimal thickness is unchecked"
+                        );
+
+                        window.parent.postMessage(
+                          { action: 'optimalHeight', value: newValue },
+                          "*"
+                        );
+                      } else {
+                        const newValue = !isRing1Auto;
+                        setIsRing1Auto(newValue);
+                        localStorage.setItem(getStorageKey("ring1Auto"), newValue.toString());
+
+                        console.log(
+                          newValue
+                            ? "Ring 1: Automatically set the optimal thickness is checked"
+                            : "Ring 1: Automatically set the optimal thickness is unchecked"
+                        );
+
+                        window.parent.postMessage(
+                          { action: 'optimalHeight', value: newValue },
+                          "*"
+                        );
+                      }
+                    }}
+                  />
+                  <label className="font-semibold text-sm">
+                    {t('sizes.autoThickness')}
                   </label>
-                  <select
-                    className="w-full border hover:border-[#909090] rounded px-2 py-3"
-                    disabled={isRing1Auto}
-                    value={ring1Thickness}
-                    onChange={handleRing1ThicknessChange}
-                  >
-                    {!ring1Thickness && <option value="" disabled>{t('sizes.selectThickness')}</option>}
-                    {/* Custom options */}
-                    {thicknessOptions.map((size, index) => (
-                      <option key={index} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
                 </div>
-              </div>
-
-              <div className="flex mb-3 auto-setting">
-                <input
-                  type="checkbox"
-                  className="mr-2"
-                  checked={isRing1Auto}
-                  onChange={() => {
-                    const newValue = !isRing1Auto;
-                    setIsRing1Auto(newValue);
-                    localStorage.setItem(getStorageKey("ring1Auto"), newValue.toString());
-
-                    // Log the state
-                    console.log(
-                      newValue
-                        ? "Automatically set the optimal thickness is checked"
-                        : "Automatically set the optimal thickness is unchecked"
-                    );
-
-                    // Send postMessage to iframe with the updated value
-                    window.parent.postMessage(
-                      { action: 'optimalHeight', value: newValue },
-                      "*"
-                    );
-                  }}
-                />
-                <label className="font-semibold text-sm">
-                  {t('sizes.autoThickness')}
-                </label>
-              </div>
-            </>
-          )}
+              </>
+            );
+          })()}
           <div className="ring-width-3-before relative">
             <label className="block mb-1 font-semibold text-sm">
               {t('sizes.ringSize')}
@@ -467,9 +566,16 @@ export const Sizes = ({ rings, activeRing }) => {
             <div className="flex">
               <select
                 className="w-full border hover:border-[#909090] rounded px-2 py-3"
-                value={ring1SizeCountry}
-                onChange={(e) => handleRing1SizeChange(e, "country")}
+                value={getCurrentRingKey() === 'ring2' ? ring2SizeCountry : ring1SizeCountry}
+                onChange={(e) => {
+                  if (getCurrentRingKey() === 'ring2') {
+                    handleRing2SizeChange(e, "country");
+                  } else {
+                    handleRing1SizeChange(e, "country");
+                  }
+                }}
               >
+                <option value="EU">{t('sizes.country.eu') || 'EU'}</option>
                 <option value="UK">{t('sizes.country.uk')}</option>
                 <option value="ES">{t('sizes.country.es')}</option>
                 <option value="PL">{t('sizes.country.pl')}</option>
@@ -477,30 +583,37 @@ export const Sizes = ({ rings, activeRing }) => {
               </select>
               <select
                 className="w-full border hover:border-[#909090] rounded px-2 py-3"
-                value={ring1Size}
+                value={getCurrentRingKey() === 'ring2' ? ring2Size : ring1Size}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setRing1Size(value);
-                  localStorage.setItem(getStorageKey("ring1Size"), value);
+                  const currentRingKey = getCurrentRingKey();
                   
-                  console.log(`Ring Size (second select) selected: ${value}`);
-                  window.parent.postMessage(
-                    { action: 'countrySize', selectedRing: activeRing, value: value },
-                    "*"
-                  );
+                  if (currentRingKey === 'ring2') {
+                    setRing2Size(value);
+                    localStorage.setItem(getStorageKey("ring2Size"), value);
+                    
+                    console.log(`Ring 2 Size selected: ${value}`);
+                    window.parent.postMessage(
+                      { action: 'countrySize', selectedRing: activeRing, value: value },
+                      "*"
+                    );
+                  } else {
+                    setRing1Size(value);
+                    localStorage.setItem(getStorageKey("ring1Size"), value);
+                    
+                    console.log(`Ring 1 Size selected: ${value}`);
+                    window.parent.postMessage(
+                      { action: 'countrySize', selectedRing: activeRing, value: value },
+                      "*"
+                    );
+                  }
                 }}
               >
-                {!ring1Size && <option value="" disabled>{t('sizes.selectSize')}</option>}
-                <option value="F">F</option>
-                <option value="F½">F½</option>
-                <option value="G">G</option>
-                <option value="G½">G½</option>
-                <option value="H">H</option>
-                <option value="H½">H½</option>
-                <option value="I">I</option>
-                <option value="I½">I½</option>
-                <option value="J">J</option>
-                <option value="J½">J½</option>
+                {getRingSizeOptions(getCurrentRingKey() === 'ring2' ? ring2SizeCountry : ring1SizeCountry).map((size, index) => (
+                  <option key={index} value={size}>
+                    {size}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
