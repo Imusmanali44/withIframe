@@ -7,7 +7,7 @@ export class Renderer {
 
   initRenderer() {
     const params = {
-      exposure: 2.4,
+      exposure: 1.2,
       toneMapping: 'ACESFilmic',
       blurriness: 0.3,
       intensity: 1.0,
@@ -41,7 +41,7 @@ export class Renderer {
     this.renderer.toneMappingExposure = params.exposure;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.localClippingEnabled = true;
-    this.renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
     
     // Optimize for mobile
     if (isMobile) {

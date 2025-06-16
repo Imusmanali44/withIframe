@@ -16,7 +16,7 @@ export class OrbitControlHandler {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
     this.controls.maxPolarAngle = Math.PI / 2.1;
-    this.controls.enableZoom = false;
+    this.controls.enableZoom = true;
     this.controls.enablePan = false;
   }
 

@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
-
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { Flow } from 'three/examples/jsm/modifiers/CurveModifier.js';
+import { DiamondMaterialManager } from './DiamondMaterialManager.js';
 
 // import  CSG  from '/utils/CSGMesh.js'
 // import Bender from '/utils/bender.js'
@@ -16,9 +16,9 @@ export class StoneManager {
     this.scene = scene;
     this.modelManager = modelManager;
     this.renderer = renderer;
-
-
-
+    
+    // Initialize diamond material manager
+    this.diamondMaterialManager = new DiamondMaterialManager(renderer);
   }
   async loadDiamondToRing(options = {}, value) {
     // Default options based on the UI controls in the images
@@ -29,18 +29,18 @@ export class StoneManager {
       scale: { x: 17.20, y: 17.20, z: 21.50 }, // Default scales from Image 2
       position: { x: 0, y: 0.50, z: 1.05 }, // Default positions from Image 1 & 2
       rotation: { x: -0.13, y: 0.00, z: 0.00 }, // Default rotations from Image 1
-      textureUrl: 'diamondm/dtext.jpg',
+      textureUrl: 'diamondMap/1b.jpg', // Clear Diamond preset normal map texture
       textureUrlfire: 'diamondm/diamond_fire.jpg',
 
       modelUrl: 'diamondm/d1.glb',
       effects: {
-        map: true, // Base Color is unchecked
-        normalMap: true, // Normal Map is checked
-        roughnessMap: true, // Roughness is checked
-        metalnessMap: true, // Metallic is unchecked
-        emissiveMap: true,
+        map: false, // Clear Diamond preset - no base color map
+        normalMap: true, // Clear Diamond preset - only normal map
+        roughnessMap: false, // Clear Diamond preset - no roughness map
+        metalnessMap: false, // Clear Diamond preset - no metalness map
+        emissiveMap: false, // Clear Diamond preset - no emissive map
         aoMap: false,
-        envMap: true,
+        envMap: true, // Clear Diamond preset - use cubemap
         displacementMap: false
       }
     };
@@ -158,37 +158,47 @@ export class StoneManager {
       // Set materials for the diamond
       diamondModel.traverse((child) => {
         if (child.isMesh && child.material) {
-          // Clone the material to avoid affecting other instances
-          child.material = child.material.clone();
+          // Dispose of the old material and its textures first
+          if (child.material.map) child.material.map.dispose();
+          if (child.material.normalMap) child.material.normalMap.dispose();
+          if (child.material.roughnessMap) child.material.roughnessMap.dispose();
+          if (child.material.metalnessMap) child.material.metalnessMap.dispose();
+          if (child.material.emissiveMap) child.material.emissiveMap.dispose();
+          if (child.material.aoMap) child.material.aoMap.dispose();
+          if (child.material.envMap) child.material.envMap.dispose();
+          if (child.material.displacementMap) child.material.displacementMap.dispose();
+          child.material.dispose();
+          
+          // Create new diamond material with cubemap
+          child.material = this.diamondMaterialManager.createDiamondMaterial();
 
-          // Apply standard material properties
-          child.material.metalness = 0.7;
-          child.material.roughness = 0.1;
+          // Set renderOrder at the mesh level (higher than midMesh)
+          child.renderOrder = 4; // Increase to 4 from 3
+        }
+      });
 
-          // Apply texture if provided
-          if (config.textureUrl) {
-            this.applyDiamondTexture(
-              diamondModel,
+      // Apply textures if provided using the diamond material manager
+      if (config.effects) {
+        const texturePromises = [];
+        diamondModel.traverse((child) => {
+          if (child.isMesh && child.material) {
+            const promise = this.diamondMaterialManager.applyDiamondTextures(
+              child.material,
               config.textureUrl,
               config.effects
             );
+            texturePromises.push(promise);
           }
-          child.material.depthWrite = true;
-          child.material.depthTest = true;
-          child.material.transparent = false; // Make sure it's not transparent
-          child.material.polygonOffset = false; // Disable polygon offset for diamonds
-          child.material.stencilWrite = true,
-            child.material.stencilRef = 2,  // Use a different value than both main model and midMesh
-            child.material.stencilFunc = THREE.AlwaysStencilFunc,  // Always pass the stencil test
-            child.material.stencilZPass = THREE.ReplaceStencilOp,
-
-            // Set renderOrder at the mesh level (higher than midMesh)
-            child.renderOrder = 4; // Increase to 4 from 3
-
-          // child.material.needsUpdate = true;
-          child.material.needsUpdate = true;
+        });
+        
+        // Wait for all textures to load
+        try {
+          await Promise.all(texturePromises);
+          console.log('All diamond textures applied successfully');
+        } catch (error) {
+          console.warn('Some diamond textures failed to load:', error);
         }
-      });
+      }
 
       console.log(`Diamond successfully added to ring ${config.ringIndex} with scale: ${JSON.stringify(config.scale)}, position: ${JSON.stringify(config.position)}, and rotation: ${JSON.stringify(config.rotation)}`);
       return diamondModel;
@@ -219,16 +229,16 @@ export class StoneManager {
       zOffset: 0.25, // Z-axis offset (front face positioning)
       // Default diamond model - will be overridden based on stone type
       modelUrl: 'diamondm/d1.glb',
-      textureUrl: 'diamondm/dtext.jpg', // Texture for diamonds
+      textureUrl: 'diamondMap/1b.jpg', // Clear Diamond preset normal map texture
       textureUrlfire: 'diamondm/diamond_fire.jpg',
       effects: {
-        map: true,
-        normalMap: true,
-        roughnessMap: true,
-        metalnessMap: true,
-        emissiveMap: true,
+        map: false, // Clear Diamond preset - no base color map
+        normalMap: true, // Clear Diamond preset - only normal map
+        roughnessMap: false, // Clear Diamond preset - no roughness map
+        metalnessMap: false, // Clear Diamond preset - no metalness map
+        emissiveMap: false, // Clear Diamond preset - no emissive map
         aoMap: false,
-        envMap: true,
+        envMap: true, // Clear Diamond preset - use cubemap
         displacementMap: false
       }
     };
@@ -262,7 +272,7 @@ export class StoneManager {
       // Select model based on stone type
       switch (stoneType) {
         case "Smooth conversion":
-          config.modelUrl = "diamondm/s11.glb";
+          config.modelUrl = "diamondm/d1.glb";
           break;
         case "Pavé":
           config.modelUrl = "diamondm/d2.glb";
@@ -271,7 +281,7 @@ export class StoneManager {
           config.modelUrl = "diamondm/d1.glb";
           break;
         case "Smooth Stone":
-          config.modelUrl = "diamondm/c.glb";
+          config.modelUrl = "diamondm/d3.glb";
           break;
         case "Rail setting Across":
           config.modelUrl = "diamondm/d1a.glb";
@@ -467,21 +477,21 @@ export class StoneManager {
         // Apply material properties
         diamondModel.traverse((child) => {
           if (child.isMesh && child.material) {
-            // Clone the material to avoid affecting other instances
-            child.material = child.material.clone();
+            // Dispose of the old material and its textures first
+            if (child.material.map) child.material.map.dispose();
+            if (child.material.normalMap) child.material.normalMap.dispose();
+            if (child.material.roughnessMap) child.material.roughnessMap.dispose();
+            if (child.material.metalnessMap) child.material.metalnessMap.dispose();
+            if (child.material.emissiveMap) child.material.emissiveMap.dispose();
+            if (child.material.aoMap) child.material.aoMap.dispose();
+            if (child.material.envMap) child.material.envMap.dispose();
+            if (child.material.displacementMap) child.material.displacementMap.dispose();
+            child.material.dispose();
 
-            // Apply standard material properties
-            child.material.metalness = 0.8;
-            child.material.roughness = 0;
+            // Create new diamond material with cubemap
+            child.material = this.diamondMaterialManager.createDiamondMaterial();
 
-            // Apply texture if provided
-            if (config.textureUrl && this.applyDiamondTexture) {
-              this.applyDiamondTexture(
-                diamondModel,
-                config.textureUrl,
-                config.effects
-              );
-            }
+            // Set renderOrder and depth properties
             child.material.depthWrite = true;
             child.material.depthTest = true;
             child.material.polygonOffset = false;
@@ -489,11 +499,31 @@ export class StoneManager {
             child.material.stencilRef = 2;
             child.material.stencilFunc = THREE.AlwaysStencilFunc;
             child.material.stencilZPass = THREE.ReplaceStencilOp;
-            // Set renderOrder at the mesh level (higher than midMesh)
             child.renderOrder = 3;
             child.material.needsUpdate = true;
           }
         });
+        
+        // Apply textures using the diamond material manager
+        if (config.effects) {
+          const texturePromises = [];
+          diamondModel.traverse((child) => {
+            if (child.isMesh && child.material) {
+              const promise = this.diamondMaterialManager.applyDiamondTextures(
+                child.material,
+                config.textureUrl,
+                config.effects
+              );
+              texturePromises.push(promise);
+            }
+          });
+          
+          try {
+            await Promise.all(texturePromises);
+          } catch (error) {
+            console.warn('Failed to apply textures to diamond:', error);
+          }
+        }
         diamondsHolder.renderOrder = 3;
         diamondHolder.renderOrder = 3
         diamondModels.renderOrder = 3// Ensure diamond is rendered on top of the ring
@@ -722,227 +752,12 @@ export class StoneManager {
 
     console.log(`Changed diamond rotation on ring ${targetRingIndex} to:`, rotation);
   }
-  async applyDiamondTexture(diamondModel, textureUrl, effects) {
-    if (!textureUrl) return Promise.resolve();
-
-    // First, remove all existing textures from the model
-    diamondModel.traverse((child) => {
-      if (child.isMesh && child.material) {
-        // Store material properties that might need to be preserved
-        const originalColor = child.material.color ? child.material.color.clone() : null;
-
-        // Remove all texture maps
-        if (child.material.map) {
-          child.material.map.dispose();
-          child.material.map = null;
-        }
-        if (child.material.normalMap) {
-          child.material.normalMap.dispose();
-          child.material.normalMap = null;
-        }
-        if (child.material.roughnessMap) {
-          child.material.roughnessMap.dispose();
-          child.material.roughnessMap = null;
-        }
-        if (child.material.metalnessMap) {
-          child.material.metalnessMap.dispose();
-          child.material.metalnessMap = null;
-        }
-        if (child.material.emissiveMap) {
-          child.material.emissiveMap.dispose();
-          child.material.emissiveMap = null;
-        }
-        if (child.material.aoMap) {
-          child.material.aoMap.dispose();
-          child.material.aoMap = null;
-        }
-        if (child.material.envMap) {
-          child.material.envMap.dispose();
-          child.material.envMap = null;
-        }
-        if (child.material.displacementMap) {
-          child.material.displacementMap.dispose();
-          child.material.displacementMap = null;
-        }
-
-        // Reset other texture-related properties
-        if (child.material.normalScale) {
-          child.material.normalScale.set(1, 1);
-        }
-        if (child.material.emissive) {
-          child.material.emissive.set(0, 0, 0);
-          child.material.emissiveIntensity = 0;
-        }
-        child.material.displacementScale = 0;
-        child.material.envMapIntensity = 1.0;
-
-        // Restore original color if it existed
-        if (originalColor) {
-          child.material.color.copy(originalColor);
-        }
-
-        // Mark material for update
-        child.material.needsUpdate = true;
-      }
-    });
-
-    // If no new texture should be applied, we're done
-    if (!textureUrl) return Promise.resolve();
-
-    // Create a texture loader for the new texture
-    const textureLoader = new THREE.TextureLoader();
-
-  try {
-    // Load the first texture (diamond texture)
-    const texture = await new Promise((resolve, reject) => {
-      textureLoader.load(
-        textureUrl,
-        (texture) => resolve(texture),
-        undefined,
-        (error) => reject(error)
-      );
-    });
-  
-    // Load the fire texture
-    let textureUrlFire = 'diamondMap/diamond_fire.jpg';
-    const textureFire = await new Promise((resolve, reject) => {
-      textureLoader.load(
-        textureUrlFire,
-        (texture) => resolve(texture),
-        undefined,
-        (error) => reject(error)
-      );
-    });
-
-    // Load the sparkle texture
-    let textureUrlSparkle = 'diamondMap/diamond_sparkle.jpg';
-    const textureSparkle = await new Promise((resolve, reject) => {
-      textureLoader.load(
-        textureUrlSparkle,
-        (texture) => resolve(texture),
-        undefined,
-        (error) => reject(error)
-      );
-    });
-    let textureUrlTriTop = 'diamondMap/diamond_top_triangles.png';
-    const textureTriTop = await new Promise((resolve, reject) => {
-      textureLoader.load(
-        textureUrlTriTop,
-        (texture) => resolve(texture),
-        undefined,
-        (error) => reject(error)
-      );
-    });
-  
-    // Configure textures with modern Three.js properties
-    // Replace deprecated encoding with colorSpace
-    texture.colorSpace = THREE.SRGBColorSpace;  
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    
-    textureFire.colorSpace = THREE.SRGBColorSpace;
-    textureFire.wrapS = THREE.RepeatWrapping;
-    textureFire.wrapT = THREE.RepeatWrapping;
-    // Make sure fire texture is not filtered too much
-    textureFire.minFilter = THREE.LinearFilter;
-    textureFire.magFilter = THREE.LinearFilter;
-    
-    textureSparkle.colorSpace = THREE.SRGBColorSpace;
-    textureSparkle.wrapS = THREE.RepeatWrapping;
-    textureSparkle.wrapT = THREE.RepeatWrapping;
-  
-    textureTriTop.colorSpace = THREE.SRGBColorSpace;
-    textureTriTop.wrapS = THREE.RepeatWrapping;
-    textureTriTop.wrapT = THREE.RepeatWrapping;
-    // Make sure fire texture is not filtered too much
-    textureTriTop.minFilter = THREE.LinearFilter; 
-    textureTriTop.magFilter = THREE.LinearFilter;
-
-    // Apply textures to all meshes in the diamond model
-    diamondModel.traverse((child) => {
-      if (child.isMesh && child.material) {
-        // Create a new material or clone the existing one to ensure proper settings
-        if (child.material.isMeshStandardMaterial || child.material.isMeshPhysicalMaterial) {
-          // Apply main texture to most map types
-          if (effects.map) {
-            // child.material.map = texture;
-          }
-    
-          if (effects.normalMap) {
-            child.material.normalMap = texture;
-            // Children.material.alphaMap = textureSparkle; // Apply alpha map for transparency
-            child.material.normalScale = new THREE.Vector2(1, 1);
-
-          }
-    
-          if (effects.roughnessMap) {
-            child.material.roughnessMap = textureTriTop;
-            // Lower roughness for more shininess
-            child.material.roughness = 0.1;
-          }
-    
-          if (effects.metalnessMap) {
-            // Use the sparkle texture for metallness to enhance the sparkle effect
-            child.material.metalnessMap = textureSparkle;
-            child.material.metalness = 0.7; // Higher metalness for better reflection
-          }
-    
-          // Apply fire texture specifically to the emissive map with enhanced settings
-          if (effects.emissiveMap) {
-            child.material.emissiveMap = textureFire;
-            child.material.emissive = new THREE.Color(1, 1, 1); // Full white for maximum color from texture
-            child.material.emissiveIntensity = 1.2; // Increase intensity to make it more visible
-          }
-    
-          if (effects.aoMap) {
-            child.material.aoMap = texture;
-            child.material.aoMapIntensity = 0.5; // Moderate AO effect
-          }
-    
-          if (effects.envMap) {
-            // child.material.envMap = texture;
-            // child.material.envMapIntensity = 1.5; // Stronger environment mapping
-          }
-    
-          if (effects.displacementMap) {
-            child.material.displacementMap = texture;
-            child.material.displacementScale = 0.05; // More subtle displacement
-            child.material.displacementBias = 0;
-          }
-        }
-  
-        // Update the material properties
-        child.material.depthWrite = true;
-        child.material.depthTest = true;
-        child.material.transparent = false;
-        child.material.polygonOffset = false;
-        child.renderOrder = 1000;
-        
-        // Make sure to update the material
-        child.material.needsUpdate = true;
-      }
-    });
-
-    // Log success message with detailed info
-    console.log('Successfully applied textures to diamond model:', {
-      mainTexture: textureUrl,
-      fireTexture: textureUrlFire,
-      sparkleTexture: textureUrlSparkle,
-      effectsApplied: effects
-    });
-  
-    return Promise.resolve();
-  } catch (error) {
-    // Improved error logging
-    console.error('Error applying textures to diamond:', error);
-    console.error('Context:', {
-      mainTextureURL: textureUrl,
-      fireTextureURL: 'diamondMap/diamond_fire.jpg',
-      sparkleTextureURL: 'diamondMap/diamond_sparkle.jpg'
-    });
-    return Promise.reject(error);
+  // Clean up resources when the stone manager is disposed
+  dispose() {
+    if (this.diamondMaterialManager) {
+      this.diamondMaterialManager.dispose();
+    }
   }
-}
 
   /**
    * Remove diamond from a specific ring
