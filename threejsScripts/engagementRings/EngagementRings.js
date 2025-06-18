@@ -1,11 +1,17 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DiamondMaterialManager } from '../stoneManager/DiamondMaterialManager.js';
 
 export class EngagementRings {
-  constructor(scene, modelManager) {
+  constructor(scene, modelManager, renderer) {
     this.scene = scene;
-    this.modelManager = modelManager
+    this.modelManager = modelManager;
+    this.renderer = renderer;
     this.ringPath = null;
+    
+    // Initialize diamond material manager
+    this.diamondMaterialManager = new DiamondMaterialManager(renderer);
+    
     this.modelData = [
       { glbPath: 'models/eng/VR001.glb', texturePath: 'path/to/texture2.jpg' },
       { glbPath: 'models/eng/VR001S-BD.glb', texturePath: 'path/to/texture3.jpg' },
@@ -85,6 +91,7 @@ export class EngagementRings {
 
   async loadEngRingById(id) {
     try {
+      id = id - 1; // Convert from 1-based to 0-based indexing
       const loaderOverlay = document.querySelector('.loader-overlay');
       if (loaderOverlay) {
         loaderOverlay.style.display = 'block';
@@ -92,7 +99,7 @@ export class EngagementRings {
       
       // Ensure the ID is within the range of modelData array
       if (id < 0 || id >= this.modelData.length) {
-        throw new Error(`Invalid ID: ${id}. Please provide a valid model ID.`);
+        throw new Error(`Invalid ID: ${id + 1}. Please provide a valid model ID.`);
       }
   
       // Get the model data for the given ID
@@ -137,7 +144,10 @@ export class EngagementRings {
         // this.applyColorExcludingMeshes(model, '#D8BC7E', false);
       }
       
-      console.log(`Model loaded successfully: ${modelInfo.glbPath}`, model);
+      // Apply diamond effects to diamond meshes
+      this.applyDiamondTextureToRing(model);
+      
+      console.log(`Model loaded successfully: ${modelInfo.glbPath}`, model,id);
       
       if (loaderOverlay) {
         loaderOverlay.style.display = 'none';
@@ -157,6 +167,87 @@ export class EngagementRings {
       return null;
     }
   }
+
+  applyDiamondTextureToRing(model) {
+    // Use the same effects configuration as in StoneManager
+    const effects = {
+      map: false, // Clear Diamond preset - no base color map
+      normalMap: true, // Clear Diamond preset - only normal map
+      roughnessMap: false, // Clear Diamond preset - no roughness map
+      metalnessMap: false, // Clear Diamond preset - no metalness map
+      emissiveMap: false, // Clear Diamond preset - no emissive map
+      aoMap: false,
+      envMap: true, // Clear Diamond preset - use cubemap
+      displacementMap: false
+    };
+    
+    const textureUrl = 'diamondMap/1b.jpg'; // Use the same texture as StoneManager
+    
+    // Find all meshes with "_1" in their name and apply the diamond material
+    model.traverse((child) => {
+      // console.log("model apply diamond texture to ring", child)
+      console.log("child.name", child.name)
+      if (child.isMesh && child.name == 'mesh002_1') {
+        console.log(`Applying diamond material to engagement ring mesh: ${child.name}`);
+        
+        // Dispose of the old material and its textures first
+        if (child.material) {
+          if (child.material.map) child.material.map.dispose();
+          if (child.material.normalMap) child.material.normalMap.dispose();
+          if (child.material.roughnessMap) child.material.roughnessMap.dispose();
+          if (child.material.metalnessMap) child.material.metalnessMap.dispose();
+          if (child.material.emissiveMap) child.material.emissiveMap.dispose();
+          if (child.material.aoMap) child.material.aoMap.dispose();
+          if (child.material.envMap) child.material.envMap.dispose();
+          if (child.material.displacementMap) child.material.displacementMap.dispose();
+          child.material.dispose();
+        }
+        
+        // Create new diamond material with cubemap (same as StoneManager)
+        child.material = this.diamondMaterialManager.createDiamondMaterialBigDiamond();
+        
+        // Set renderOrder for proper rendering
+        child.renderOrder = 4;
+        
+        // Ensure environment map is applied
+        const applyEnvMap = () => {
+          if (this.diamondMaterialManager.envMapPMREMbigDiamond) {
+            child.material.envMap = this.diamondMaterialManager.envMapPMREMbigDiamond;
+            child.material.needsUpdate = true;
+          }
+        };
+        
+        // Apply environment map immediately if ready, otherwise wait
+        if (this.diamondMaterialManager.envMapPMREMbigDiamond) {
+          applyEnvMap();
+        } else {
+          // Wait for environment map to load
+          const checkEnvMap = () => {
+            if (this.diamondMaterialManager.envMapPMREMbigDiamond) {
+              applyEnvMap();
+            } else {
+              setTimeout(checkEnvMap, 100);
+            }
+          };
+          checkEnvMap();
+        }
+        
+        // Apply textures using the diamond material manager (same as StoneManager)
+        this.diamondMaterialManager.applyDiamondTextures(
+          child.material,
+          textureUrl,
+          effects
+        ).then(() => {
+          console.log(`Diamond material applied successfully to: ${child.name}`);
+        }).catch((error) => {
+          console.warn(`Failed to apply diamond textures to ${child.name}:`, error);
+        });
+      }
+    });
+    
+    console.log(`Diamond materials applied successfully to engagement ring model`);
+  }
+
   applyColorExcludingMeshes(model, color, reverse = false) {
     model.traverse((child) => {
       // Check if the traversed object is a mesh
@@ -166,7 +257,7 @@ export class EngagementRings {
           if (child.material && child.material.color) {
             child.material.color.set(color);
           }
-          console.warn("aaaaaa", child.name)
+          console.warn("aaaaaa model engagement rings", child.name)
 
         }
 
@@ -193,4 +284,10 @@ export class EngagementRings {
     });
   }
 
+  // Clean up resources when disposing
+  dispose() {
+    if (this.diamondMaterialManager) {
+      this.diamondMaterialManager.dispose();
+    }
+  }
 }

@@ -1,11 +1,17 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DiamondMaterialManager } from '../stoneManager/DiamondMaterialManager.js';
 
 export class MemoirRings {
-  constructor(scene, modelManager) {
+  constructor(scene, modelManager, renderer) {
     this.scene = scene;
     this.modelManager = modelManager;
+    this.renderer = renderer;
     this.ringPath = null;
+    
+    // Initialize diamond material manager
+    this.diamondMaterialManager = new DiamondMaterialManager(renderer);
+    
     this.modelData = [
       { glbPath: 'models/memoir/01.glb', texturePath: 'path/to/texture1.jpg' },
       { glbPath: 'models/memoir/02.glb', texturePath: 'path/to/texture2.jpg' },
@@ -110,7 +116,9 @@ export class MemoirRings {
       
       // Commented code preserved from original
       // this.modelManager.applyColorToModel(model,'#D8BC7E')
-      // this.applyDiamondTextureToRing(model);
+    console.log("model apply diamond texture to ring", model)
+
+      this.applyDiamondTextureToRing(model);
       
       console.log(`Model loaded successfully: ${modelInfo.glbPath}`, model);
       
@@ -166,109 +174,113 @@ export class MemoirRings {
     });
   }
 
-
   applyDiamondTextureToRing(model) {
-    const textureUrl = 'diamondm/dtext.jpg'; // Hard-coded texture URL
-    
-    // Default effects configuration
+    // Use the same effects configuration as in StoneManager
+
     const effects = {
-      map: false,
-      normalMap: true,
-      roughnessMap: true,
-      metalnessMap: false,
-      emissiveMap: false,
+      map: false, // Clear Diamond preset - no base color map
+      normalMap: true, // Clear Diamond preset - only normal map
+      roughnessMap: false, // Clear Diamond preset - no roughness map
+      metalnessMap: false, // Clear Diamond preset - no metalness map
+      emissiveMap: false, // Clear Diamond preset - no emissive map
       aoMap: false,
-      envMap: false,
+      envMap: true, // Clear Diamond preset - use cubemap
       displacementMap: false
     };
     
-    // Create a texture loader for the new texture
-    const textureLoader = new THREE.TextureLoader();
-    
-    // Load the texture
-    textureLoader.load(
-      textureUrl,
-      (texture) => {
-        // Configure texture
-        texture.encoding = THREE.sRGBEncoding;
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
+    const textureUrl = 'diamondMap/1b.jpg'; // Use the same texture as StoneManager
+    // Find all meshes with "diamond" in their name and apply the diamond material
+    model.traverse((child) => {
+      if (child.isMesh && child.name.includes('diamon') || child.name.includes('_1')) {
+        console.log(`Applying diamond material to: ${child.name}`);
         
-        // Find all meshes with "diamond" in their name and apply the texture
-        model.traverse((child) => {
-          if (child.isMesh && child.name.includes('diamond')) {
-            console.log(`Applying diamond texture to: ${child.name}`);
-            
-            // Store material properties that might need to be preserved
-            const originalColor = child.material ? child.material.color.clone() : null;
-            
-            // Ensure material is cloned to avoid affecting other instances
-            if (child.material) {
-              child.material = child.material.clone();
-              
-              // Apply texture to each enabled map type
-              if (effects.map) {
-                child.material.map = texture;
-              }
-              
-              if (effects.normalMap) {
-                child.material.normalMap = texture;
-                child.material.normalScale = new THREE.Vector2(1, 1);
-              }
-              
-              if (effects.roughnessMap) {
-                child.material.roughnessMap = texture;
-              }
-              
-              if (effects.metalnessMap) {
-                child.material.metalnessMap = texture;
-              }
-              
-              if (effects.emissiveMap) {
-                child.material.emissiveMap = texture;
-                child.material.emissive = new THREE.Color(1, 1, 1);
-                child.material.emissiveIntensity = 0.5;
-              }
-              
-              if (effects.aoMap) {
-                child.material.aoMap = texture;
-              }
-              
-              if (effects.envMap) {
-                child.material.envMap = texture;
-                child.material.envMapIntensity = 1.0;
-              }
-              
-              if (effects.displacementMap) {
-                child.material.displacementMap = texture;
-                child.material.displacementScale = 0.1;
-              }
-              
-              // Apply standard material properties for diamonds
-              child.material.metalness = 0.8;
-              child.material.roughness = 0;
-              
-              // Restore original color if it existed
-              if (originalColor) {
-                child.material.color.copy(originalColor);
-              }
-              
-              // Update the material
-              child.material.needsUpdate = true;
-            }
+        // Dispose of the old material and its textures first
+        if (child.material) {
+          if (child.material.map) child.material.map.dispose();
+          if (child.material.normalMap) child.material.normalMap.dispose();
+          if (child.material.roughnessMap) child.material.roughnessMap.dispose();
+          if (child.material.metalnessMap) child.material.metalnessMap.dispose();
+          if (child.material.emissiveMap) child.material.emissiveMap.dispose();
+          if (child.material.aoMap) child.material.aoMap.dispose();
+          if (child.material.envMap) child.material.envMap.dispose();
+          if (child.material.displacementMap) child.material.displacementMap.dispose();
+          child.material.dispose();
+        }
+        
+        // Create new diamond material with cubemap (same as StoneManager)
+        child.material = this.diamondMaterialManager.createDiamondMaterial();
+        
+        // Set renderOrder for proper rendering
+        child.renderOrder = 4;
+        
+        // Ensure environment map is applied
+        const applyEnvMap = () => {
+          if (this.diamondMaterialManager.envMapPMREM) {
+            console.log("applyEnvMap",this.diamondMaterialManager.envMapPMREM)
+            child.material.metalness = 0.6;
+            child.material.roughness = 0;
+            child.material.envMapIntensity = 1.5; // Increased for better reflections
+            child.material.transmission = 1;  // Add transmission for glass-like effect
+            child.material.ior = 1.2;          // Index of refraction - more realistic diamond value
+            child.material.reflectivity = 1.2;
+            child.material.clearcoat = 1;
+            child.material.clearcoatRoughness = 0; // Ensure clear coat is perfectly smooth
+            child.material.thickness = 2.0; // simulate refraction
+            child.material.transparent = true;
+            child.material.opacity = 0.9;
+            child.material.depthWrite = true;
+            child.material.depthTest = true;
+            child.material.polygonOffset = false;
+            // Enhanced properties from HTML version
+            child.material.specularIntensity = 1;
+            child.material.specularColor = new THREE.Color(1, 1, 1);
+            // Ensure proper side rendering for transparency
+            child.material.side = THREE.DoubleSide;
+            child.material.envMap = this.diamondMaterialManager.envMapPMREM;
+            child.material.needsUpdate = true;
           }
-        });
+        };
         
-        console.log(`Diamond textures applied successfully to memoir ring model`);
-      },
-      (xhr) => {
-        // Progress callback
-        console.log(`Diamond texture loading: ${(xhr.loaded / xhr.total) * 100}% loaded`);
-      },
-      (error) => {
-        // Error callback
-        console.error('Error loading diamond texture for memoir ring:', error);
+        // Apply environment map immediately if ready, otherwise wait
+        if (this.diamondMaterialManager.envMapPMREM) {
+          console.log("applyEnvMap",this.diamondMaterialManager.envMapPMREM)
+
+          applyEnvMap();
+        } else {
+          // Wait for environment map to load
+          const checkEnvMap = () => {
+            if (this.diamondMaterialManager.envMapPMREM) {
+            console.log("applyEnvMap",this.diamondMaterialManager.envMapPMREM)
+
+              applyEnvMap();
+            } else {
+              setTimeout(checkEnvMap, 100);
+            }
+          };
+          checkEnvMap();
+        }
+        
+        // Apply textures using the diamond material manager (same as StoneManager)
+        this.diamondMaterialManager.applyDiamondTextures(
+          child.material,
+          textureUrl,
+          effects
+        ).then(() => {
+          console.log(`Diamond material applied successfully to: ${child.name}`);
+        }).catch((error) => {
+          console.warn(`Failed to apply diamond textures to ${child.name}:`, error);
+        });
       }
-    );
+    });
+    
+    console.log(`Diamond materials applied successfully to memoir ring model`,model);
+    
+  }
+
+  // Clean up resources when disposing
+  dispose() {
+    if (this.diamondMaterialManager) {
+      this.diamondMaterialManager.dispose();
+    }
   }
 }

@@ -37,8 +37,8 @@ class RotatingRingApp {
     this.PreciousMetalins.modelManager = this.modelManager;
     
     this.PreciousMetalHelper = new PreciousMetalHelper(this.scene, this.PreciousMetalins, this.modelManager);
-    this.EngagementRings = new EngagementRings(this.scene, this.modelManager);
-    this.MemoirRings = new MemoirRings(this.scene, this.modelManager);
+    this.EngagementRings = new EngagementRings(this.scene, this.modelManager, this.renderer);
+    this.MemoirRings = new MemoirRings(this.scene, this.modelManager, this.renderer);
 
     this.GrooveManager = new GrooveManager(this.scene, this.modelManager);
     this.StepsManager = new StepsManager(this.scene, this.modelManager, this.GrooveManager);
@@ -145,7 +145,7 @@ class RotatingRingApp {
 }
 
 // Instantiate the app
-new RotatingRingApp();
+window.app = new RotatingRingApp();
 
 
 

@@ -65,7 +65,7 @@ export class MessageHandler {
 
             // diamondCount: 10,
             ringIndex: this.modelManager.selectedModel,
-            modelUrl: "diamondm/d2.glb"
+            modelUrl: "diamondm/circle.glb"
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           }, value);
         }
@@ -101,7 +101,7 @@ export class MessageHandler {
 
             // diamondCount: 10,
             ringIndex: this.modelManager.selectedModel,
-            modelUrl: "diamondm/d1a.glb"
+            modelUrl: "diamondm/rect.glb"
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           }, value);
 
@@ -115,7 +115,7 @@ export class MessageHandler {
 
             // diamondCount: 10,
             ringIndex: this.modelManager.selectedModel,
-            modelUrl: "diamondm/d2a.glb"
+            modelUrl: "diamondm/d3.glb"
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           }, value);
 

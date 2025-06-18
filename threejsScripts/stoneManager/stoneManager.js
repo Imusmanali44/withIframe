@@ -275,7 +275,7 @@ export class StoneManager {
           config.modelUrl = "diamondm/d1.glb";
           break;
         case "Pavé":
-          config.modelUrl = "diamondm/d2.glb";
+          config.modelUrl = "diamondm/circle.glb";
           break;
         case "Rail setting":
           config.modelUrl = "diamondm/d1.glb";
@@ -284,10 +284,10 @@ export class StoneManager {
           config.modelUrl = "diamondm/d3.glb";
           break;
         case "Rail setting Across":
-          config.modelUrl = "diamondm/d1a.glb";
+          config.modelUrl = "diamondm/rect.glb";
           break;
         case "Smooth setting Across":
-          config.modelUrl = "diamondm/d2a.glb";
+          config.modelUrl = "diamondm/d3.glb";
           break;  
         default:
           // Keep the default model url if stone type doesn't match
