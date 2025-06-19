@@ -87,14 +87,14 @@ const maxStonesPerDistribution = {
     {
       name: "Rail setting Across",
       img: StoneStyleRailSettingAcross,
-      disabled: false
+      disabled: true
       // StoneStyleSmoothConversionSide,
     },
     {
       name: "Smooth setting Across",
       // img: StoneStylePavedSide,
       img: StoneStyleRailSettingAcross,
-      disabled: false
+      disabled: true
     },
     {
       name: "Channel side",

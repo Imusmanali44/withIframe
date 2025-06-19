@@ -91,7 +91,7 @@ export class EngagementRings {
 
   async loadEngRingById(id) {
     try {
-      id = id - 1; // Convert from 1-based to 0-based indexing
+      // id = id - 1; // Convert from 1-based to 0-based indexing
       const loaderOverlay = document.querySelector('.loader-overlay');
       if (loaderOverlay) {
         loaderOverlay.style.display = 'block';
@@ -187,7 +187,7 @@ export class EngagementRings {
     model.traverse((child) => {
       // console.log("model apply diamond texture to ring", child)
       console.log("child.name", child.name)
-      if (child.isMesh && child.name == 'mesh002_1') {
+      if (child.isMesh ) {
         console.log(`Applying diamond material to engagement ring mesh: ${child.name}`);
         
         // Dispose of the old material and its textures first

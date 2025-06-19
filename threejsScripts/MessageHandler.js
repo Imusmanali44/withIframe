@@ -74,8 +74,8 @@ export class MessageHandler {
           this.modelManager.StoneManagerIns.removeDiamondsFromRing(this.modelManager.selectedModel)
           this.modelManager.StoneManagerIns.loadDiamondToRing({
             ringIndex: this.modelManager.selectedModel,
-            modelUrl: "diamondm/d1.glb",
-            rotation: { x: -0.13, y: 0.00, z: 0.25 }, // Default rotations from Image 1
+            modelUrl: "diamondm/rect.glb",
+            // rotation: { x: -0.13, y: 0.00, z: 0.25 }, // Default rotations from Image 1
 
             // scale: { x: 19.70, y: 19.70, z: 37.00 }
           }, value);
