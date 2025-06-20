@@ -187,7 +187,7 @@ export class EngagementRings {
     model.traverse((child) => {
       // console.log("model apply diamond texture to ring", child)
       console.log("child.name", child.name)
-      if (child.isMesh ) {
+      if (child.isMesh && child.name.includes('dmesh') ) {
         console.log(`Applying diamond material to engagement ring mesh: ${child.name}`);
         
         // Dispose of the old material and its textures first
