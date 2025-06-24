@@ -187,7 +187,8 @@ export class EngagementRings {
     model.traverse((child) => {
       // console.log("model apply diamond texture to ring", child)
       console.log("child.name", child.name)
-      if (child.isMesh && child.name.includes('dmesh') ) {
+      if (child.isMesh && child.name.toLowerCase().includes('mond') ) {
+
         console.log(`Applying diamond material to engagement ring mesh: ${child.name}`);
         
         // Dispose of the old material and its textures first
@@ -204,26 +205,26 @@ export class EngagementRings {
         }
         
         // Create new diamond material with cubemap (same as StoneManager)
-        child.material = this.diamondMaterialManager.createDiamondMaterialBigDiamond();
+        child.material = this.diamondMaterialManager.createDiamondMaterial();
         
         // Set renderOrder for proper rendering
         child.renderOrder = 4;
         
         // Ensure environment map is applied
         const applyEnvMap = () => {
-          if (this.diamondMaterialManager.envMapPMREMbigDiamond) {
-            child.material.envMap = this.diamondMaterialManager.envMapPMREMbigDiamond;
+          if (this.diamondMaterialManager.envMapPMREM) {
+            child.material.envMap = this.diamondMaterialManager.envMapPMREM;
             child.material.needsUpdate = true;
           }
         };
         
         // Apply environment map immediately if ready, otherwise wait
-        if (this.diamondMaterialManager.envMapPMREMbigDiamond) {
+        if (this.diamondMaterialManager.envMapPMREM) {
           applyEnvMap();
         } else {
           // Wait for environment map to load
           const checkEnvMap = () => {
-            if (this.diamondMaterialManager.envMapPMREMbigDiamond) {
+            if (this.diamondMaterialManager.envMapPMREM) {
               applyEnvMap();
             } else {
               setTimeout(checkEnvMap, 100);
@@ -233,15 +234,15 @@ export class EngagementRings {
         }
         
         // Apply textures using the diamond material manager (same as StoneManager)
-        this.diamondMaterialManager.applyDiamondTextures(
-          child.material,
-          textureUrl,
-          effects
-        ).then(() => {
-          console.log(`Diamond material applied successfully to: ${child.name}`);
-        }).catch((error) => {
-          console.warn(`Failed to apply diamond textures to ${child.name}:`, error);
-        });
+        // this.diamondMaterialManager.applyDiamondTextures(
+        //   child.material,
+        //   textureUrl,
+        //   effects
+        // ).then(() => {
+        //   console.log(`Diamond material applied successfully to: ${child.name}`);
+        // }).catch((error) => {
+        //   console.warn(`Failed to apply diamond textures to ${child.name}:`, error);
+        // });
       }
     });
     

@@ -154,7 +154,7 @@ export class MemoirRings {
         }
 
         // Skip meshes whose names contain "_1"
-        if (child.name.includes("diamond") && !reverse) {
+        if (child.name.includes("Diam") && !reverse) {
           // Do nothing
           
         }
@@ -191,7 +191,7 @@ export class MemoirRings {
     const textureUrl = 'diamondMap/1b.jpg'; // Use the same texture as StoneManager
     // Find all meshes with "diamond" in their name and apply the diamond material
     model.traverse((child) => {
-      if (child.isMesh && child.name.includes('diamon') || child.name.includes('_1')) {
+      if (child.isMesh && child.name.toLowerCase().includes('mon') ) {
         console.log(`Applying diamond material to: ${child.name}`);
         
         // Dispose of the old material and its textures first
