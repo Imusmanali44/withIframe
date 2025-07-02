@@ -3,6 +3,7 @@ import WidthDepthSurface from "./WidthDepthSurface";
 import { TrashSvg, AddSvg } from "../../../../static/SvgImages";
 import { GrooveRangeSlider } from "../../../shared/GrooveRangeSlider";
 import { useLocalization } from "../../../../context/LocalizationContext";
+import { saveGrooveConfiguration } from "../../../../utils/pricing";
 
 const DistributionOptions = [
   {
@@ -118,8 +119,45 @@ const StepGroove = ({
     localStorage.setItem(storageKey, JSON.stringify(ring2Grooves));
   }, [ring2Grooves, activeRing]);
 
+  // Helper function to trigger groove pricing update
+  const triggerGroovePricing = (grooveType, grooves, targetRing = null) => {
+    const selectedRing = window.selectedRing || 1; // Default to ring 1 if not set
+    const isPairActive = window.pair1 === true;
+    
+    const grooveConfig = {
+      type: grooveType,
+      grooves: grooves || []
+    };
+
+    if (isPairActive && (selectedRing === 1 || selectedRing === 2)) {
+      // For pairs, apply groove config to both rings
+      saveGrooveConfiguration('ring1', grooveConfig);
+      saveGrooveConfiguration('ring2', grooveConfig);
+    } else {
+      // For individual rings, apply only to the selected ring
+      const ringKey = `ring${selectedRing}`;
+      saveGrooveConfiguration(ringKey, grooveConfig);
+    }
+  };
+
   const handleGrooveSelection = (item) => {
     setGroove(item.name);
+    
+    // Trigger pricing update - get the current grooves for the selected ring
+    const selectedRing = window.selectedRing || 1;
+    const isPairActive = window.pair1 === true;
+    
+    let currentGrooves = [];
+    if (item.name !== "Without") {
+      if (isPairActive || selectedRing === 1) {
+        currentGrooves = ring1Grooves;
+      } else if (selectedRing === 2) {
+        currentGrooves = ring2Grooves;
+      }
+    }
+    
+    triggerGroovePricing(item.name, currentGrooves);
+    
     window.parent.postMessage({ 
       action: 'addGroove', 
       type: item.name,
@@ -131,7 +169,17 @@ const StepGroove = ({
 
   const addGrooveRing1 = () => {
     const newId = ring1Grooves.length + 1;
-    setRing1Grooves([...ring1Grooves, { id: newId, name: t('grooveAndEdge.labels.freeGroove') }]);
+    const newGrooves = [...ring1Grooves, { id: newId, name: t('grooveAndEdge.labels.freeGroove') }];
+    setRing1Grooves(newGrooves);
+    
+    // Trigger pricing update - use ring1 grooves for the selected ring
+    const selectedRing = window.selectedRing || 1;
+    const isPairActive = window.pair1 === true;
+    
+    if (isPairActive || selectedRing === 1) {
+      triggerGroovePricing(groove, newGrooves);
+    }
+    
     window.parent.postMessage(
       { 
         action: "addGroove", 
@@ -148,7 +196,17 @@ const StepGroove = ({
 
   const addGrooveRing2 = () => {
     const newId = ring2Grooves.length + 1;
-    setRing2Grooves([...ring2Grooves, { id: newId, name: t('grooveAndEdge.labels.freeGroove') }]);
+    const newGrooves = [...ring2Grooves, { id: newId, name: t('grooveAndEdge.labels.freeGroove') }];
+    setRing2Grooves(newGrooves);
+    
+    // Trigger pricing update - use ring2 grooves for the selected ring
+    const selectedRing = window.selectedRing || 1;
+    const isPairActive = window.pair1 === true;
+    
+    if (isPairActive || selectedRing === 2) {
+      triggerGroovePricing(groove, newGrooves);
+    }
+    
     window.parent.postMessage(
       { 
         action: "addGroove", 
@@ -164,7 +222,17 @@ const StepGroove = ({
   };
 
   const removeGrooveRing1 = (id) => {
-    setRing1Grooves(ring1Grooves.filter((groove) => groove.id !== id));
+    const newGrooves = ring1Grooves.filter((groove) => groove.id !== id);
+    setRing1Grooves(newGrooves);
+    
+    // Trigger pricing update - use ring1 grooves for the selected ring
+    const selectedRing = window.selectedRing || 1;
+    const isPairActive = window.pair1 === true;
+    
+    if (isPairActive || selectedRing === 1) {
+      triggerGroovePricing(groove, newGrooves);
+    }
+    
     window.parent.postMessage(
       { 
         action: "addGroove", 
@@ -179,7 +247,17 @@ const StepGroove = ({
   };
 
   const removeGrooveRing2 = (id) => {
-    setRing2Grooves(ring2Grooves.filter((groove) => groove.id !== id));
+    const newGrooves = ring2Grooves.filter((groove) => groove.id !== id);
+    setRing2Grooves(newGrooves);
+    
+    // Trigger pricing update - use ring2 grooves for the selected ring
+    const selectedRing = window.selectedRing || 1;
+    const isPairActive = window.pair1 === true;
+    
+    if (isPairActive || selectedRing === 2) {
+      triggerGroovePricing(groove, newGrooves);
+    }
+    
     window.parent.postMessage(
       { 
         action: "addGroove", 

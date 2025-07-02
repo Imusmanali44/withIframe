@@ -62,12 +62,44 @@ const ConfiguratorFooter = () => {
     };
 
     window.addEventListener('sizePricingChanged', handleSizePricingChange);
+    
+    // Listen for engraving pricing changes
+    const handleEngravingPricingChange = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('engravingPricingChanged', handleEngravingPricingChange);
+    
+    // Listen for precious metal pricing changes
+    const handlePreciousMetalPricingChange = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('preciousMetalPricingChanged', handlePreciousMetalPricingChange);
+    
+    // Listen for groove and step pricing changes
+    const handleGrooveStepPricingChange = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('grooveStepPricingChanged', handleGrooveStepPricingChange);
+    
+    // Listen for stone pricing changes
+    const handleStonePricingChange = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('stonePricingChanged', handleStonePricingChange);
 
     // Cleanup
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('profileChanged', handleProfileChange);
       window.removeEventListener('sizePricingChanged', handleSizePricingChange);
+      window.removeEventListener('engravingPricingChanged', handleEngravingPricingChange);
+      window.removeEventListener('preciousMetalPricingChanged', handlePreciousMetalPricingChange);
+      window.removeEventListener('grooveStepPricingChanged', handleGrooveStepPricingChange);
+      window.removeEventListener('stonePricingChanged', handleStonePricingChange);
     };
   }, []);
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { AddSvg, TrashSvg } from "../../../../static/SvgImages";
 import StoneColorPurity from "./StoneColorPurity";
 import { useLocalization } from "../../../../context/LocalizationContext";
+import { saveStoneConfiguration } from "../../../../utils/pricing";
 // stone style image
 import StoneStyleWithout from "../../../../assets/images/StoneSetting/stoneStyle/none.svg";
 import StoneStyleSmooth from "../../../../assets/images/StoneSetting/stoneStyle/bezel.svg";
@@ -87,14 +88,14 @@ const maxStonesPerDistribution = {
     {
       name: "Rail setting Across",
       img: StoneStyleRailSettingAcross,
-      disabled: true
+      disabled: false
       // StoneStyleSmoothConversionSide,
     },
     {
       name: "Smooth setting Across",
       // img: StoneStylePavedSide,
       img: StoneStyleRailSettingAcross,
-      disabled: true
+      disabled: false
     },
     {
       name: "Channel side",
@@ -294,6 +295,30 @@ const TabContent = ({
   const [stonesPerGroup, setStonesPerGroup] = useState("");
   const [groupDivision, setGroupDivision] = useState("");
 
+  // Helper function to trigger stone pricing update
+  const triggerStonePricing = () => {
+    const selectedRing = window.selectedRing || 1;
+    const isPairActive = window.pair1 === true;
+    
+    const stoneConfig = {
+      style: stoneStyle,
+      type: stoneType,
+      size: stoneSize,
+      number: stoneNumber,
+      colorPurity: selectedOption
+    };
+
+    if (isPairActive && (selectedRing === 1 || selectedRing === 2)) {
+      // For pairs, apply stone config to both rings
+      saveStoneConfiguration('ring1', activeTab, stoneConfig);
+      saveStoneConfiguration('ring2', activeTab, stoneConfig);
+    } else {
+      // For individual rings, apply only to the selected ring
+      const ringKey = `ring${selectedRing}`;
+      saveStoneConfiguration(ringKey, activeTab, stoneConfig);
+    }
+  };
+
   // Initialize state based on current ring/tab when component mounts
   useEffect(() => {
     loadStateForCurrentRing();
@@ -407,6 +432,13 @@ const TabContent = ({
                 key={index}
                 onClick={() => {
                   if (!item.disabled) {
+                    setStoneStyle(item.name);
+                    
+                    // Trigger pricing update after state is set
+                    setTimeout(() => {
+                      triggerStonePricing();
+                    }, 100);
+                    
                     window.parent.postMessage(
                       { 
                         action: "addStone", 
@@ -416,7 +448,6 @@ const TabContent = ({
                       "*"
                     );
                     console.log(`Clicked: ${item.name}, Index: ${index}, Ring: ${currentRingKey}`);
-                    setStoneStyle(item.name);
                   }
                 }}
                 className={`bg-white w-[calc(34%-10px)] lg:w-[calc(25%-10px)] border flex flex-col justify-between items-center pt-3 
@@ -452,6 +483,12 @@ const TabContent = ({
                     onClick={() => {
                       if (!item.disabled) {
                         setStoneType(item.name);
+                        
+                        // Trigger pricing update after state is set
+                        setTimeout(() => {
+                          triggerStonePricing();
+                        }, 100);
+                        
                         // Add postMessage with ringKey
                         window.parent.postMessage(
                           { 
@@ -492,6 +529,12 @@ const TabContent = ({
                 value={stoneSize}
                 onChange={(e) => {
                   setStoneSize(e.target.value);
+                  
+                  // Trigger pricing update after state is set
+                  setTimeout(() => {
+                    triggerStonePricing();
+                  }, 100);
+                  
                   console.log(`Clicked size ${e.target.value}, Ring: ${currentRingKey}`);
                   window.parent.postMessage(
                     { 
@@ -541,6 +584,12 @@ const TabContent = ({
                   value={stoneNumber}
                   onChange={(e) => {
                     setStoneNumber(e.target.value);
+                    
+                    // Trigger pricing update after state is set
+                    setTimeout(() => {
+                      triggerStonePricing();
+                    }, 100);
+                    
                     window.parent.postMessage(
                       { 
                         action: "addStone", 

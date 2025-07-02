@@ -11,6 +11,7 @@ import MultiRangeMaskSlider2 from "../../../shared/SimpleCRangeSlider2";
 import { ColorSurface } from "./ColorSurface";
 import IsPair from "../../../shared/IsPair";
 import { useLocalization } from "../../../../context/LocalizationContext";
+import { savePreciousMetalPartition } from "../../../../utils/pricing";
 
 const metalOptions = [
   {
@@ -271,6 +272,27 @@ export const PreciousMetal = ({
     }
   };
 
+  // Function to trigger precious metal pricing events for relevant rings
+  const triggerPreciousMetalPricing = (partition) => {
+    if (isPair && isPair.pair1 && Array.isArray(rings) && rings.length >= 2) {
+      // Trigger for all pair rings
+      savePreciousMetalPartition('ring1', partition);
+      savePreciousMetalPartition('ring2', partition);
+      
+      // If we have a second pair
+      if (isPair.pair2 && rings.length >= 4) {
+        savePreciousMetalPartition('ring3', partition);
+        savePreciousMetalPartition('ring4', partition);
+      }
+    } else {
+      // Just trigger for the active ring
+      const ringKey = Array.isArray(activeRing) 
+        ? `ring1` // Use ring1 as default for array activeRing
+        : `ring${activeRing?.name?.slice(-1) || '1'}`; // Extract ring number from name
+      savePreciousMetalPartition(ringKey, partition);
+    }
+  };
+
   const getTwoToneOptions = () => {
     return options.map((option) => {
       // Add opacity 0.3 for specific patterns
@@ -369,6 +391,9 @@ export const PreciousMetal = ({
     setPartition(item);
     savePairedSettings("partition", JSON.stringify(item));
     
+    // Trigger precious metal pricing event
+    triggerPreciousMetalPricing(item);
+    
     // Toggle the dropdown
     setIsPartitionDropdownOpen(!isPartitionDropdownOpen);
   };
@@ -448,6 +473,9 @@ export const PreciousMetal = ({
       setSelectedPartitionTriColoredImg(null);
       savePairedSettings("selectedPartitionTriColoredImg", JSON.stringify(null));
       
+      // Trigger precious metal pricing for two tone
+      triggerPreciousMetalPricing({ name: "Two tone" });
+      
       isTwoTone = true;
     } else {
       setSelectedPartitionTriColoredImg(option);
@@ -455,6 +483,9 @@ export const PreciousMetal = ({
       
       setSelectedPartitionTwotoneImg(null);
       savePairedSettings("selectedPartitionTwotoneImg", JSON.stringify(null));
+      
+      // Trigger precious metal pricing for tri colored
+      triggerPreciousMetalPricing({ name: "Tri Colored" });
       
       isTwoTone = false;
       
@@ -642,6 +673,10 @@ export const PreciousMetal = ({
                           : () => {
                               setPartition(item);
                               savePairedSettings("partition", JSON.stringify(item));
+                              
+                              // Trigger precious metal pricing event
+                              triggerPreciousMetalPricing(item);
+                              
                               setIsPartitionDropdownOpen(false);
                               setSelectedPartitionTwotoneImg(null);
                               setSelectedPartitionTriColoredImg(null);

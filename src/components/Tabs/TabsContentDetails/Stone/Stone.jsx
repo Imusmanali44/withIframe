@@ -9,6 +9,7 @@ import {
 import StoneColorPurity from "./StoneColorPurity";
 import TabContent from "./TabContent";
 import { useLocalization } from "../../../../context/LocalizationContext";
+import { saveStoneConfiguration } from "../../../../utils/pricing";
 
 export const Stone = ({
   rings,
@@ -148,8 +149,39 @@ export const Stone = ({
     localStorage.setItem(storageKey, stoneSize);
   }, [stoneSize, activeRing]);
 
+  // Helper function to trigger stone pricing update
+  const triggerStonePricing = (stoneConfig, tabId) => {
+    const selectedRing = window.selectedRing || 1;
+    const isPairActive = window.pair1 === true;
+
+    if (isPairActive && (selectedRing === 1 || selectedRing === 2)) {
+      // For pairs, apply stone config to both rings
+      saveStoneConfiguration('ring1', tabId, stoneConfig);
+      saveStoneConfiguration('ring2', tabId, stoneConfig);
+    } else {
+      // For individual rings, apply only to the selected ring
+      const ringKey = `ring${selectedRing}`;
+      saveStoneConfiguration(ringKey, tabId, stoneConfig);
+    }
+  };
+
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
+    
+    // Trigger pricing update when color/purity changes
+    if (activeTab) {
+      const stoneConfig = {
+        style: "Smooth conversion", // Default style for simple mode
+        type: "Brilliant", // Default type
+        size: stoneSize,
+        number: 1,
+        colorPurity: event.target.value
+      };
+      
+      setTimeout(() => {
+        triggerStonePricing(stoneConfig, activeTab);
+      }, 100);
+    }
   };
 
   const addStone = () => {
@@ -157,12 +189,38 @@ export const Stone = ({
       const newStone = { id: stones.length + 1 };
       setStones([...stones, newStone]);
       setActiveTab(newStone.id);
+      
+      // Trigger pricing for new stone with default configuration
+      const stoneConfig = {
+        style: "Without", // Default to without when first created
+        type: "Without",
+        size: stoneSize,
+        number: 1,
+        colorPurity: selectedOption
+      };
+      
+      setTimeout(() => {
+        triggerStonePricing(stoneConfig, newStone.id);
+      }, 100);
     }
   };
 
   const removeStone = (id) => {
     const updatedStones = stones.filter((stone) => stone.id !== id);
     setStones(updatedStones);
+
+    // Clear pricing for removed stone
+    const stoneConfig = {
+      style: "Without",
+      type: "Without",
+      size: stoneSize,
+      number: 0,
+      colorPurity: null
+    };
+    
+    setTimeout(() => {
+      triggerStonePricing(stoneConfig, id);
+    }, 100);
 
     if (updatedStones.length > 0) {
       setActiveTab(updatedStones[updatedStones.length - 1].id);
@@ -226,7 +284,22 @@ export const Stone = ({
           <>
             <div className="flex mt-6 gap-2">
               <button
-                onClick={() => setOption(1)}
+                onClick={() => {
+                  setOption(1);
+                  
+                  // Trigger pricing for "with stone" option
+                  const stoneConfig = {
+                    style: "Smooth conversion", // Default style for simple mode
+                    type: "Brilliant", // Default type
+                    size: stoneSize,
+                    number: 1,
+                    colorPurity: selectedOption
+                  };
+                  
+                  setTimeout(() => {
+                    triggerStonePricing(stoneConfig, 1); // Use tab 1 for simple mode
+                  }, 100);
+                }}
                 className={`p-3 uppercase bg-white font-semibold text-sm border flex items-center gap-2 ${
                   option === 1 ? "border-[#205fa8]" : ""
                 }`}
@@ -235,7 +308,22 @@ export const Stone = ({
                 {t('stone.withStone')}
               </button>
               <button
-                onClick={() => setOption(2)}
+                onClick={() => {
+                  setOption(2);
+                  
+                  // Trigger pricing for "without stone" option
+                  const stoneConfig = {
+                    style: "Without",
+                    type: "Without", 
+                    size: stoneSize,
+                    number: 0,
+                    colorPurity: null
+                  };
+                  
+                  setTimeout(() => {
+                    triggerStonePricing(stoneConfig, 1); // Use tab 1 for simple mode
+                  }, 100);
+                }}
                 className={`p-3 uppercase bg-white font-semibold text-sm border flex items-center gap-2 ${
                   option === 2 ? "border-[#205fa8]" : ""
                 }`}

@@ -234,15 +234,15 @@ export class EngagementRings {
         }
         
         // Apply textures using the diamond material manager (same as StoneManager)
-        // this.diamondMaterialManager.applyDiamondTextures(
-        //   child.material,
-        //   textureUrl,
-        //   effects
-        // ).then(() => {
-        //   console.log(`Diamond material applied successfully to: ${child.name}`);
-        // }).catch((error) => {
-        //   console.warn(`Failed to apply diamond textures to ${child.name}:`, error);
-        // });
+        this.diamondMaterialManager.applyDiamondTextures(
+          child.material,
+          textureUrl,
+          effects
+        ).then(() => {
+          console.log(`Diamond material applied successfully to: ${child.name}`);
+        }).catch((error) => {
+          console.warn(`Failed to apply diamond textures to ${child.name}:`, error);
+        });
       }
     });
     

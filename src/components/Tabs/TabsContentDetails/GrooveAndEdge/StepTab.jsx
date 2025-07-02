@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import WidthDepthSurface from "./WidthDepthSurface";
 import { useLocalization } from "../../../../context/LocalizationContext";
+import { saveStepConfiguration } from "../../../../utils/pricing";
 
 const stepLeftOptions = [
   {
@@ -85,6 +86,27 @@ const StepTab = ({
     localStorage.setItem(storageKey, optionStepRight);
   }, [optionStepRight, activeRing]);
   
+  // Helper function to trigger step pricing update
+  const triggerStepPricing = (leftStep, rightStep) => {
+    const selectedRing = window.selectedRing || 1; // Default to ring 1 if not set
+    const isPairActive = window.pair1 === true;
+    
+    const stepConfig = {
+      left: leftStep,
+      right: rightStep
+    };
+
+    if (isPairActive && (selectedRing === 1 || selectedRing === 2)) {
+      // For pairs, apply step config to both rings
+      saveStepConfiguration('ring1', stepConfig);
+      saveStepConfiguration('ring2', stepConfig);
+    } else {
+      // For individual rings, apply only to the selected ring
+      const ringKey = `ring${selectedRing}`;
+      saveStepConfiguration(ringKey, stepConfig);
+    }
+  };
+  
   // Function to get localized step name
   const getLocalizedStepName = (name) => {
     switch(name) {
@@ -107,6 +129,10 @@ const StepTab = ({
             onClick={() => {
               setOptionStepLeft(item.name);
               console.log('Left step changed to:', item.name);
+              
+              // Trigger pricing update
+              triggerStepPricing(item.name, optionStepRight);
+              
               window.parent.postMessage(
                 {
                   action: "addStep",
@@ -151,6 +177,10 @@ const StepTab = ({
             onClick={() => {
               setOptionStepRight(item.name);
               console.log('Right step changed to:', item.name);
+              
+              // Trigger pricing update
+              triggerStepPricing(optionStepLeft, item.name);
+              
               window.parent.postMessage(
                 {
                   action: "addStep",
