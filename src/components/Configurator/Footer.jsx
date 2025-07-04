@@ -32,10 +32,10 @@ const ConfiguratorFooter = () => {
 
   // Update pricing when component mounts and when localStorage changes
   useEffect(() => {
-    const updatePricing = () => {
+    const updatePricing = async () => {
       const currentProfile = getCurrentProfile();
       const sizeValues = getAllSizePricing();
-      const pricing = getCombinedPricing(currentProfile, sizeValues);
+      const pricing = await getCombinedPricing(currentProfile, sizeValues);
       setCurrentPricing(pricing);
     };
 
@@ -90,6 +90,13 @@ const ConfiguratorFooter = () => {
     };
 
     window.addEventListener('stonePricingChanged', handleStonePricingChange);
+    
+    // Listen for pricing data loaded from Google Sheets
+    const handlePricingDataLoaded = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('pricingDataLoaded', handlePricingDataLoaded);
 
     // Cleanup
     return () => {
@@ -100,6 +107,7 @@ const ConfiguratorFooter = () => {
       window.removeEventListener('preciousMetalPricingChanged', handlePreciousMetalPricingChange);
       window.removeEventListener('grooveStepPricingChanged', handleGrooveStepPricingChange);
       window.removeEventListener('stonePricingChanged', handleStonePricingChange);
+      window.removeEventListener('pricingDataLoaded', handlePricingDataLoaded);
     };
   }, []);
 

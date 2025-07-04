@@ -55,6 +55,7 @@ function AppContent() {
           </div>
         </div>
       </div>
+      
       <Configurator
         activeStep={activeStep}
         setActiveStep={setActiveStep}

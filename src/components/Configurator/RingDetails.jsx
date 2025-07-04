@@ -24,10 +24,10 @@ export default function RingDetails() {
 
   // Update pricing when component mounts and when localStorage changes
   useEffect(() => {
-    const updatePricing = () => {
+    const updatePricing = async () => {
       const profile = getCurrentProfile();
       const sizeValues = getAllSizePricing();
-      const pricing = getCombinedPricing(profile, sizeValues);
+      const pricing = await getCombinedPricing(profile, sizeValues);
       setCurrentPricing(pricing);
       setCurrentProfile(profile);
     };
@@ -83,6 +83,13 @@ export default function RingDetails() {
     };
 
     window.addEventListener('stonePricingChanged', handleStonePricingChange);
+    
+    // Listen for pricing data loaded from Google Sheets
+    const handlePricingDataLoaded = () => {
+      updatePricing();
+    };
+
+    window.addEventListener('pricingDataLoaded', handlePricingDataLoaded);
 
     // Cleanup
     return () => {
@@ -93,6 +100,7 @@ export default function RingDetails() {
       window.removeEventListener('preciousMetalPricingChanged', handlePreciousMetalPricingChange);
       window.removeEventListener('grooveStepPricingChanged', handleGrooveStepPricingChange);
       window.removeEventListener('stonePricingChanged', handleStonePricingChange);
+      window.removeEventListener('pricingDataLoaded', handlePricingDataLoaded);
     };
   }, []);
   

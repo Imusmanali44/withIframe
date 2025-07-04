@@ -1,64 +1,67 @@
-export const pricingConfig = {
-  P1: {
-    ring1: 459,
-    ring2: 362
-  },
-  P2: {
-    ring1: 415,
-    ring2: 332
-  },
-  P3: {
-    ring1: 438,
-    ring2: 347
-  },
-  P4: {
-    ring1: 461,
-    ring2: 362
-  },
-  P5: {
-    ring1: 409,
-    ring2: 328
-  },
-  P6: {
-    ring1: 460,
-    ring2: 358
-  },
-  P7: {
-    ring1: 460,
-    ring2: 358
-  },
-  P8: {
-    ring1: 452,
-    ring2: 366
-  },
-  P9: {
-    ring1: 529,
-    ring2: 418
-  },
-  P10: {
-    ring1: 409,
-    ring2: 327
-  },
-  P11: {
-    ring1: 491,
-    ring2: 380
-  },
-  P12: {
-    ring1: 444,
-    ring2: 353
-  },
-  P13: {
-    ring1: 460,
-    ring2: 367
-  },
-  P14: {
-    ring1: 488,
-    ring2: 387
-  },
-  P15: {
-    ring1: 452,
-    ring2: 350
+import { fetchPricingFromGoogleSheets } from '../services/googleSheets.js';
+
+// Dynamic pricing configuration (loaded from Google Sheets)
+let pricingConfig = {
+  P1: { ring1: 459, ring2: 362 },
+  P2: { ring1: 415, ring2: 332 },
+  P3: { ring1: 438, ring2: 347 },
+  P4: { ring1: 461, ring2: 362 },
+  P5: { ring1: 409, ring2: 328 },
+  P6: { ring1: 460, ring2: 358 },
+  P7: { ring1: 460, ring2: 358 },
+  P8: { ring1: 452, ring2: 366 },
+  P9: { ring1: 529, ring2: 418 },
+  P10: { ring1: 409, ring2: 327 },
+  P11: { ring1: 491, ring2: 380 },
+  P12: { ring1: 444, ring2: 353 },
+  P13: { ring1: 460, ring2: 367 },
+  P14: { ring1: 488, ring2: 387 },
+  P15: { ring1: 452, ring2: 350 }
+};
+
+// Flag to track if pricing data has been loaded
+let pricingDataLoaded = false;
+
+/**
+ * Initialize pricing data from Google Sheets
+ * @returns {Promise<void>}
+ */
+export const initializePricingData = async () => {
+  if (pricingDataLoaded) {
+    return;
   }
+  
+  try {
+    const fetchedPricing = await fetchPricingFromGoogleSheets();
+    pricingConfig = fetchedPricing;
+    pricingDataLoaded = true;
+    
+    // Trigger a pricing update event
+    window.dispatchEvent(new CustomEvent('pricingDataLoaded', { 
+      detail: { pricingConfig } 
+    }));
+    
+  } catch (error) {
+    console.error('Failed to initialize pricing data:', error);
+    // Keep using fallback pricing config
+  }
+};
+
+/**
+ * Get current pricing configuration
+ * @returns {Object} Current pricing configuration
+ */
+export const getPricingConfig = () => {
+  return pricingConfig;
+};
+
+/**
+ * Refresh pricing data from Google Sheets
+ * @returns {Promise<void>}
+ */
+export const refreshPricingData = async () => {
+  pricingDataLoaded = false;
+  await initializePricingData();
 };
 
 // Size pricing configuration
@@ -164,8 +167,11 @@ export const calculateSizeAdjustments = (currentValues, ringKey) => {
 };
 
 // Get combined pricing (profile + size adjustments + engraving + precious metal + grooves + steps + stones)
-export const getCombinedPricing = (profileId, sizeValues) => {
-  const basePricing = getPricingForProfile(profileId);
+export const getCombinedPricing = async (profileId, sizeValues) => {
+  // Ensure pricing data is loaded
+  await initializePricingData();
+  
+  const basePricing = await getPricingForProfile(profileId);
   
   const ring1Adjustment = calculateSizeAdjustments(sizeValues?.ring1, 'ring1');
   const ring2Adjustment = calculateSizeAdjustments(sizeValues?.ring2, 'ring2');
@@ -212,7 +218,15 @@ export const getAllSizePricing = () => {
 };
 
 // Helper function to get pricing for a specific profile
-export const getPricingForProfile = (profileId) => {
+export const getPricingForProfile = async (profileId) => {
+  // Ensure pricing data is loaded
+  await initializePricingData();
+  
+  return pricingConfig[profileId] || { ring1: 0, ring2: 0 };
+};
+
+// Synchronous version for backward compatibility (uses cached data)
+export const getPricingForProfileSync = (profileId) => {
   return pricingConfig[profileId] || { ring1: 0, ring2: 0 };
 };
 
